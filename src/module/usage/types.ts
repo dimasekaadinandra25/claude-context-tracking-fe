@@ -54,6 +54,7 @@ export type UsageSession = {
   last_request_at: string;
   last_reported_at: string;
   user_name?: string;
+  models: string[];
 };
 
 export type SessionHour = {
@@ -66,6 +67,7 @@ export type SessionHour = {
 export type SessionDetail = {
   session: UsageSession;
   user_name: string;
+  models: string[];
   hours: SessionHour[];
 };
 

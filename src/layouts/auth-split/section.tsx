@@ -11,13 +11,15 @@ import Typography from '@mui/material/Typography';
 import { RouterLink } from 'src/routes/components';
 
 import { CONFIG } from 'src/shared/config';
+import { LogoMark } from 'src/shared/ui/logo';
 
 // ----------------------------------------------------------------------
+
+const HERO_MARK_SIZE = 160;
 
 export type AuthSplitSectionProps = BoxProps & {
   title?: string;
   method?: string;
-  imgUrl?: string;
   subtitle?: string;
   layoutQuery?: Breakpoint;
   methods?: {
@@ -33,7 +35,6 @@ export function AuthSplitSection({
   methods,
   layoutQuery = 'md',
   title = 'Manage the job',
-  imgUrl = `${CONFIG.assetsDir}/assets/illustrations/illustration-dashboard.webp`,
   subtitle = 'More effectively with optimized workflows.',
   ...other
 }: AuthSplitSectionProps) {
@@ -78,12 +79,7 @@ export function AuthSplitSection({
         )}
       </div>
 
-      <Box
-        component="img"
-        alt="Dashboard illustration"
-        src={imgUrl}
-        sx={{ width: 1, aspectRatio: '4/3', objectFit: 'cover' }}
-      />
+      <LogoMark size={HERO_MARK_SIZE} />
 
       {!!methods?.length && method && (
         <Box component="ul" sx={{ gap: 2, display: 'flex' }}>

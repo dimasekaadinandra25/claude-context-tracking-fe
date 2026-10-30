@@ -9,6 +9,7 @@ import { useRouter } from 'src/routes/hooks';
 
 import { useTranslate } from 'src/locales';
 
+import { ModelChips } from '../../../components/model-chips';
 import { formatTokens, formatDateTime } from '../../../utils/format';
 
 type Props = Pick<
@@ -35,7 +36,13 @@ function useColumns(): GridColDef<UsageSession>[] {
     { field: 'title', headerName: t('col.title'), sortable: false, flex: 1, minWidth: WIDE },
     { field: 'user_name', headerName: t('col.person'), ...fixed },
     { field: 'project', headerName: t('col.project'), sortable: false, minWidth: WIDE },
-    { field: 'model', headerName: t('col.model'), sortable: false, width: WIDE },
+    {
+      field: 'models',
+      headerName: t('col.models'),
+      sortable: false,
+      width: WIDE,
+      renderCell: ({ row }) => <ModelChips models={row.models} />,
+    },
     {
       field: 'new_context',
       headerName: t('col.newContext'),

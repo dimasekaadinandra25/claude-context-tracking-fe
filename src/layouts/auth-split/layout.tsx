@@ -7,8 +7,6 @@ import { merge } from 'es-toolkit';
 
 import Alert from '@mui/material/Alert';
 
-import { paths } from 'src/routes/paths';
-
 import { CONFIG } from 'src/shared/config';
 import { BrandLogo } from 'src/shared/ui/logo';
 
@@ -85,13 +83,6 @@ export function AuthSplitLayout({
         layoutQuery={layoutQuery}
         method={CONFIG.auth.method}
         {...slotProps?.section}
-        methods={[
-          {
-            label: 'Jwt',
-            path: paths.auth.jwt.signIn,
-            icon: `${CONFIG.assetsDir}/assets/icons/platforms/ic-jwt.svg`,
-          },
-        ]}
       />
       <AuthSplitContent layoutQuery={layoutQuery} {...slotProps?.content}>
         {children}

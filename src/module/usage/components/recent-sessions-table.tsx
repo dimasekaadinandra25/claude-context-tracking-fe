@@ -7,6 +7,7 @@ import { useRouter } from 'src/routes/hooks';
 import { useTranslate } from 'src/locales';
 
 import { DataTable } from './data-table';
+import { ModelChips } from './model-chips';
 import { formatTokens, formatDateTime } from '../utils/format';
 
 export function RecentSessionsTable({ sessions }: { sessions: UsageSession[] }) {
@@ -16,7 +17,7 @@ export function RecentSessionsTable({ sessions }: { sessions: UsageSession[] }) 
   const columns: Column<UsageSession>[] = [
     { id: 'title', label: t('col.title'), render: (s) => s.title || s.id },
     { id: 'project', label: t('col.project'), render: (s) => s.project || '-' },
-    { id: 'model', label: t('col.model'), render: (s) => s.model },
+    { id: 'models', label: t('col.models'), render: (s) => <ModelChips models={s.models} /> },
     {
       id: 'newContext',
       label: t('col.newContext'),

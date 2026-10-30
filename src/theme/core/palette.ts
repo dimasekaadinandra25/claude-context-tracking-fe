@@ -97,13 +97,20 @@ export const grey = createPaletteChannel(themeConfig.palette.grey);
  * ➤
  */
 export const text = {
-  light: createPaletteChannel({ primary: grey[800], secondary: grey[600], disabled: grey[500] }),
-  dark: createPaletteChannel({ primary: '#FFFFFF', secondary: grey[500], disabled: grey[600] }),
+  light: createPaletteChannel({ primary: '#141413', secondary: '#3D3D3A', disabled: grey[500] }),
+  dark: createPaletteChannel({ primary: grey[50], secondary: grey[400], disabled: grey[600] }),
 };
 
 export const background = {
-  light: createPaletteChannel({ paper: '#FFFFFF', default: '#FFFFFF', neutral: grey[200] }),
-  dark: createPaletteChannel({ paper: grey[800], default: grey[900], neutral: '#28323D' }),
+  light: createPaletteChannel({ paper: '#FFFFFF', default: grey[50], neutral: grey[200] }),
+  dark: createPaletteChannel({ paper: grey[800], default: '#262624', neutral: grey[900] }),
+};
+
+export const border = { light: grey[300], dark: grey[700] };
+
+export const chartColors = {
+  light: ['#D97757', '#5C8DC2', '#5F8A7D', '#8582B5', '#9A7D50', '#8F7A6A'],
+  dark: ['#D97757', '#6A9BCC', '#BCD1CA', '#CBCADB', '#E3DACC', '#8F7A6A'],
 };
 
 export const action = (mode: 'light' | 'dark'): Partial<TypeAction> => ({
@@ -148,8 +155,6 @@ const basePalette: ColorSystemOptions['palette'] = {
   error,
   common,
   grey,
-  divider: varAlpha(grey['500Channel'], 0.2),
-  TableCell: { border: varAlpha(grey['500Channel'], 0.2) },
   ...extendPalette,
 };
 
@@ -161,12 +166,16 @@ export const palette: SchemesRecord<ColorSystemOptions['palette']> = {
     ...basePalette,
     text: text.light,
     background: background.light,
+    divider: border.light,
+    TableCell: { border: border.light },
     action: action('light'),
   },
   dark: {
     ...basePalette,
     text: text.dark,
     background: background.dark,
+    divider: border.dark,
+    TableCell: { border: border.dark },
     action: action('dark'),
   },
 };

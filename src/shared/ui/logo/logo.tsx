@@ -2,12 +2,12 @@ import type { LinkProps } from '@mui/material/Link';
 
 import { mergeClasses } from 'minimal-shared/utils';
 
-import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import { styled } from '@mui/material/styles';
 
 import { RouterLink } from 'src/routes/components';
 
+import { LogoMark } from './logo-mark';
 import { logoClasses } from './classes';
 
 // ----------------------------------------------------------------------
@@ -43,12 +43,7 @@ export function Logo({
       ]}
       {...other}
     >
-      <Box
-        component="img"
-        alt="Venturo logo"
-        src="/logo/venturo-logo.png"
-        sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
-      />
+      <LogoMark size={40} />
     </LogoRoot>
   );
 }

@@ -93,7 +93,7 @@ export function JwtSignInView() {
 
       <Button
         fullWidth
-        color="inherit"
+        color="primary"
         size="large"
         type="submit"
         variant="contained"

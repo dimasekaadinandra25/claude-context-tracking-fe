@@ -24,6 +24,7 @@ function facts(detail: SessionDetail): [string, string][] {
     ['person', detail.user_name],
     ['project', s.project || '-'],
     ['model', s.model],
+    ['models', detail.models.join(', ')],
     ['machine', s.machine],
     ['contextWindow', formatTokens(s.context_window)],
     ['startContext', formatTokens(s.start_context)],

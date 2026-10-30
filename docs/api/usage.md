@@ -24,5 +24,8 @@ as the browser time zone (`buildRangeParams`).
 | GET | `/core/v1/admin/users/:id/api-keys` | `adminListKeys(userId)` |
 | POST | `/core/v1/admin/api-keys/:id/revoke` | `adminRevokeKey(keyId)` |
 
+Session rows from `getSessions` and the `getSession` detail carry `models`: every model the
+session used, largest new context first. The `model` filter matches any of them.
+
 Errors come back as `Error.message` from the server `errors.detail` or `message`.
 The full API key from `adminIssueKey` is kept only in the issue dialog's state and dropped on close.

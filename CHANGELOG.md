@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Added
+
+- Sessions grid, person recent sessions and session detail show every model a session used
+  (`models`), not only the current one.
+
+### Changed
+
+- Claude palette (accent `#D97757`, warm neutrals for light and dark) and Claude-warm chart colors
+  set once through the theme (`MuiChartsDataProvider`).
+- Accent-tinted KPI tiles, an accent bar on card headers and a primary sign-in button.
+- Original Claude Usage mark replaces the Venturo logo in the sidebar, auth pages and favicon.
+- Token counts drop a trailing `.0` (`200K`, not `200.0K`); chart y-axes are wide enough for
+  their tick labels.
+
+### Removed
+
+- Venturo and Tuai logo files under `public/logo/`.
+
 ## [0.1.0] - 2026-10-30
 
 ### Added

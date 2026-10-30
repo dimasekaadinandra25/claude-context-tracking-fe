@@ -33,6 +33,7 @@ import { progress } from './progress';
 import { timeline } from './timeline';
 import { checkbox } from './checkbox';
 import { accordion } from './accordion';
+import { charts } from './mui-x-charts';
 import { textField } from './text-field';
 import { pagination } from './pagination';
 import { iconButton } from './button-icon';
@@ -91,6 +92,7 @@ export const components: Components<Theme> = {
   ...toggleButton,
   // ➤➤ MUI X ➤➤
   ...treeView,
+  ...charts,
   ...dataGrid,
   ...datePicker,
 };

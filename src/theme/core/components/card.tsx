@@ -25,6 +25,19 @@ const MuiCardHeader: Components<Theme>['MuiCardHeader'] = {
     root: ({ theme }) => ({
       padding: theme.spacing(3, 3, 0),
     }),
+    title: ({ theme }) => ({
+      display: 'flex',
+      alignItems: 'center',
+      gap: theme.spacing(1.25),
+      '&::before': {
+        content: '""',
+        width: 4,
+        height: 18,
+        flexShrink: 0,
+        borderRadius: 2,
+        backgroundColor: theme.vars.palette.primary.main,
+      },
+    }),
   },
 };
 

@@ -15,6 +15,7 @@ type Props = {
 };
 
 const CHART_HEIGHT = 320;
+const Y_AXIS_WIDTH = 56;
 
 const valueFormatter = (value: number | null) => formatTokens(value ?? 0);
 
@@ -31,7 +32,7 @@ export function StackedBarChart({ points, interval, labelOf }: Props) {
     <BarChart
       height={CHART_HEIGHT}
       xAxis={[{ scaleType: 'band', data: buckets.map((b) => formatBucket(b, interval)) }]}
-      yAxis={[{ valueFormatter: (value: number) => formatTokens(value) }]}
+      yAxis={[{ width: Y_AXIS_WIDTH, valueFormatter: (value: number) => formatTokens(value) }]}
       series={series.map((s) => ({ ...s, stack: 'total', valueFormatter }))}
     />
   );

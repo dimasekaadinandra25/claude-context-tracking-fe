@@ -1,5 +1,5 @@
 import { it, expect, describe } from 'vitest';
-import { screen } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 
 import { renderWithAppProviders } from 'src/test/render';
 import { envelope, installFakeBackend } from 'src/test/fake-backend';
@@ -35,5 +35,26 @@ describe('OverviewView', () => {
     expect(backend.requests.map((r) => r.url)).toEqual(
       expect.arrayContaining(['/usage/v1/overview', '/usage/v1/timeseries'])
     );
+  });
+
+  it('peopleTitleAndColumnsButtonShareOneHeader', async () => {
+    installFakeBackend({
+      'GET /usage/v1/overview': { status: 200, data: envelope(emptyOverview) },
+      'GET /usage/v1/timeseries': { status: 200, data: envelope([]) },
+    });
+
+    renderWithAppProviders(
+      <ReportRangeProvider>
+        <OverviewView />
+      </ReportRangeProvider>
+    );
+
+    const title = await screen.findByText('People');
+    const button = screen.getByRole('button', { name: 'Columns' });
+    expect(title.closest('.MuiCardHeader-root')).toBe(button.closest('.MuiCardHeader-root'));
+    expect(title.closest('.MuiCardHeader-root')).not.toBeNull();
+
+    fireEvent.click(button);
+    expect(await screen.findByText('Show/Hide All')).toBeInTheDocument();
   });
 });

@@ -1,5 +1,4 @@
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
 
 import { useTranslate } from 'src/locales';
 
@@ -24,7 +23,6 @@ export function OverviewView() {
             <StackedBarChart points={points} interval="day" labelOf={nameOf} />
           </ChartCard>
           <Card>
-            <CardHeader title={t('overview.people')} />
             <PeopleTable people={overview.people} />
           </Card>
         </>

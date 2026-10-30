@@ -23,6 +23,8 @@
     "model": "Model",
     "models": "Models",
     "newContext": "New context",
+    "share": "New context share",
+    "shareScale": "Scale: 0 to {{max}}",
     "latestPeak": "Latest / peak context",
     "requests": "Requests",
     "sessions": "Sessions",
@@ -43,7 +45,7 @@
     "contextWindow": "Context window",
     "startContext": "Start context",
     "latestPeak": "Latest / peak context",
-    "newContext": "New context",
+    "newContext": "New context (all time)",
     "requests": "Requests",
     "compactions": "Compactions",
     "firstRequest": "First request",
@@ -68,7 +70,8 @@
   "overview": {
     "title": "Team overview",
     "chart": "New context per day by person",
-    "people": "People"
+    "people": "People",
+    "columns": "Columns"
   },
   "person": {
     "title": "Person detail",

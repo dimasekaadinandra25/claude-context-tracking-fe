@@ -1,0 +1,126 @@
+{
+  "empty": {
+    "chart": "No usage in this range yet.",
+    "people": "No people yet.",
+    "sessions": "No sessions in this range.",
+    "models": "No model usage in this range.",
+    "keys": "No API keys yet."
+  },
+  "kpi": {
+    "newContext": "New context",
+    "requests": "Requests",
+    "activePeople": "Active people",
+    "sessions": "Sessions"
+  },
+  "col": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "title": "Title",
+    "person": "Person",
+    "project": "Project",
+    "model": "Model",
+    "newContext": "New context",
+    "latestPeak": "Latest / peak context",
+    "requests": "Requests",
+    "sessions": "Sessions",
+    "compactions": "Compactions",
+    "currentModel": "Current model",
+    "lastRequest": "Last request",
+    "lastSynced": "Last synced",
+    "prefix": "Prefix",
+    "created": "Created",
+    "lastUsed": "Last used"
+  },
+  "fact": {
+    "person": "Person",
+    "project": "Project",
+    "model": "Current model",
+    "machine": "Machine",
+    "contextWindow": "Context window",
+    "startContext": "Start context",
+    "latestPeak": "Latest / peak context",
+    "newContext": "New context",
+    "requests": "Requests",
+    "compactions": "Compactions",
+    "firstRequest": "First request",
+    "lastRequest": "Last request"
+  },
+  "filter": {
+    "all": "All",
+    "person": "Person",
+    "project": "Project",
+    "model": "Model",
+    "search": "Search title or project"
+  },
+  "role": {
+    "admin": "Admin",
+    "member": "Member"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "revoked": "Revoked"
+  },
+  "overview": {
+    "title": "Team overview",
+    "chart": "New context per day by person",
+    "people": "People"
+  },
+  "person": {
+    "title": "Person detail",
+    "picker": "Person",
+    "chart": "New context per day by model",
+    "recent": "Recent sessions",
+    "viewAll": "All sessions"
+  },
+  "sessions": {
+    "title": "Sessions"
+  },
+  "session": {
+    "title": "Session",
+    "chart": "New context per hour by model"
+  },
+  "models": {
+    "title": "Models",
+    "share": "Share of new context",
+    "chart": "New context per day by model"
+  },
+  "adminPeople": {
+    "title": "People"
+  },
+  "admin": {
+    "create": "Create member",
+    "createSubmit": "Create",
+    "created": "Member created",
+    "username": "Username",
+    "password": "Password",
+    "newPassword": "New password",
+    "keys": "API keys",
+    "resetPassword": "Reset password",
+    "resetTitle": "Reset password for {{name}}",
+    "passwordReset": "Password reset",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "activateConfirm": "Activate {{name}}? Keys revoked on deactivation stay revoked; issue a new key.",
+    "deactivateConfirm": "Deactivate {{name}}? They can no longer sign in, and all their API keys are revoked.",
+    "updated": "User updated"
+  },
+  "keys": {
+    "title": "API keys of {{name}}",
+    "issue": "Issue key",
+    "issueSubmit": "Issue",
+    "issued": "API key issued",
+    "issuedTitle": "New API key",
+    "name": "Key name",
+    "once": "This key will not be shown again.",
+    "copy": "Copy",
+    "copied": "Copied to clipboard",
+    "done": "Done",
+    "revoke": "Revoke",
+    "revoked": "API key revoked",
+    "revokeTitle": "Revoke API key",
+    "revokeConfirm": "Revoke {{prefix}}? The desktop app using it stops syncing."
+  }
+}

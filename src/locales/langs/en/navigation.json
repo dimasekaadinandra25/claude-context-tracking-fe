@@ -1,0 +1,20 @@
+{
+  "overview": "Team overview",
+  "person": "Person detail",
+  "sessions": "Sessions",
+  "models": "Models",
+  "admin": {
+    "root": "Admin",
+    "people": "People"
+  },
+  "account": {
+    "profile": "Profile",
+    "theme": "Theme",
+    "logout": "Logout",
+    "logoutConfirm": {
+      "title": "Logout Confirmation",
+      "description": "Are you sure you want to log out?",
+      "confirm": "Logout"
+    }
+  }
+}

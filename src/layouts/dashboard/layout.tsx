@@ -12,6 +12,7 @@ import { iconButtonClasses } from '@mui/material/IconButton';
 
 import { BrandLogo } from 'src/shared/ui/logo';
 import { useSettingsContext } from 'src/module/core/features/settings';
+import { QuickSearchButton, QuickSearchDialog } from 'src/module/usage/components/quick-search';
 
 import { NavMobile } from './nav-mobile';
 import { VerticalDivider } from './content';
@@ -54,6 +55,7 @@ export function DashboardLayout({
   const navVars = dashboardNavColorVars(theme, settings.state.navColor, settings.state.navLayout);
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
+  const search = useBoolean();
 
   const dashboardNavData = useNavData();
   const navData = slotProps?.nav?.data ?? dashboardNavData;
@@ -171,7 +173,10 @@ export function DashboardLayout({
       })}
     >
       <AccountDrawer compact={compact} />
-      <ModeButton />
+      <Box sx={{ display: 'flex', flexDirection: 'inherit', gap: 1 }}>
+        <QuickSearchButton onClick={search.onTrue} />
+        <ModeButton />
+      </Box>
     </Box>
   );
 
@@ -193,7 +198,12 @@ export function DashboardLayout({
 
   const renderFooter = () => null;
 
-  const renderMain = () => <MainSection {...slotProps?.main}>{children}</MainSection>;
+  const renderMain = () => (
+    <MainSection {...slotProps?.main}>
+      {children}
+      <QuickSearchDialog open={search.value} onOpen={search.onTrue} onClose={search.onFalse} />
+    </MainSection>
+  );
 
   return (
     <LayoutSection

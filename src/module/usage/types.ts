@@ -14,6 +14,7 @@ export type OverviewPerson = {
   sessions: number;
   last_request_at: string | null;
   last_synced_at: string | null;
+  app_version: string | null;
 } & OutputUsage;
 
 export type Overview = {

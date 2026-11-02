@@ -48,7 +48,11 @@ export async function getOverview(range: ReportRange, userId?: string): Promise<
   const overview = await unwrap<Overview>(
     axios.get(endpoints.usage.overview, { params: rangeParams(range, userId) })
   );
-  return { ...NO_TOTALS, ...overview, people: overview.people.map(withOutput) };
+  return {
+    ...NO_TOTALS,
+    ...overview,
+    people: overview.people.map((p) => ({ ...withOutput(p), app_version: p.app_version ?? null })),
+  };
 }
 
 export function getTimeseries(

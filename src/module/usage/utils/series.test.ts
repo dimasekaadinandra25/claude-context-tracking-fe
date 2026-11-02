@@ -1,6 +1,6 @@
 import { it, expect, describe } from 'vitest';
 
-import { toDailyByKey, toWeekHourGrid, toStackedSeries } from './series';
+import { cellBuckets, toDailyByKey, toWeekHourGrid, toStackedSeries } from './series';
 
 describe('toStackedSeries', () => {
   it('fills missing buckets with zero and labels each key', () => {
@@ -51,5 +51,21 @@ describe('toDailyByKey', () => {
     );
     expect(result.get('u1')).toEqual([40, 0, 2]);
     expect(result.get('u2')).toEqual([0, 8, 0]);
+  });
+});
+
+describe('cellBuckets', () => {
+  it('sums each matching bucket and lists the newest first', () => {
+    const points = [
+      { bucket: '2026-10-26T09:00:00+07:00', key: 'u1', new_context: 4, requests: 1 },
+      { bucket: '2026-11-02T09:00:00+07:00', key: 'u1', new_context: 10, requests: 1 },
+      { bucket: '2026-11-02T09:00:00+07:00', key: 'u2', new_context: 5, requests: 1 },
+      { bucket: '2026-11-02T10:00:00+07:00', key: 'u1', new_context: 9, requests: 1 },
+    ];
+
+    expect(cellBuckets(points, 0, 9)).toEqual([
+      { bucket: '2026-11-02T09:00:00+07:00', tokens: 15 },
+      { bucket: '2026-10-26T09:00:00+07:00', tokens: 4 },
+    ]);
   });
 });

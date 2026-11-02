@@ -12,12 +12,23 @@ const MuiCard: Components<Theme>['MuiCard'] = {
       boxShadow: `var(--card-shadow, ${theme.vars.customShadows.card})`,
       borderRadius: `var(--card-radius, ${Number(theme.shape.borderRadius) * 2}px)`,
       zIndex: 0, // Fix Safari overflow: hidden with border radius
-      backgroundColor: varAlpha(theme.vars.palette.background.paperChannel, 0.72),
-      backdropFilter: 'blur(16px) saturate(140%)',
+      backgroundColor: 'transparent',
       border: `1px solid ${varAlpha(theme.vars.palette.common.whiteChannel, 0.7)}`,
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        inset: 0,
+        zIndex: -1,
+        borderRadius: 'inherit',
+        pointerEvents: 'none',
+        backgroundColor: varAlpha(theme.vars.palette.background.paperChannel, 0.72),
+        backdropFilter: 'blur(16px) saturate(140%)',
+      },
       ...theme.applyStyles('dark', {
-        backgroundColor: varAlpha(theme.vars.palette.background.paperChannel, 0.55),
         border: `1px solid ${varAlpha(theme.vars.palette.common.whiteChannel, 0.08)}`,
+        '&::before': {
+          backgroundColor: varAlpha(theme.vars.palette.background.paperChannel, 0.55),
+        },
       }),
     }),
   },

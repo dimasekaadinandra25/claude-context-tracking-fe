@@ -1,6 +1,11 @@
 import type { GridColDef } from '@mui/x-data-grid';
 import type { OverviewPerson } from 'src/module/usage/types';
 
+import dayjs from 'dayjs';
+
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
 import { DataGrid } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
@@ -10,6 +15,8 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useTranslate } from 'src/locales';
+import { Iconify } from 'src/shared/ui/iconify';
+import { fToNow } from 'src/shared/utils/format-time';
 import { niceMax } from 'src/module/usage/utils/scale';
 import { GridActions } from 'src/module/usage/components/grid-actions';
 import { formatTokens, formatDateTime } from 'src/module/usage/utils/format';
@@ -27,6 +34,22 @@ const NARROW = 120;
 const TREND_DAYS = 7;
 const SPARK_HEIGHT = 32;
 const NO_TREND = Array<number>(TREND_DAYS).fill(0);
+const STALE_HOURS = 24;
+
+const compareVersions = (a: string, b: string) => a.localeCompare(b, undefined, { numeric: true });
+
+function latestVersion(people: OverviewPerson[]) {
+  return people
+    .map((p) => p.app_version)
+    .reduce<
+      string | null
+    >((max, v) => (v && (!max || compareVersions(v, max) > 0) ? v : max), null);
+}
+
+function isStale(person: OverviewPerson) {
+  if (!person.last_synced_at) return person.new_context > 0 || person.requests > 0;
+  return dayjs().diff(person.last_synced_at, 'hour', true) > STALE_HOURS;
+}
 
 function dateColumn(
   field: 'last_request_at' | 'last_synced_at',
@@ -41,6 +64,43 @@ function dateColumn(
 }
 
 const count = (value: number) => value.toLocaleString();
+
+function VersionCell({ version, latest }: { version: string | null; latest: string | null }) {
+  const { t } = useTranslate('usage');
+  if (!version) return '—';
+  return (
+    <Box sx={{ display: 'flex', gap: 0.5 }}>
+      <Chip size="small" label={version} />
+      {latest && compareVersions(version, latest) < 0 && (
+        <Tooltip title={t('version.latest', { version: latest })}>
+          <Chip size="small" color="warning" label={t('version.outdated')} />
+        </Tooltip>
+      )}
+    </Box>
+  );
+}
+
+function SyncedCell({ person }: { person: OverviewPerson }) {
+  const { t } = useTranslate('usage');
+  return (
+    <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+      {formatDateTime(person.last_synced_at)}
+      {isStale(person) && (
+        <Tooltip
+          title={
+            person.last_synced_at
+              ? t('sync.stale', { ago: fToNow(person.last_synced_at) })
+              : t('sync.never')
+          }
+        >
+          <Box component="span" sx={{ display: 'inline-flex', color: 'warning.main' }}>
+            <Iconify icon="solar:danger-triangle-bold" />
+          </Box>
+        </Tooltip>
+      )}
+    </Box>
+  );
+}
 
 function numberColumn(
   field: keyof OverviewPerson & string,
@@ -71,6 +131,16 @@ function trendColumn(
         valueFormatter={(value) => formatTokens(value ?? 0)}
       />
     ),
+  };
+}
+
+function versionColumn(headerName: string, latest: string | null): GridColDef<OverviewPerson> {
+  return {
+    field: 'app_version',
+    headerName,
+    width: WIDE,
+    display: 'flex',
+    renderCell: ({ row }) => <VersionCell version={row.app_version} latest={latest} />,
   };
 }
 
@@ -114,8 +184,13 @@ function useColumns(
       width: WIDE,
       valueFormatter: (value: string) => value || '-',
     },
+    versionColumn(t('col.appVersion'), latestVersion(people)),
     dateColumn('last_request_at', t('col.lastRequest')),
-    dateColumn('last_synced_at', t('col.lastSynced')),
+    {
+      ...dateColumn('last_synced_at', t('col.lastSynced')),
+      display: 'flex',
+      renderCell: ({ row }) => <SyncedCell person={row} />,
+    },
   ];
 }
 

@@ -4,6 +4,13 @@
 
 ### Added
 
+- Members table: an App version column with an Outdated chip for versions below the newest one,
+  and a warning icon on Last synced when a member has not synced for over 24 hours.
+- Heatmap drill-down: clicking a cell lists the dates behind it, newest first, each linking to the
+  sessions of that hour. The sessions list takes `from`/`to` from the URL.
+- Quick search (Ctrl+K / Cmd+K, or the search button in the nav footer): members (admin) and
+  sessions, with arrow keys and Enter to open one.
+
 - Change password page (`/dashboard/account/password`, account menu › Change password) with
   current / new / confirm fields (`POST /core/v1/auth/change-password`). While
   `must_change_password` is set, every dashboard route redirects there until the change succeeds.

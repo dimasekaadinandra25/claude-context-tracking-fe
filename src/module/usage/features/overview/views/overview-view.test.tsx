@@ -257,3 +257,28 @@ describe('OverviewView activity heatmap and trends', () => {
     await waitFor(() => expect(weekCalls()).toHaveLength(3));
   });
 });
+
+describe('OverviewView heatmap drill-down', () => {
+  it('heatmapCellListsDatesWithHourSessionLinks', async () => {
+    renderWithRoutes((params) =>
+      params.interval === 'hour'
+        ? [
+            { bucket: '2026-10-26T09:00:00Z', key: 'u-1', new_context: 5000, requests: 1 },
+            { bucket: '2026-11-02T09:00:00Z', key: 'u-1', new_context: 10000, requests: 1 },
+            { bucket: '2026-11-02T09:00:00Z', key: 'u-2', new_context: 5000, requests: 1 },
+          ]
+        : []
+    );
+
+    fireEvent.click(await screen.findByLabelText('Mon 09:00 · 20K'));
+
+    const links = await screen.findAllByRole('link');
+    expect(links).toHaveLength(2);
+    expect(links[0]).toHaveTextContent('15K');
+    expect(links[0]).toHaveAttribute(
+      'href',
+      '/dashboard/sessions?from=2026-11-02T09%3A00%3A00.000Z&to=2026-11-02T10%3A00%3A00.000Z'
+    );
+    expect(links[1]).toHaveTextContent('5K');
+  });
+});

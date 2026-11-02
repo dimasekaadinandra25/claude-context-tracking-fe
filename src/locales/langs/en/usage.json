@@ -47,7 +47,8 @@
     "subagentOutput": "Subagent output",
     "latestContext": "Latest context",
     "peakContext": "Peak context",
-    "trend": "Last 7 days"
+    "trend": "Last 7 days",
+    "appVersion": "App version"
   },
   "fact": {
     "person": "Member",
@@ -179,5 +180,20 @@
     "fri": "Fri",
     "sat": "Sat",
     "sun": "Sun"
+  },
+  "version": {
+    "outdated": "Outdated",
+    "latest": "Latest is {{version}}"
+  },
+  "sync": {
+    "stale": "Not synced for {{ago}}",
+    "never": "Never synced"
+  },
+  "search": {
+    "open": "Search (Ctrl+K)",
+    "placeholder": "Search members and sessions",
+    "members": "Members",
+    "sessions": "Sessions",
+    "empty": "No results"
   }
 }

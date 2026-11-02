@@ -1,7 +1,7 @@
 import type { GridSortModel, GridPaginationModel } from '@mui/x-data-grid';
 import type { SessionFilters } from '../utils/query';
 
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { useSearchParams } from 'src/routes/hooks';
 
@@ -13,8 +13,10 @@ import { useReportRange } from '../../../hooks/use-report-range';
 const DEFAULT_PAGE_SIZE = 25;
 
 export function useSessionsList() {
-  const { range } = useReportRange();
+  const { range, setRange } = useReportRange();
   const searchParams = useSearchParams();
+  const from = searchParams.get('from');
+  const to = searchParams.get('to');
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
     pageSize: DEFAULT_PAGE_SIZE,
@@ -25,6 +27,10 @@ export function useSessionsList() {
   const [filters, setFilters] = useState<SessionFilters>({
     userId: searchParams.get('user_id') ?? '',
   });
+
+  useEffect(() => {
+    if (from && to) setRange({ from: new Date(from), to: new Date(to), tz: range.tz });
+  }, [from, to, range.tz, setRange]);
 
   const query = useMemo(
     () => sessionsQueryFromGrid({ ...paginationModel, sortModel, filters }),

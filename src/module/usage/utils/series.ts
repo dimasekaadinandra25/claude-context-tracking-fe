@@ -30,14 +30,36 @@ const DATE_LENGTH = 10;
 const HOUR_START = 11;
 const HOUR_END = 13;
 
+function weekHour(bucket: string): [number, number] {
+  const weekday = new Date(bucket.slice(0, DATE_LENGTH)).getUTCDay();
+  return [
+    (weekday + DAYS_PER_WEEK - 1) % DAYS_PER_WEEK,
+    Number(bucket.slice(HOUR_START, HOUR_END)),
+  ];
+}
+
 export function toWeekHourGrid(points: TimeseriesPoint[]): number[][] {
   const grid = Array.from({ length: DAYS_PER_WEEK }, () => Array<number>(HOURS_PER_DAY).fill(0));
   points.forEach((p) => {
-    const weekday = new Date(p.bucket.slice(0, DATE_LENGTH)).getUTCDay();
-    const hour = Number(p.bucket.slice(HOUR_START, HOUR_END));
-    grid[(weekday + DAYS_PER_WEEK - 1) % DAYS_PER_WEEK][hour] += p.new_context;
+    const [day, hour] = weekHour(p.bucket);
+    grid[day][hour] += p.new_context;
   });
   return grid;
+}
+
+export function cellBuckets(
+  points: TimeseriesPoint[],
+  day: number,
+  hour: number
+): { bucket: string; tokens: number }[] {
+  const totals = new Map<string, number>();
+  points.forEach((p) => {
+    const [d, h] = weekHour(p.bucket);
+    if (d === day && h === hour) totals.set(p.bucket, (totals.get(p.bucket) ?? 0) + p.new_context);
+  });
+  return [...totals]
+    .map(([bucket, tokens]) => ({ bucket, tokens }))
+    .sort((a, b) => new Date(b.bucket).getTime() - new Date(a.bucket).getTime());
 }
 
 export function toDailyByKey(points: TimeseriesPoint[], days: string[]): Map<string, number[]> {

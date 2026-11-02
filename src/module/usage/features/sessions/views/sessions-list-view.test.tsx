@@ -1,5 +1,5 @@
 import { it, expect, describe } from 'vitest';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
 
 import { renderWithAppProviders } from 'src/test/render';
 import { captureCsvDownloads } from 'src/test/csv-export';
@@ -34,16 +34,18 @@ const session = {
 
 const GRID_READY = { timeout: 5000 };
 
-function renderSessions() {
-  installFakeBackend({
+function renderSessions(route?: string) {
+  const backend = installFakeBackend({
     'GET /usage/v1/sessions': { status: 200, data: envelope([session]) },
     'GET /usage/v1/models': { status: 200, data: envelope([]) },
   });
   renderWithAppProviders(
     <ReportRangeProvider>
       <SessionsListView />
-    </ReportRangeProvider>
+    </ReportRangeProvider>,
+    route
   );
+  return backend;
 }
 
 describe('SessionsListView', () => {
@@ -73,5 +75,22 @@ describe('SessionsListView', () => {
     expect(csv).toContain('1234');
     expect(csv).toContain('2026-11-01T10:00:00Z');
     expect(csv).not.toMatch(/48\.2K|441\.2K/);
+  });
+});
+
+describe('SessionsListView URL range', () => {
+  it('readsRangeFromSearchParams', async () => {
+    const from = '2026-11-02T02:00:00.000Z';
+    const to = '2026-11-02T03:00:00.000Z';
+    const backend = renderSessions(`/?from=${from}&to=${to}`);
+
+    await waitFor(() =>
+      expect(backend.requests).toContainEqual(
+        expect.objectContaining({
+          url: '/usage/v1/sessions',
+          params: expect.objectContaining({ from, to }),
+        })
+      )
+    );
   });
 });

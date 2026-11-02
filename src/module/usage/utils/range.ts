@@ -49,7 +49,7 @@ export function buildRangeParams(range: ReportRange): Record<string, string> {
 export function rangeToDays(range: ReportRange): { start: string; end: string } {
   return {
     start: dayjs(range.from).format(DATE_FORMAT),
-    end: dayjs(range.to).subtract(1, 'day').format(DATE_FORMAT),
+    end: dayjs(range.to).subtract(1, 'millisecond').format(DATE_FORMAT),
   };
 }
 

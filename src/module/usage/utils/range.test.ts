@@ -4,6 +4,7 @@ import {
   lastDays,
   rangeDates,
   isSameRange,
+  rangeToDays,
   defaultRange,
   previousRange,
   buildRangeParams,
@@ -65,5 +66,17 @@ describe('rangeDates', () => {
   it('lists each local day of the range', () => {
     const range = { from: new Date(2026, 9, 30), to: new Date(2026, 10, 2), tz: 'UTC' };
     expect(rangeDates(range)).toEqual(['2026-10-30', '2026-10-31', '2026-11-01']);
+  });
+});
+
+describe('rangeToDays', () => {
+  it('keeps whole days and a single hour on their own dates', () => {
+    expect(rangeToDays(lastDays(7, new Date(2026, 10, 2, 15)))).toEqual({
+      start: '2026-10-27',
+      end: '2026-11-02',
+    });
+    expect(
+      rangeToDays({ from: new Date(2026, 10, 2, 9), to: new Date(2026, 10, 2, 10), tz: 'UTC' })
+    ).toEqual({ start: '2026-11-02', end: '2026-11-02' });
   });
 });

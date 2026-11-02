@@ -106,7 +106,7 @@ export function ModelsView() {
             </Grid>
             <Grid size={{ xs: 12, md: 7 }}>
               <ChartCard title={t('models.chart')}>
-                <StackedBarChart points={points} interval="day" />
+                <StackedBarChart points={points} />
               </ChartCard>
             </Grid>
           </Grid>

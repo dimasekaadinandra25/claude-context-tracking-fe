@@ -28,7 +28,7 @@ export function OverviewView() {
           <KpiRow overview={overview} previous={previous} />
           <BudgetCard />
           <ChartCard title={t('overview.chart')}>
-            <StackedBarChart points={points} interval="day" labelOf={nameOf} />
+            <StackedBarChart points={points} labelOf={nameOf} />
           </ChartCard>
           <ChartCard title={t('overview.heatmap')}>
             <ActivityHeatmap points={hourly} />

@@ -18,6 +18,7 @@ import { useTranslate } from 'src/locales';
 import { Iconify } from 'src/shared/ui/iconify';
 import { fToNow } from 'src/shared/utils/format-time';
 import { niceMax } from 'src/module/usage/utils/scale';
+import { RowLink } from 'src/module/usage/components/row-link';
 import { GridActions } from 'src/module/usage/components/grid-actions';
 import { formatTokens, formatDateTime } from 'src/module/usage/utils/format';
 import { ShareBar } from 'src/module/usage/features/overview/components/share-bar';
@@ -47,7 +48,8 @@ function latestVersion(people: OverviewPerson[]) {
 }
 
 function isStale(person: OverviewPerson) {
-  if (!person.last_synced_at) return person.new_context > 0 || person.requests > 0;
+  if (person.is_active === false) return false;
+  if (!person.last_synced_at) return true;
   return dayjs().diff(person.last_synced_at, 'hour', true) > STALE_HOURS;
 }
 
@@ -160,6 +162,11 @@ function useColumns(
       flex: 1,
       minWidth: WIDE,
       valueGetter: (_v, row) => row.full_name || row.email,
+      renderCell: ({ row, value, tabIndex }) => (
+        <RowLink href={paths.dashboard.person(row.user_id)} tabIndex={tabIndex}>
+          {value}
+        </RowLink>
+      ),
     },
     numberColumn('new_context', t('col.newContext'), formatTokens),
     {

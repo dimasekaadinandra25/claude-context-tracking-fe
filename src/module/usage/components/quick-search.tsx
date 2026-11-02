@@ -17,13 +17,14 @@ import { useTranslate } from 'src/locales';
 import { Iconify } from 'src/shared/ui/iconify';
 import { useAuthContext } from 'src/module/core/features/auth/hooks';
 
+import { lastDays } from '../utils/range';
 import { useFetch } from '../hooks/use-fetch';
 import { sessionTitle } from '../utils/session';
 import { getPeople, getSessions } from '../api/usage';
-import { useReportRange } from '../hooks/use-report-range';
+import { useDebounced } from '../hooks/use-debounced';
 
-const DEBOUNCE_MS = 250;
 const LIMIT = 8;
+const SEARCH_DAYS = 30;
 
 type Result = {
   id: string;
@@ -33,19 +34,9 @@ type Result = {
   href: string;
 };
 
-function useDebounced(value: string) {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), DEBOUNCE_MS);
-    return () => clearTimeout(timer);
-  }, [value]);
-  return debounced;
-}
-
 function useResults(open: boolean, query: string): Result[] {
   const { t } = useTranslate('usage');
   const { user } = useAuthContext();
-  const { range } = useReportRange();
   const isAdmin = !!user?.is_super_admin;
   const q = useDebounced(query.trim());
 
@@ -54,8 +45,11 @@ function useResults(open: boolean, query: string): Result[] {
     [open, isAdmin]
   );
   const loadSessions = useCallback(
-    () => (q ? getSessions(range, { q, per_page: String(LIMIT) }) : Promise.resolve(null)),
-    [range, q]
+    () =>
+      q
+        ? getSessions(lastDays(SEARCH_DAYS), { q, per_page: String(LIMIT) })
+        : Promise.resolve(null),
+    [q]
   );
   const people = useFetch(loadPeople).data ?? [];
   const sessions = useFetch(loadSessions).data?.items ?? [];

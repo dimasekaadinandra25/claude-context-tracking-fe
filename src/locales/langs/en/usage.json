@@ -31,10 +31,10 @@
     "newContext": "New context",
     "share": "New context share",
     "shareScale": "Scale: 0 to {{max}}",
-    "latestPeak": "Latest / peak",
+    "latestPeak": "Latest / peak (all time)",
     "requests": "Requests",
     "sessions": "Sessions",
-    "compactions": "Compactions",
+    "compactions": "Compactions (all time)",
     "currentModel": "Current model",
     "lastRequest": "Last request",
     "lastSynced": "Last synced",
@@ -46,9 +46,13 @@
     "subagentRequests": "Subagent requests",
     "subagentOutput": "Subagent output",
     "latestContext": "Latest context",
-    "peakContext": "Peak context",
+    "peakContext": "Peak context (all time)",
     "trend": "Last 7 days",
-    "appVersion": "App version"
+    "appVersion": "App version",
+    "newContextInRange": "New context (in range)",
+    "outputTokensInRange": "Output tokens (in range)",
+    "subagentRequestsInRange": "Subagent requests (in range)",
+    "requestsAllTime": "Requests (all time)"
   },
   "fact": {
     "person": "Member",
@@ -60,7 +64,7 @@
     "startContext": "Start context",
     "latestPeak": "Latest / peak context",
     "newContext": "New context (all time)",
-    "requests": "Requests",
+    "requests": "Requests (all time)",
     "compactions": "Compactions",
     "firstRequest": "First request",
     "lastRequest": "Last request",
@@ -92,13 +96,16 @@
   },
   "person": {
     "title": "Member detail",
+    "myTitle": "My usage",
     "picker": "Member",
     "chart": "New context per day by model",
     "recent": "Recent sessions",
     "viewAll": "All sessions"
   },
   "sessions": {
-    "title": "Sessions"
+    "title": "Sessions",
+    "hourFilter": "Showing sessions active between {{from}} and {{to}}",
+    "clearHourFilter": "Show the full range"
   },
   "session": {
     "title": "Session",
@@ -128,7 +135,7 @@
     "deactivate": "Deactivate",
     "activateConfirm": "Activate {{name}}? Keys revoked on deactivation stay revoked; issue a new key.",
     "deactivateConfirm": "Deactivate {{name}}? They can no longer sign in, and all their API keys are revoked.",
-    "updated": "User updated",
+    "updated": "Member updated",
     "budget": "Budget"
   },
   "budget": {
@@ -139,6 +146,7 @@
     "empty": "No budgets yet. Set budgets in Admin → Members.",
     "dialogTitle": "Monthly budget for {{name}}",
     "tokens": "New context tokens per month",
+    "tokensHint": "= {{tokens}}",
     "save": "Save",
     "clear": "Clear",
     "saved": "Budget saved",
@@ -192,7 +200,7 @@
   },
   "search": {
     "open": "Search (Ctrl+K)",
-    "placeholder": "Search members and sessions",
+    "placeholder": "Search members and sessions (last 30 days)",
     "members": "Members",
     "sessions": "Sessions",
     "empty": "No results"

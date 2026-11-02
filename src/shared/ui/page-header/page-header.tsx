@@ -24,6 +24,7 @@ type Props = {
   backHref?: string;
   /** Tooltip / screen-reader label for the back arrow (defaults to "Back"). */
   backLabel?: string;
+  onBack?: () => void;
   action?: React.ReactNode;
   sx?: SxProps<Theme>;
 };
@@ -34,6 +35,7 @@ export function PageHeader({
   subtitle,
   backHref,
   backLabel,
+  onBack,
   action,
   sx,
 }: Props) {
@@ -60,6 +62,13 @@ export function PageHeader({
               <IconButton
                 component={RouterLink}
                 href={backHref}
+                onClick={
+                  onBack &&
+                  ((event: React.MouseEvent) => {
+                    event.preventDefault();
+                    onBack();
+                  })
+                }
                 aria-label={label}
                 sx={{ ml: -1, flexShrink: 0, color: 'text.secondary' }}
               >

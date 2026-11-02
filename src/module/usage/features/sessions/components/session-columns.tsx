@@ -2,7 +2,10 @@ import type { TFunction } from 'i18next';
 import type { GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
 import type { UsageSession } from '../../../types';
 
+import { paths } from 'src/routes/paths';
+
 import { sessionTitle } from '../../../utils/session';
+import { RowLink } from '../../../components/row-link';
 import { ModelChips } from '../../../components/model-chips';
 import { formatTokens, formatDateTime } from '../../../utils/format';
 
@@ -43,6 +46,11 @@ export function sessionColumns(t: TFunction): GridColDef<UsageSession>[] {
       flex: 1,
       minWidth: WIDTH.title,
       valueGetter: (_v, row) => sessionTitle(row, t),
+      renderCell: ({ row, value, tabIndex }) => (
+        <RowLink href={paths.dashboard.session(row.id)} tabIndex={tabIndex}>
+          {value}
+        </RowLink>
+      ),
     },
     { field: 'user_name', headerName: t('col.person'), sortable: false, width: WIDTH.person },
     { field: 'project', headerName: t('col.project'), sortable: false, width: WIDTH.date },
@@ -53,8 +61,8 @@ export function sessionColumns(t: TFunction): GridColDef<UsageSession>[] {
       width: WIDTH.models,
       renderCell: ({ row }) => <ModelChips models={row.models} />,
     },
-    { ...tokenColumn('new_context', t('col.newContext')), sortable: true },
-    tokenColumn('output_tokens', t('col.outputTokens')),
+    { ...tokenColumn('new_context', t('col.newContextInRange')), sortable: true },
+    tokenColumn('output_tokens', t('col.outputTokensInRange')),
     {
       field: 'latest_peak',
       headerName: t('col.latestPeak'),
@@ -66,8 +74,8 @@ export function sessionColumns(t: TFunction): GridColDef<UsageSession>[] {
     },
     tokenColumn('latest_context', t('col.latestContext')),
     tokenColumn('peak_context', t('col.peakContext')),
-    countColumn('requests', t('col.requests')),
-    countColumn('subagent_requests', t('col.subagentRequests')),
+    countColumn('requests', t('col.requestsAllTime')),
+    countColumn('subagent_requests', t('col.subagentRequestsInRange')),
     countColumn('compactions', t('col.compactions')),
     {
       field: 'last_request_at',

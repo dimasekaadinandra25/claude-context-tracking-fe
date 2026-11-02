@@ -8,15 +8,16 @@ type Props = {
   title: string;
   action?: React.ReactNode;
   backHref?: string;
+  onBack?: () => void;
   loading?: boolean;
   error?: string | null;
   children?: React.ReactNode;
 };
 
-export function PageShell({ title, action, backHref, loading, error, children }: Props) {
+export function PageShell({ title, action, backHref, onBack, loading, error, children }: Props) {
   return (
     <Stack spacing={3} sx={{ p: { xs: 2, md: 4 } }}>
-      <PageHeader title={title} action={action} backHref={backHref} />
+      <PageHeader title={title} action={action} backHref={backHref} onBack={onBack} />
       {loading && <LinearProgress />}
       {error && <Alert severity="error">{error}</Alert>}
       {children}

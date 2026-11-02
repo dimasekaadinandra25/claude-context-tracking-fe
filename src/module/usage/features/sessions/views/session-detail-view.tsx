@@ -1,6 +1,7 @@
 import type { OutputUsage, SessionDetail, TimeseriesPoint } from '../../../types';
 
 import { useCallback } from 'react';
+import { useLocation } from 'react-router';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -8,17 +9,17 @@ import Typography from '@mui/material/Typography';
 import { LineChart } from '@mui/x-charts/LineChart';
 
 import { paths } from 'src/routes/paths';
-import { useParams } from 'src/routes/hooks';
+import { useParams, useRouter } from 'src/routes/hooks';
 
 import { useTranslate } from 'src/locales';
 
 import { getSession } from '../../../api/usage';
 import { useFetch } from '../../../hooks/use-fetch';
 import { sessionTitle } from '../../../utils/session';
-import { toStackedSeries } from '../../../utils/series';
 import { PageShell } from '../../../components/page-shell';
 import { ChartCard } from '../../../components/chart-card';
 import { EmptyState } from '../../../components/empty-state';
+import { toHourlyStackedSeries } from '../../../utils/series';
 import { formatTokens, formatBucket, formatDateTime } from '../../../utils/format';
 
 const CHART_HEIGHT = 320;
@@ -84,7 +85,7 @@ function HourlyLineChart({ points }: { points: TimeseriesPoint[] }) {
     return <EmptyState message={t('empty.chart')} />;
   }
 
-  const { buckets, series } = toStackedSeries(points);
+  const { buckets, series } = toHourlyStackedSeries(points);
 
   return (
     <LineChart
@@ -99,6 +100,8 @@ function HourlyLineChart({ points }: { points: TimeseriesPoint[] }) {
 export function SessionDetailView() {
   const { t } = useTranslate('usage');
   const { id = '' } = useParams();
+  const router = useRouter();
+  const { key } = useLocation();
   const load = useCallback(() => getSession(id), [id]);
   const { data, error, loading } = useFetch(load);
   const points = (data?.hours ?? []).map((h) => ({ ...h, bucket: h.hour, key: h.model }));
@@ -107,6 +110,7 @@ export function SessionDetailView() {
     <PageShell
       title={data ? sessionTitle(data.session, t) : t('session.title')}
       backHref={paths.dashboard.sessions}
+      onBack={key === 'default' ? undefined : router.back}
       loading={loading}
       error={error}
     >

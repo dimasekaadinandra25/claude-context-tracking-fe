@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 export type ReportRange = { from: Date; to: Date; tz: string };
 
-const DEFAULT_DAYS = 7;
+export const DEFAULT_DAYS = 7;
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export function browserTimeZone(): string {
@@ -30,10 +30,14 @@ export function rangeDays(range: ReportRange): number {
   return dayjs(range.to).diff(range.from, 'day');
 }
 
-export function previousRange(range: ReportRange): ReportRange {
+export function previousRange(range: ReportRange, now: Date = new Date()): ReportRange {
+  const from = range.from.getTime();
+  const length = range.to.getTime() - from;
+  const end = Math.min(now.getTime(), range.to.getTime());
+  const elapsed = end > from ? end - from : length;
   return {
-    from: dayjs(range.from).subtract(rangeDays(range), 'day').toDate(),
-    to: range.from,
+    from: new Date(from - length),
+    to: new Date(from - length + elapsed),
     tz: range.tz,
   };
 }

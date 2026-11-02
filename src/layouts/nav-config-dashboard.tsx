@@ -28,7 +28,12 @@ export function useNavData(): NavSectionProps['data'] {
 
   return useMemo(() => {
     const usage = [
-      { title: t('person'), path: paths.dashboard.person(), icon: ICONS.person, deepMatch: true },
+      {
+        title: t(isAdmin ? 'person' : 'myUsage'),
+        path: paths.dashboard.person(),
+        icon: ICONS.person,
+        deepMatch: true,
+      },
       {
         title: t('sessions'),
         path: paths.dashboard.sessions,

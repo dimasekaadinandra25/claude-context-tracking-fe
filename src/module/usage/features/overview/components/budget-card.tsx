@@ -1,3 +1,4 @@
+import type { Theme, SxProps } from '@mui/material/styles';
 import type { Budget } from 'src/module/usage/types';
 
 import { useCallback } from 'react';
@@ -30,11 +31,20 @@ function budgetColor(percent: number) {
   return 'primary';
 }
 
+function statusSx(color: ReturnType<typeof budgetColor>): SxProps<Theme> {
+  if (color === 'primary') return { color: 'text.secondary' };
+  return (theme) => ({
+    color: theme.vars.palette[color].dark,
+    ...theme.applyStyles('dark', { color: theme.vars.palette[color].main }),
+  });
+}
+
 function BudgetRow({ budget }: { budget: Budgeted }) {
   const { t } = useTranslate('usage');
-  const percent = Math.round((budget.used_new_context / budget.monthly_new_context) * PERCENT);
-  const color = budgetColor(percent);
-  const textColor = color === 'primary' ? 'text.secondary' : `${color}.main`;
+  const ratio = (budget.used_new_context / budget.monthly_new_context) * PERCENT;
+  const percent = Math.round(ratio);
+  const color = budgetColor(ratio);
+  const textSx = statusSx(color);
 
   return (
     <Box>
@@ -47,10 +57,10 @@ function BudgetRow({ budget }: { budget: Budgeted }) {
             icon="solar:danger-triangle-bold"
             width={18}
             aria-label={t(`budget.${color}`)}
-            sx={{ color: textColor }}
+            sx={textSx}
           />
         )}
-        <Typography variant="body2" sx={{ color: textColor }}>
+        <Typography variant="body2" sx={textSx}>
           {t('budget.usage', {
             used: formatTokens(budget.used_new_context),
             budget: formatTokens(budget.monthly_new_context),

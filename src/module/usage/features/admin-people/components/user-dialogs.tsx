@@ -6,6 +6,7 @@ import { useTranslate } from 'src/locales';
 import { ConfirmDialog } from 'src/shared/ui/confirm-dialog';
 
 import { FormDialog } from './form-dialog';
+import { formatTokens } from '../../../utils/format';
 import {
   adminSetActive,
   adminSetBudget,
@@ -89,6 +90,9 @@ export function BudgetDialog({ open, user, busy, onClose, onRun }: UserDialogPro
           required: true,
           min: 1,
           step: 1,
+          initial: user?.monthly_new_context ? String(user.monthly_new_context) : '',
+          hint: (value) =>
+            Number(value) > 0 ? t('budget.tokensHint', { tokens: formatTokens(Number(value)) }) : '',
         },
       ]}
       busy={busy}

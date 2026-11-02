@@ -19,6 +19,8 @@ export type FormField = {
   maxLength?: number;
   min?: number;
   step?: number;
+  initial?: string;
+  hint?: (value: string) => string;
 };
 
 type Props = {
@@ -44,10 +46,11 @@ export function FormDialog({
 }: Props) {
   const { t } = useTranslate('common');
   const [values, setValues] = useState<Record<string, string>>({});
+  const valueOf = (field: FormField) => values[field.name] ?? field.initial ?? '';
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
-    onSubmit(values);
+    onSubmit(Object.fromEntries(fields.map((field) => [field.name, valueOf(field)])));
   };
 
   return (
@@ -62,15 +65,23 @@ export function FormDialog({
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ pt: 1 }}>
-            {fields.map(({ name, label, type, required, ...htmlInput }) => (
+            {fields.map((field) => (
               <TextField
-                key={name}
-                label={label}
-                type={type ?? 'text'}
-                required={required}
-                value={values[name] ?? ''}
-                onChange={(event) => setValues({ ...values, [name]: event.target.value })}
-                slotProps={{ htmlInput }}
+                key={field.name}
+                label={field.label}
+                type={field.type ?? 'text'}
+                required={field.required}
+                value={valueOf(field)}
+                helperText={field.hint?.(valueOf(field))}
+                onChange={(event) => setValues({ ...values, [field.name]: event.target.value })}
+                slotProps={{
+                  htmlInput: {
+                    minLength: field.minLength,
+                    maxLength: field.maxLength,
+                    min: field.min,
+                    step: field.step,
+                  },
+                }}
               />
             ))}
           </Stack>

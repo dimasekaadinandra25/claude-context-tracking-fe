@@ -48,10 +48,10 @@ export function PersonView() {
           <KpiRow overview={overview} previous={previous} showPeople={false} />
           <BudgetCard userId={userId} />
           <ChartCard title={t('person.chart')}>
-            <StackedBarChart points={points} interval="day" />
+            <StackedBarChart points={points} />
           </ChartCard>
           <Card>
-            <CardHeader title={t('person.recent')} action={viewAll} />
+            <CardHeader title={t('person.recent')} action={viewAll} sx={{ pb: 2 }} />
             <RecentSessionsTable sessions={sessions} />
           </Card>
         </>

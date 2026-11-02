@@ -6,7 +6,7 @@ import { captureCsvDownloads } from 'src/test/csv-export';
 import { envelope, installFakeBackend } from 'src/test/fake-backend';
 
 import { OverviewView } from './overview-view';
-import { lastDays } from '../../../utils/range';
+import { lastDays, previousRange } from '../../../utils/range';
 import { ReportRangeProvider } from '../../../hooks/use-report-range';
 
 const emptyOverview = {
@@ -210,7 +210,7 @@ describe('OverviewView compare periods', () => {
     expect(backend.requests).toContainEqual(
       expect.objectContaining({
         url: '/usage/v1/overview',
-        params: expect.objectContaining({ to: expected.from.toISOString() }),
+        params: expect.objectContaining({ from: previousRange(expected).from.toISOString() }),
       })
     );
     expect(await tileChange('New context')).toBe('▲ 20% vs prev 30d');

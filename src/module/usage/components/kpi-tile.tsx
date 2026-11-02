@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 type Props = {
   title: string;
   value: string;
-  change?: { label: string; color: string };
+  change?: string;
 };
 
 export function KpiTile({ title, value, change }: Props) {
@@ -30,8 +30,8 @@ export function KpiTile({ title, value, change }: Props) {
         {value}
       </Typography>
       {change && (
-        <Typography variant="caption" sx={{ mt: 0.5, display: 'block', color: change.color }}>
-          {change.label}
+        <Typography variant="caption" sx={{ mt: 0.5, display: 'block', color: 'text.secondary' }}>
+          {change}
         </Typography>
       )}
     </Card>

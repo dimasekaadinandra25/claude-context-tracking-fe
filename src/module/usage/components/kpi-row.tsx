@@ -38,12 +38,10 @@ function useChange() {
 
   return (current: number, previous: number) => {
     const percent = percentChange(current, previous);
-    if (percent === null) return { label: t('kpi.noPrevious'), color: 'text.secondary' };
-    if (percent > 0) return { label: t('kpi.up', { percent, days }), color: 'success.main' };
-    if (percent < 0) {
-      return { label: t('kpi.down', { percent: -percent, days }), color: 'error.main' };
-    }
-    return { label: t('kpi.flat', { days }), color: 'text.secondary' };
+    if (percent === null) return t('kpi.noPrevious');
+    if (percent > 0) return t('kpi.up', { percent, days });
+    if (percent < 0) return t('kpi.down', { percent: -percent, days });
+    return t('kpi.flat', { days });
   };
 }
 

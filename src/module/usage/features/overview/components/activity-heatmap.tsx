@@ -1,3 +1,4 @@
+import type { Theme, SxProps } from '@mui/material/styles';
 import type { TimeseriesPoint } from 'src/module/usage/types';
 
 import dayjs from 'dayjs';
@@ -8,6 +9,7 @@ import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Tooltip from '@mui/material/Tooltip';
 import Popover from '@mui/material/Popover';
+import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -40,20 +42,32 @@ const hourSessionsHref = (bucket: string) =>
     to: dayjs(bucket).add(1, 'hour').toISOString(),
   })}`;
 
+const cellSx =
+  (value: number, max: number): SxProps<Theme> =>
+  (theme) => ({
+    height: 20,
+    borderRadius: 0.5,
+    bgcolor: value
+      ? varAlpha(theme.vars.palette.primary.mainChannel, shareOf(value, max))
+      : 'action.hover',
+    '&.Mui-focusVisible': {
+      outline: `2px solid ${theme.vars.palette.primary.main}`,
+      outlineOffset: 1,
+    },
+  });
+
 function HeatmapCell({ label, value, max, onClick }: CellProps) {
   return (
     <Tooltip title={label}>
-      <Box
-        onClick={value ? (event) => onClick(event.currentTarget) : undefined}
-        sx={(theme) => ({
-          cursor: value ? 'pointer' : 'default',
-          height: 20,
-          borderRadius: 0.5,
-          bgcolor: value
-            ? varAlpha(theme.vars.palette.primary.mainChannel, shareOf(value, max))
-            : 'action.hover',
-        })}
-      />
+      {value ? (
+        <ButtonBase
+          aria-label={label}
+          onClick={(event) => onClick(event.currentTarget)}
+          sx={cellSx(value, max)}
+        />
+      ) : (
+        <Box sx={cellSx(value, max)} />
+      )}
     </Tooltip>
   );
 }

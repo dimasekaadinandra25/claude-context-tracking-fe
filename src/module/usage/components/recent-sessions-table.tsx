@@ -6,6 +6,7 @@ import { useRouter } from 'src/routes/hooks';
 
 import { useTranslate } from 'src/locales';
 
+import { RowLink } from './row-link';
 import { DataTable } from './data-table';
 import { ModelChips } from './model-chips';
 import { sessionTitle } from '../utils/session';
@@ -16,12 +17,16 @@ export function RecentSessionsTable({ sessions }: { sessions: UsageSession[] }) 
   const router = useRouter();
 
   const columns: Column<UsageSession>[] = [
-    { id: 'title', label: t('col.title'), render: (s) => sessionTitle(s, t) },
+    {
+      id: 'title',
+      label: t('col.title'),
+      render: (s) => <RowLink href={paths.dashboard.session(s.id)}>{sessionTitle(s, t)}</RowLink>,
+    },
     { id: 'project', label: t('col.project'), render: (s) => s.project || '-' },
     { id: 'models', label: t('col.models'), render: (s) => <ModelChips models={s.models} /> },
     {
       id: 'newContext',
-      label: t('col.newContext'),
+      label: t('col.newContextInRange'),
       align: 'right',
       render: (s) => formatTokens(s.new_context),
     },

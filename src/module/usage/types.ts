@@ -15,6 +15,7 @@ export type OverviewPerson = {
   last_request_at: string | null;
   last_synced_at: string | null;
   app_version: string | null;
+  is_active?: boolean;
 } & OutputUsage;
 
 export type Overview = {

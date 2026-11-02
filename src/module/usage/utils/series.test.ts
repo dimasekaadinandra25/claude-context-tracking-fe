@@ -1,6 +1,13 @@
 import { it, expect, describe } from 'vitest';
 
-import { cellBuckets, toDailyByKey, toWeekHourGrid, toStackedSeries } from './series';
+import {
+  cellBuckets,
+  toDailyByKey,
+  toWeekHourGrid,
+  toStackedSeries,
+  toDailyStackedSeries,
+  toHourlyStackedSeries,
+} from './series';
 
 describe('toStackedSeries', () => {
   it('fills missing buckets with zero and labels each key', () => {
@@ -18,6 +25,38 @@ describe('toStackedSeries', () => {
       { id: 'u1', label: 'name-u1', data: [0, 40] },
       { id: 'u2', label: 'name-u2', data: [8, 2] },
     ]);
+  });
+});
+
+describe('toDailyStackedSeries', () => {
+  it('keeps every day of the range and fills empty days with zero', () => {
+    const result = toDailyStackedSeries(
+      [
+        { bucket: '2026-10-29T00:00:00+07:00', key: 'u1', new_context: 8, requests: 1 },
+        { bucket: '2026-11-01T00:00:00+07:00', key: 'u1', new_context: 2, requests: 1 },
+      ],
+      ['2026-10-29', '2026-10-30', '2026-10-31', '2026-11-01']
+    );
+
+    expect(result.buckets).toEqual(['2026-10-29', '2026-10-30', '2026-10-31', '2026-11-01']);
+    expect(result.series).toEqual([{ id: 'u1', label: 'u1', data: [8, 0, 0, 2] }]);
+  });
+});
+
+describe('toHourlyStackedSeries', () => {
+  it('lists every hour between the first and last bucket', () => {
+    const result = toHourlyStackedSeries([
+      { bucket: '2026-11-02T12:00:00+07:00', key: 'opus', new_context: 5, requests: 1 },
+      { bucket: '2026-11-02T09:00:00+07:00', key: 'opus', new_context: 4, requests: 1 },
+    ]);
+
+    expect(result.buckets).toEqual([
+      '2026-11-02T02:00:00.000Z',
+      '2026-11-02T03:00:00.000Z',
+      '2026-11-02T04:00:00.000Z',
+      '2026-11-02T05:00:00.000Z',
+    ]);
+    expect(result.series).toEqual([{ id: 'opus', label: 'opus', data: [4, 0, 0, 5] }]);
   });
 });
 

@@ -5,8 +5,8 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useTranslate } from 'src/locales';
 import { DateRangePicker } from 'src/shared/ui/date-range-picker';
 
+import { daysToRange, rangeToDays } from '../utils/range';
 import { useReportRange } from '../hooks/use-report-range';
-import { lastDays, daysToRange, isSameRange, rangeToDays } from '../utils/range';
 
 const QUICK_RANGES = [
   { days: 1, key: 'today' },
@@ -16,17 +16,14 @@ const QUICK_RANGES = [
 
 function QuickRanges() {
   const { t } = useTranslate('usage');
-  const { range, setRange } = useReportRange();
-  const active = QUICK_RANGES.find((q) =>
-    isSameRange(lastDays(q.days, new Date(), range.tz), range)
-  );
+  const { preset, setPreset } = useReportRange();
 
   return (
     <ToggleButtonGroup
       exclusive
       size="small"
-      value={active?.days ?? null}
-      onChange={(_e, days: number | null) => days && setRange(lastDays(days, new Date(), range.tz))}
+      value={preset}
+      onChange={(_e, days: number | null) => days && setPreset(days)}
     >
       {QUICK_RANGES.map((q) => (
         <ToggleButton key={q.key} value={q.days}>

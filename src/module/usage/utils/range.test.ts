@@ -60,6 +60,27 @@ describe('previousRange', () => {
       tz: 'Asia/Jakarta',
     });
   });
+
+  it('compares the same elapsed time when the range is still running', () => {
+    const now = new Date(2026, 10, 2, 15, 30);
+    const range = lastDays(7, now, 'UTC');
+    const length = range.to.getTime() - range.from.getTime();
+    const elapsed = now.getTime() - range.from.getTime();
+    expect(previousRange(range, now)).toEqual({
+      from: new Date(range.from.getTime() - length),
+      to: new Date(range.from.getTime() - length + elapsed),
+      tz: 'UTC',
+    });
+  });
+
+  it('keeps a sub-day range non-empty', () => {
+    const range = { from: new Date(2026, 10, 2, 9), to: new Date(2026, 10, 2, 10), tz: 'UTC' };
+    expect(previousRange(range, new Date(2026, 10, 2, 8))).toEqual({
+      from: new Date(2026, 10, 2, 8),
+      to: new Date(2026, 10, 2, 9),
+      tz: 'UTC',
+    });
+  });
 });
 
 describe('rangeDates', () => {

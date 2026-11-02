@@ -5,11 +5,16 @@ export type StackedSeries = {
   series: { id: string; label: string; data: number[] }[];
 };
 
+const DAYS_PER_WEEK = 7;
+const HOURS_PER_DAY = 24;
+const DATE_LENGTH = 10;
+const HOUR_MS = 3_600_000;
+
 export function toStackedSeries(
   points: TimeseriesPoint[],
-  labelOf: (key: string) => string = (key) => key
+  labelOf: (key: string) => string = (key) => key,
+  buckets: string[] = [...new Set(points.map((p) => p.bucket))].sort()
 ): StackedSeries {
-  const buckets = [...new Set(points.map((p) => p.bucket))].sort();
   const keys = [...new Set(points.map((p) => p.key))];
   const index = new Map(buckets.map((b, i) => [b, i]));
   const series = keys.map((key) => {
@@ -17,16 +22,33 @@ export function toStackedSeries(
     points
       .filter((p) => p.key === key)
       .forEach((p) => {
-        data[index.get(p.bucket) ?? 0] += p.new_context;
+        const i = index.get(p.bucket);
+        if (i !== undefined) data[i] += p.new_context;
       });
     return { id: key, label: labelOf(key), data };
   });
   return { buckets, series };
 }
 
-const DAYS_PER_WEEK = 7;
-const HOURS_PER_DAY = 24;
-const DATE_LENGTH = 10;
+export function toDailyStackedSeries(
+  points: TimeseriesPoint[],
+  days: string[],
+  labelOf?: (key: string) => string
+): StackedSeries {
+  const daily = points.map((p) => ({ ...p, bucket: p.bucket.slice(0, DATE_LENGTH) }));
+  return toStackedSeries(daily, labelOf, days);
+}
+
+export function toHourlyStackedSeries(points: TimeseriesPoint[]): StackedSeries {
+  const hourly = points.map((p) => ({ ...p, bucket: new Date(p.bucket).toISOString() }));
+  const times = hourly.map((p) => new Date(p.bucket).getTime());
+  const first = Math.min(...times);
+  const count = times.length ? Math.round((Math.max(...times) - first) / HOUR_MS) + 1 : 0;
+  const buckets = Array.from({ length: count }, (_, i) =>
+    new Date(first + i * HOUR_MS).toISOString()
+  );
+  return toStackedSeries(hourly, undefined, buckets);
+}
 const HOUR_START = 11;
 const HOUR_END = 13;
 

@@ -220,6 +220,41 @@ describe('AdminPeopleView budget dialog', () => {
     );
   });
 
+  it('budgetDialogPrefillsAndShowsTheTokenHint', async () => {
+    const backend = budgetBackend(10000000);
+    const user = await openBudgetDialog();
+
+    const input = screen.getByRole('spinbutton', { name: /New context tokens/ });
+    expect(input).toHaveValue(10000000);
+    expect(screen.getByText('= 10M')).toBeInTheDocument();
+
+    await user.clear(input);
+    await user.type(input, '5000000');
+    expect(screen.getByText('= 5M')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await screen.findByText('Budget saved');
+    expect(backend.requests).toContainEqual(
+      expect.objectContaining({ method: 'PUT', body: { monthly_new_context: 5000000 } })
+    );
+  });
+
+  it('listsMembersWhenOverviewAndBudgetsFail', async () => {
+    installFakeBackend({
+      'GET /core/v1/admin/users': ok([mia]),
+      'GET /usage/v1/overview': { status: 500, data: { message: 'down' } },
+      'GET /usage/v1/budgets': { status: 500, data: { message: 'down' } },
+    });
+    renderWithAppProviders(
+      <ReportRangeProvider>
+        <AdminPeopleView />
+      </ReportRangeProvider>
+    );
+
+    expect(await screen.findByText('mia@example.test')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('adminClearsBudget', async () => {
     const backend = budgetBackend(10000000);
     const user = await openBudgetDialog();

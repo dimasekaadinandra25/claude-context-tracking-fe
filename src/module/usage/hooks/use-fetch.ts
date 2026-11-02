@@ -8,7 +8,7 @@ type FetchState<T> = {
   loading: boolean;
 };
 
-export function useFetch<T>(load: () => Promise<T>) {
+export function useFetch<T>(load: () => Promise<T>, refresh = true) {
   const [state, setState] = useState<FetchState<T>>({ data: null, error: null, loading: true });
   const [version, setVersion] = useState(0);
 
@@ -17,16 +17,18 @@ export function useFetch<T>(load: () => Promise<T>) {
   }, [load]);
 
   useEffect(() => {
+    if (!refresh) return undefined;
     const timer = setInterval(() => setVersion((v) => v + 1), REFRESH_INTERVAL_MS);
     return () => clearInterval(timer);
-  }, [load]);
+  }, [load, refresh]);
 
   useEffect(() => {
     let active = true;
     load()
       .then((data) => active && setState({ data, error: null, loading: false }))
       .catch(
-        (err: Error) => active && setState({ data: null, error: err.message, loading: false })
+        (err: Error) =>
+          active && setState((prev) => ({ data: prev.data, error: err.message, loading: false }))
       );
     return () => {
       active = false;

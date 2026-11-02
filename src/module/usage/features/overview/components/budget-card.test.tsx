@@ -60,6 +60,16 @@ describe('BudgetCard', () => {
     expect(screen.getByLabelText('Over budget')).toBeInTheDocument();
   });
 
+  it('budgetCardComparesTheUnroundedRatio', async () => {
+    renderBudgets([
+      { ...budget, user_id: 'u-1', monthly_new_context: 1000000, used_new_context: 995000 },
+    ]);
+
+    expect(await screen.findByText('995K of 1M · 100%')).toBeInTheDocument();
+    expect(screen.getByLabelText('Near budget')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Over budget')).not.toBeInTheDocument();
+  });
+
   it('budgetCardShowsOnlyThePerson', async () => {
     renderBudgets(
       [

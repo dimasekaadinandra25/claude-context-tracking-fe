@@ -16,10 +16,17 @@ export type GridQuery = {
 
 const DEFAULT_SORT = '-last_request_at';
 
-function sortParam(sortModel: GridSortModel): string {
+export function sortParam(sortModel: GridSortModel): string {
   const [first] = sortModel;
   if (!first?.sort) return DEFAULT_SORT;
   return first.sort === 'desc' ? `-${first.field}` : first.field;
+}
+
+export function sortModelFromParam(param: string | null): GridSortModel {
+  const sort = param || DEFAULT_SORT;
+  return sort.startsWith('-')
+    ? [{ field: sort.slice(1), sort: 'desc' }]
+    : [{ field: sort, sort: 'asc' }];
 }
 
 export function sessionsQueryFromGrid({

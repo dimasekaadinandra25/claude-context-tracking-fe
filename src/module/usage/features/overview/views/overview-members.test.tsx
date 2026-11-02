@@ -82,4 +82,32 @@ describe('OverviewView app version and sync', () => {
     expect(screen.getByLabelText('Never synced')).toBeInTheDocument();
     expect(screen.queryAllByLabelText(/^Not synced for/)).toHaveLength(1);
   });
+
+  it('flagsNeverSyncedEvenWithoutUsageAndSkipsInactiveMembers', async () => {
+    const threeDaysAgo = new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString();
+    renderPeople([
+      { ...mia, new_context: 0, requests: 0, last_synced_at: null },
+      { ...mia, user_id: 'u-2', full_name: 'Raka', last_synced_at: null, is_active: false },
+      {
+        ...mia,
+        user_id: 'u-3',
+        full_name: 'Sari',
+        last_synced_at: threeDaysAgo,
+        is_active: false,
+      },
+    ]);
+
+    expect(await screen.findByText('Raka')).toBeInTheDocument();
+    expect(screen.getAllByLabelText('Never synced')).toHaveLength(1);
+    expect(screen.queryAllByLabelText(/^Not synced for/)).toHaveLength(0);
+  });
+
+  it('memberNameIsALinkToTheirPage', async () => {
+    renderPeople([{ ...mia, last_synced_at: justSynced() }]);
+
+    expect(await screen.findByRole('link', { name: 'Mia' })).toHaveAttribute(
+      'href',
+      '/dashboard/person/u-1'
+    );
+  });
 });

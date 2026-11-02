@@ -9,6 +9,7 @@ import { testUser, authContextValue } from 'src/test/auth-fixtures';
 import { envelope, installFakeBackend } from 'src/test/fake-backend';
 import { AuthContext } from 'src/module/core/features/auth/context/auth-context';
 
+import { lastDays } from '../utils/range';
 import { QuickSearchDialog } from './quick-search';
 import { ReportRangeProvider } from '../hooks/use-report-range';
 
@@ -53,7 +54,7 @@ describe('QuickSearchDialog', () => {
     await screen.findByText('at /');
     await user.keyboard('{Control>}k{/Control}');
     await user.type(
-      await screen.findByRole('textbox', { name: 'Search members and sessions' }),
+      await screen.findByRole('textbox', { name: 'Search members and sessions (last 30 days)' }),
       'mi'
     );
 
@@ -63,7 +64,11 @@ describe('QuickSearchDialog', () => {
     expect(backend.requests).toContainEqual(
       expect.objectContaining({
         url: '/usage/v1/sessions',
-        params: expect.objectContaining({ q: 'mi', per_page: '8' }),
+        params: expect.objectContaining({
+          q: 'mi',
+          per_page: '8',
+          from: lastDays(30).from.toISOString(),
+        }),
       })
     );
 
@@ -79,7 +84,7 @@ describe('QuickSearchDialog', () => {
     await screen.findByText('at /');
     await user.keyboard('{Meta>}k{/Meta}');
     await user.type(
-      await screen.findByRole('textbox', { name: 'Search members and sessions' }),
+      await screen.findByRole('textbox', { name: 'Search members and sessions (last 30 days)' }),
       'raka'
     );
     await screen.findByText('Raka');

@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router';
 import { it, expect, describe } from 'vitest';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
 
@@ -5,8 +6,20 @@ import { renderWithAppProviders } from 'src/test/render';
 import { captureCsvDownloads } from 'src/test/csv-export';
 import { envelope, installFakeBackend } from 'src/test/fake-backend';
 
+import { lastDays } from '../../../utils/range';
 import { SessionsListView } from './sessions-list-view';
-import { ReportRangeProvider } from '../../../hooks/use-report-range';
+import { useReportRange, ReportRangeProvider } from '../../../hooks/use-report-range';
+
+function Probes() {
+  const { range } = useReportRange();
+  const { search } = useLocation();
+  return (
+    <>
+      <p>{`global ${range.from.toISOString()}`}</p>
+      <p>{`search ${search}`}</p>
+    </>
+  );
+}
 
 const session = {
   id: 's-1',
@@ -42,6 +55,7 @@ function renderSessions(route?: string) {
   renderWithAppProviders(
     <ReportRangeProvider>
       <SessionsListView />
+      <Probes />
     </ReportRangeProvider>,
     route
   );
@@ -56,7 +70,9 @@ describe('SessionsListView', () => {
       await screen.findByRole('gridcell', { name: 'Fix invoices' }, GRID_READY)
     ).toBeInTheDocument();
     expect(screen.getByRole('gridcell', { name: '441.2K / 900K' })).toBeInTheDocument();
-    expect(screen.getByRole('columnheader', { name: 'Output tokens' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Output tokens (in range)' })
+    ).toBeInTheDocument();
     expect(screen.queryByRole('columnheader', { name: 'Requests' })).not.toBeInTheDocument();
     expect(screen.queryByRole('columnheader', { name: 'Compactions' })).not.toBeInTheDocument();
   });
@@ -92,5 +108,73 @@ describe('SessionsListView URL range', () => {
         })
       )
     );
+  });
+
+  it('drillDownKeepsTheGlobalRange', async () => {
+    const from = '2026-11-02T02:00:00.000Z';
+    const to = '2026-11-02T03:00:00.000Z';
+    const backend = renderSessions(`/?from=${from}&to=${to}`);
+
+    await screen.findByRole('gridcell', { name: 'Fix invoices' }, GRID_READY);
+
+    expect(screen.getByText(`global ${lastDays(7).from.toISOString()}`)).toBeInTheDocument();
+    expect(backend.requests.filter((r) => r.params?.from !== from)).toEqual([]);
+  });
+
+  it('hourFilterBannerClearsBackToTheFullRange', async () => {
+    const from = '2026-11-02T02:00:00.000Z';
+    const to = '2026-11-02T03:00:00.000Z';
+    renderSessions(`/?from=${from}&to=${to}`);
+
+    expect(await screen.findByText(/Showing sessions active between/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Show the full range' }));
+
+    await waitFor(() =>
+      expect(screen.queryByText(/Showing sessions active between/)).not.toBeInTheDocument()
+    );
+  });
+});
+
+describe('SessionsListView URL state', () => {
+  it('readsPageSortAndFiltersFromTheUrl', async () => {
+    const backend = renderSessions('/?page=2&sort=new_context&project=billing&q=fix');
+
+    await waitFor(
+      () =>
+        expect(backend.requests).toContainEqual(
+          expect.objectContaining({
+            url: '/usage/v1/sessions',
+            params: expect.objectContaining({
+              page: '2',
+              sort: 'new_context',
+              project: 'billing',
+              q: 'fix',
+            }),
+          })
+        ),
+      GRID_READY
+    );
+    expect(screen.getByRole('textbox', { name: 'Project' })).toHaveValue('billing');
+  });
+
+  it('writesDebouncedFiltersToTheUrlAndResetsThePage', async () => {
+    const backend = renderSessions('/?page=3');
+    const input = screen.getByRole('textbox', { name: 'Search title or project' });
+
+    fireEvent.change(input, { target: { value: 'inv' } });
+    fireEvent.change(input, { target: { value: 'invoice' } });
+
+    expect(await screen.findByText('search ?q=invoice', {}, GRID_READY)).toBeInTheDocument();
+    await waitFor(
+      () =>
+        expect(backend.requests).toContainEqual(
+          expect.objectContaining({
+            url: '/usage/v1/sessions',
+            params: expect.objectContaining({ page: '1', q: 'invoice' }),
+          })
+        ),
+      GRID_READY
+    );
+    expect(backend.requests.some((r) => r.params?.q === 'inv')).toBe(false);
   });
 });

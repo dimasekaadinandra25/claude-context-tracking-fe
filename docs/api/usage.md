@@ -2,7 +2,7 @@
 
 **Module:** usage
 **Kode FE:** `src/module/usage/api/usage.ts`
-**Last Updated:** 2026-10-30
+**Last Updated:** 2026-11-02
 
 Server contract: `claude-usage-server/docs/api-contract/usage/README.md`. All calls send
 `Authorization: Bearer <access_token>`. Report calls send `from`/`to` as UTC `Z` strings and `tz`
@@ -23,9 +23,13 @@ as the browser time zone (`buildRangeParams`).
 | POST | `/core/v1/admin/users/:id/api-keys` | `adminIssueKey(userId, name)` |
 | GET | `/core/v1/admin/users/:id/api-keys` | `adminListKeys(userId)` |
 | POST | `/core/v1/admin/api-keys/:id/revoke` | `adminRevokeKey(keyId)` |
+| GET | `/core/v1/admin/api-keys/:id/reveal` | `adminRevealKey(keyId)` |
 
 Session rows from `getSessions` and the `getSession` detail carry `models`: every model the
 session used, largest new context first. The `model` filter matches any of them.
 
 Errors come back as `Error.message` from the server `errors.detail` or `message`.
 The full API key from `adminIssueKey` is kept only in the issue dialog's state and dropped on close.
+`adminRevealKey` returns the full key of an active key; the keys drawer writes it straight to the
+clipboard and never renders or stores it. 409 means the key was issued before reveal existed (issue
+a new key), 410 means it is no longer active.

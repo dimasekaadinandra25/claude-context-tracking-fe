@@ -122,6 +122,8 @@
     "once": "This key will not be shown again.",
     "copy": "Copy",
     "copied": "Copied to clipboard",
+    "copyKey": "Copy API key",
+    "keyCopied": "API key copied",
     "done": "Done",
     "revoke": "Revoke",
     "revoked": "API key revoked",

@@ -6,7 +6,7 @@ import { useTranslate } from 'src/locales';
 
 import { useAdminAction } from './use-admin-people';
 import { useFetch } from '../../../hooks/use-fetch';
-import { adminIssueKey, adminListKeys, adminRevokeKey } from '../../../api/usage';
+import { adminIssueKey, adminListKeys, adminRevealKey, adminRevokeKey } from '../../../api/usage';
 
 export function useKeys(userId: string) {
   const { t } = useTranslate('usage');
@@ -35,6 +35,12 @@ export function useKeys(userId: string) {
     reload();
   };
 
+  const copy = (apiKey: ApiKey) =>
+    action.run(
+      async () => navigator.clipboard.writeText(await adminRevealKey(apiKey.id)),
+      t('keys.keyCopied')
+    );
+
   return {
     keys: data ?? [],
     error,
@@ -47,5 +53,6 @@ export function useKeys(userId: string) {
     setRevoking,
     issue,
     revoke,
+    copy,
   };
 }

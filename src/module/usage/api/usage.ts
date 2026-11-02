@@ -103,3 +103,8 @@ export async function adminListKeys(userId: string) {
 export async function adminRevokeKey(keyId: string) {
   await axios.post(endpoints.admin.revokeKey(keyId));
 }
+
+export async function adminRevealKey(keyId: string) {
+  const res = await unwrap<{ key: string }>(axios.get(endpoints.admin.revealKey(keyId)));
+  return res.key;
+}

@@ -6,10 +6,13 @@ import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { useTranslate } from 'src/locales';
 import { Label } from 'src/shared/ui/label';
+import { Iconify } from 'src/shared/ui/iconify';
 import { ErrorDialog } from 'src/shared/ui/error-dialog';
 import { ConfirmDialog } from 'src/shared/ui/confirm-dialog';
 
@@ -28,7 +31,12 @@ type Props = {
   onClose: () => void;
 };
 
-function useKeyColumns(onRevoke: (key: ApiKey) => void): Column<ApiKey>[] {
+type KeyActions = {
+  onRevoke: (key: ApiKey) => void;
+  onCopy: (key: ApiKey) => void;
+};
+
+function useKeyColumns({ onRevoke, onCopy }: KeyActions): Column<ApiKey>[] {
   const { t } = useTranslate('usage');
   return [
     { id: 'name', label: t('col.name'), render: (k) => k.name },
@@ -49,42 +57,25 @@ function useKeyColumns(onRevoke: (key: ApiKey) => void): Column<ApiKey>[] {
       align: 'right',
       render: (k) =>
         k.is_active && (
-          <Button size="small" color="error" onClick={() => onRevoke(k)}>
-            {t('keys.revoke')}
-          </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+            <Tooltip title={t('keys.copyKey')}>
+              <IconButton size="small" onClick={() => onCopy(k)}>
+                <Iconify icon="solar:copy-bold" />
+              </IconButton>
+            </Tooltip>
+            <Button size="small" color="error" onClick={() => onRevoke(k)}>
+              {t('keys.revoke')}
+            </Button>
+          </Box>
         ),
     },
   ];
 }
 
-export function KeysDrawer({ user, onClose }: Props) {
+function KeyDialogs({ keys }: { keys: ReturnType<typeof useKeys> }) {
   const { t } = useTranslate('usage');
-  const { t: tCommon } = useTranslate('common');
-  const keys = useKeys(user?.id ?? '');
-  const columns = useKeyColumns(keys.setRevoking);
-
   return (
-    <Drawer anchor="right" open={!!user} onClose={onClose}>
-      <Box sx={{ width: { xs: '100vw', md: DRAWER_WIDTH }, p: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            {t('keys.title', { name: displayName(user) })}
-          </Typography>
-          <Button variant="contained" onClick={() => keys.setIssuing(true)}>
-            {t('keys.issue')}
-          </Button>
-          <Button color="inherit" onClick={onClose}>
-            {tCommon('actions.close')}
-          </Button>
-        </Box>
-        {keys.error && <Alert severity="error">{keys.error}</Alert>}
-        <DataTable
-          columns={columns}
-          rows={keys.keys}
-          rowKey={(k) => k.id}
-          emptyMessage={t('empty.keys')}
-        />
-      </Box>
+    <>
       <FormDialog
         open={keys.issuing}
         title={t('keys.issue')}
@@ -110,6 +101,39 @@ export function KeysDrawer({ user, onClose }: Props) {
         message={keys.action.error ?? ''}
         onClose={keys.action.clearError}
       />
+    </>
+  );
+}
+
+export function KeysDrawer({ user, onClose }: Props) {
+  const { t } = useTranslate('usage');
+  const { t: tCommon } = useTranslate('common');
+  const keys = useKeys(user?.id ?? '');
+  const columns = useKeyColumns({ onRevoke: keys.setRevoking, onCopy: keys.copy });
+
+  return (
+    <Drawer anchor="right" open={!!user} onClose={onClose}>
+      <Box sx={{ width: { xs: '100vw', md: DRAWER_WIDTH }, p: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            {t('keys.title', { name: displayName(user) })}
+          </Typography>
+          <Button variant="contained" onClick={() => keys.setIssuing(true)}>
+            {t('keys.issue')}
+          </Button>
+          <Button color="inherit" onClick={onClose}>
+            {tCommon('actions.close')}
+          </Button>
+        </Box>
+        {keys.error && <Alert severity="error">{keys.error}</Alert>}
+        <DataTable
+          columns={columns}
+          rows={keys.keys}
+          rowKey={(k) => k.id}
+          emptyMessage={t('empty.keys')}
+        />
+      </Box>
+      <KeyDialogs keys={keys} />
     </Drawer>
   );
 }

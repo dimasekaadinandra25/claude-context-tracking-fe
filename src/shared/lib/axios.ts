@@ -137,5 +137,6 @@ export const endpoints = {
     resetPassword: (id: string) => `/core/v1/admin/users/${id}/reset-password`,
     apiKeys: (userId: string) => `/core/v1/admin/users/${userId}/api-keys`,
     revokeKey: (keyId: string) => `/core/v1/admin/api-keys/${keyId}/revoke`,
+    revealKey: (keyId: string) => `/core/v1/admin/api-keys/${keyId}/reveal`,
   },
 } as const;

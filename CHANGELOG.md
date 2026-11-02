@@ -4,6 +4,9 @@
 
 ### Added
 
+- Admin › People › API keys: a copy button on each active key copies the full key to the clipboard
+  (`GET /core/v1/admin/api-keys/:id/reveal`) without showing it; keys issued before reveal existed
+  show the server message to issue a new key.
 - Sessions grid, person recent sessions and session detail show every model a session used
   (`models`), not only the current one.
 

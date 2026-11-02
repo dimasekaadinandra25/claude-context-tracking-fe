@@ -28,7 +28,7 @@ import {
 
 const VISIBILITY_KEY = 'usage.overview.people.columns';
 const NAME_FIELD = 'name';
-const EXPORT_FILE = 'people';
+const EXPORT_FILE = 'members';
 const WIDE = 180;
 const NARROW = 120;
 const TREND_DAYS = 7;

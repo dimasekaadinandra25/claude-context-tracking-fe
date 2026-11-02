@@ -2,6 +2,7 @@ import type { TFunction } from 'i18next';
 import type { GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
 import type { UsageSession } from '../../../types';
 
+import { sessionTitle } from '../../../utils/session';
 import { ModelChips } from '../../../components/model-chips';
 import { formatTokens, formatDateTime } from '../../../utils/format';
 
@@ -41,6 +42,7 @@ export function sessionColumns(t: TFunction): GridColDef<UsageSession>[] {
       sortable: false,
       flex: 1,
       minWidth: WIDTH.title,
+      valueGetter: (_v, row) => sessionTitle(row, t),
     },
     { field: 'user_name', headerName: t('col.person'), sortable: false, width: WIDTH.person },
     { field: 'project', headerName: t('col.project'), sortable: false, width: WIDTH.date },

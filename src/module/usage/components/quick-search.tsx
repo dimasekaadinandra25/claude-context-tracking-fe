@@ -18,6 +18,7 @@ import { Iconify } from 'src/shared/ui/iconify';
 import { useAuthContext } from 'src/module/core/features/auth/hooks';
 
 import { useFetch } from '../hooks/use-fetch';
+import { sessionTitle } from '../utils/session';
 import { getPeople, getSessions } from '../api/usage';
 import { useReportRange } from '../hooks/use-report-range';
 
@@ -42,6 +43,7 @@ function useDebounced(value: string) {
 }
 
 function useResults(open: boolean, query: string): Result[] {
+  const { t } = useTranslate('usage');
   const { user } = useAuthContext();
   const { range } = useReportRange();
   const isAdmin = !!user?.is_super_admin;
@@ -74,7 +76,7 @@ function useResults(open: boolean, query: string): Result[] {
     ...sessions.slice(0, LIMIT).map((s) => ({
       id: s.id,
       group: 'sessions' as const,
-      label: s.title || s.id,
+      label: sessionTitle(s, t),
       detail: [s.user_name, s.project].filter(Boolean).join(' · '),
       href: paths.dashboard.session(s.id),
     })),

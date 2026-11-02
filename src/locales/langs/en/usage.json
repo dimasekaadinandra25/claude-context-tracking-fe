@@ -102,6 +102,7 @@
   },
   "session": {
     "title": "Session",
+    "private": "Private session",
     "lineChart": "Hourly new context trend by model"
   },
   "models": {

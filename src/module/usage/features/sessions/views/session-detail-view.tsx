@@ -14,6 +14,7 @@ import { useTranslate } from 'src/locales';
 
 import { getSession } from '../../../api/usage';
 import { useFetch } from '../../../hooks/use-fetch';
+import { sessionTitle } from '../../../utils/session';
 import { toStackedSeries } from '../../../utils/series';
 import { PageShell } from '../../../components/page-shell';
 import { ChartCard } from '../../../components/chart-card';
@@ -104,7 +105,7 @@ export function SessionDetailView() {
 
   return (
     <PageShell
-      title={data?.session.title || t('session.title')}
+      title={data ? sessionTitle(data.session, t) : t('session.title')}
       backHref={paths.dashboard.sessions}
       loading={loading}
       error={error}

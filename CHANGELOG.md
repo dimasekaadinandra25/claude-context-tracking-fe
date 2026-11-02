@@ -4,6 +4,16 @@
 
 ### Added
 
+- Change password page (`/dashboard/account/password`, account menu � Change password) with
+  current / new / confirm fields (`POST /core/v1/auth/change-password`). While
+  `must_change_password` is set, every dashboard route redirects there until the change succeeds.
+- Output tokens and subagent usage: overview and person KPI tiles (Output tokens, Subagent
+  requests), People and Models columns (output tokens, subagent requests, subagent output),
+  Sessions columns (Output tokens, Subagent requests) and session detail totals. Fields an older
+  server omits count as 0.
+- CSV export on the overview People table and the Sessions grid: every column, raw numbers and
+  ISO dates.
+
 - Admin › People › API keys: a copy button on each active key copies the full key to the clipboard
   (`GET /core/v1/admin/api-keys/:id/reveal`) without showing it; keys issued before reveal existed
   show the server message to issue a new key.
@@ -11,6 +21,13 @@
   (`models`), not only the current one.
 
 ### Changed
+
+- Sessions grid fits a 1440px screen: Project, Requests, Subagent requests, Compactions and the
+  separate latest / peak context columns are hidden by default (Columns menu, remembered per
+  browser), and the latest / peak column no longer truncates.
+- Sign-in page tagline reads "Track Claude Code context usage across your team."
+- `CLAUDE.md` and `docs/` describe this dashboard; the starter skeleton's finance pattern docs
+  (`docs/patterns/`, `docs/CONVENTIONS.md`) are removed.
 
 - Claude palette (accent `#D97757`, warm neutrals for light and dark) and Claude-warm chart colors
   set once through the theme (`MuiChartsDataProvider`).

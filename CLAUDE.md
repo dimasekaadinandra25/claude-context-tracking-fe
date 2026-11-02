@@ -1,118 +1,71 @@
 # CLAUDE.md
 
-Arsitektur: `docs/architecture.md`; pola UI per topik: `docs/README.md` (tabel "kapan dibaca");
-kontrak API yang dipakai FE: `docs/api/`. Semua dibaca bila perlu, tidak di-import.
-Aturan per folder (fitur, route, lapisan API, i18n, test, dokumen API) dimuat dari `.claude/rules/`.
+Claude Usage dashboard: web UI for `claude-usage-server` (team overview, person detail, sessions,
+models, user and API key admin, change password). Architecture: `docs/architecture.md`; endpoints
+the dashboard calls: `docs/api/`. Read them when needed, they are not imported here.
 
-## Perintah
+## Commands
 
 ```bash
-yarn install        # Node >= 22.12, yarn 1.22.22 (field packageManager); yarn.lock ikut di-commit
-yarn dev            # Vite di port 5173 + overlay TypeScript/ESLint (hanya error)
-yarn build          # tsc lalu vite build
+yarn install        # Node >= 22.12, yarn 1.22.22 (packageManager field); yarn.lock is committed
+yarn dev            # Vite on port 5173 + TypeScript/ESLint overlay (errors only)
+yarn build          # tsc, then vite build
 yarn typecheck      # tsc --noEmit
-yarn test           # vitest run (jsdom); yarn test:watch untuk mode watch
-yarn lint:changed   # ESLint --max-warnings 0 + Prettier, hanya file src/ yang berubah sejak BASE
-yarn lint           # ESLint seluruh src/; ambang Kinerja tampil sebagai warning
-yarn lint:fix       # autofix, termasuk urutan import
-yarn check:all      # lint:changed + typecheck + test + check:changelog + check:doc-sync (sama dengan CI)
-yarn hooks          # sekali per clone: pasang .githooks/commit-msg
+yarn test           # vitest run (jsdom); yarn test:watch for watch mode
+yarn lint:changed   # ESLint --max-warnings 0 + Prettier on src/ files changed since BASE
+yarn lint           # ESLint on all of src/; structure thresholds show as warnings
+yarn lint:fix       # autofix, including import order
+yarn check:all      # lint:changed + typecheck + test + check:changelog + check:doc-sync (= CI)
 ```
 
-`BASE` diambil dari argumen atau env `BASE`, lalu `git config kinerja.base`, lalu `origin/HEAD`,
-lalu `origin/production`. Di project turunan set sekali: `git config kinerja.base origin/<branch-tujuan>`.
-Setup lokal: `docs/guides/local-development.md`; fitur baru: `docs/guides/new-feature.md`.
+`BASE` comes from the argument or env `BASE`, then `git config kinerja.base`, then `origin/HEAD`.
+The full stack (Postgres, API, dashboard on :3000) runs from `../claude-usage-server` with
+`docker compose up -d --build --wait`; see `README.md`.
 
-## Konvensi yang berbeda dari kebiasaan
+## Conventions
 
-- Import selalu `src/...` (alias Vite + `baseUrl`), bukan relatif `../../`. Urutan import dipaksa
-  `perfectionist/sort-imports` (error) dengan grup kustom: jalankan `yarn lint:fix`, jangan disusun manual.
-- Import yang hanya tipe memakai `import type`.
-- HTTP ke backend hanya lewat instance `src/shared/lib/axios.ts` (header Bearer + refresh saat 401);
-  URL endpoint hanya di `endpoints.*` di file yang sama.
-- Error dari instance itu sudah berupa `Error` (+ `.status`) dengan pesan dari `errors`/`message`
-  backend: di `catch` cukup baca `err.message`.
-- State lokal + React Context; tanpa Redux, SWR, atau React Query. Styling MUI `sx`, tanpa Tailwind.
-- Teks yang dilihat user selalu lewat `t()` (`useTranslate('<namespace>')`), termasuk pesan Zod.
+- Imports always use `src/...` (Vite alias + `baseUrl`), not deep relative paths across modules.
+  Import order is enforced by `perfectionist/sort-imports`: run `yarn lint:fix`, don't sort by hand.
+- Type-only imports use `import type`.
+- HTTP goes only through the instance in `src/shared/lib/axios.ts` (Bearer header + refresh on
+  401); endpoint URLs live only in `endpoints` in that file. Usage calls are in
+  `src/module/usage/api/usage.ts`, which defaults fields an older server may omit.
+- Errors from that instance are already `Error` (+ `.status`) with the server message: in a
+  `catch`, read `err.message`.
+- Local state + React Context; no Redux, SWR or React Query. Styling with MUI `sx`, no Tailwind.
+- Every user-visible string goes through `t()` (`useTranslate('<namespace>')`) with keys in
+  `src/locales/langs/en/<namespace>.json`, Zod messages included.
+- Token counts use `formatTokens`; request counts use `toLocaleString()`.
+- DataGrid tables share `components/grid-actions.tsx` (Columns + CSV export) and
+  `hooks/use-column-visibility.ts` (per-table `localStorage`).
 
-## Gotcha
+## Gotchas
 
-- `docs/CONVENTIONS.md` dan `docs/patterns/*` memakai contoh `src/module/finance/**` (fund-transfer,
-  cash-transactions, contacts, approval) yang tidak ada di skeleton ini. Polanya tetap berlaku; contoh
-  kode yang ada: `src/module/core/features/branches/` (CRUD dialog + cache reference data).
-- Env `VITE_*` di-inline Vite saat build dan terbaca di bundle browser; image Docker memakai build arg
-  `VITE_SERVER_URL` (default `http://localhost:8080`). Mengubah env berarti build ulang.
-- Access token di `sessionStorage` (per tab), refresh token di `localStorage`: tab baru selalu
-  refresh token dulu sebelum `GET /core/v1/auth/me`.
-- `CONFIG.auth.skip = true` (`src/shared/config/index.ts`) mematikan `AuthGuard` dashboard untuk dev
-  tanpa backend; jangan di-commit dalam keadaan `true`.
-- Nama icon Iconify hanya yang terdaftar di `src/shared/ui/iconify/icon-sets.ts`; nama lain gagal `tsc`.
-- Ambang Kinerja di `eslint.config.mjs` berlevel `warn`, jadi `yarn lint` lulus dengan backlog lama.
-  `yarn lint:changed` dan CI gagal pada warning apa pun di file yang berubah: mengubah file lama berarti
-  membereskan pelanggaran lama di file itu juga.
-- `max-lines-per-function` dan `complexity` melapor di baris awal fungsi; panjang dihitung termasuk
-  baris kosong dan komentar, sama dengan reviewer Kinerja.
+- `VITE_*` env is inlined at build time and visible in the browser bundle; the Docker image takes
+  build arg `VITE_SERVER_URL` (default `http://localhost:8080`). Changing env means rebuilding.
+- Access token in `sessionStorage` (per tab), refresh token in `localStorage`: a new tab refreshes
+  first, then calls `GET /core/v1/auth/me`.
+- `user.must_change_password` makes `PasswordChangeGuard` send every dashboard route to
+  `/dashboard/account/password` until the change succeeds and `me` is reloaded.
+- `CONFIG.auth.skip = true` (`src/shared/config/index.ts`) disables the dashboard `AuthGuard` for
+  dev without a backend; never commit it as `true`.
+- Iconify names must be registered in `src/shared/ui/iconify/icon-sets.ts`; other names fail `tsc`.
+- DataGrid only renders rows in jsdom with `autoHeight`; tests that look for grid cells need it.
+- ESLint structure thresholds (function ≤ 50 lines, complexity ≤ 10, nesting ≤ 4, params ≤ 5,
+  `.tsx` ≤ 300 lines, no magic numbers outside tests/theme/config) are `warn`, so `yarn lint`
+  passes with old backlog, but `yarn lint:changed` and CI fail on any warning in a changed file.
+- `src/_mock` and unused starter UI are leftovers; new code does not import them.
 
-## Larangan keras
+## Hard rules
 
-- Tidak ada secret di env `VITE_*` atau file yang di-commit: semua `VITE_*` ikut ke bundle browser.
-- Token, password, dan data personal tidak pernah di-log. Tidak ada `console.log` di kode yang
-  di-commit (`no-console`; `console.warn`/`console.error` boleh).
-- Tidak membuat instance axios kedua atau memanggil backend dengan `fetch`: request itu lolos dari
-  header auth dan refresh token.
-- Tidak ada `any` (pakai `unknown` lalu narrow) dan tidak ada `dangerouslySetInnerHTML` tanpa sanitasi.
-- Fitur mengambil data dari endpoint backend; `src/_mock` sisa starter dan tidak diimpor kode baru.
-- `eslint-disable` wajib menyebut rule dan alasannya
-  (`// eslint-disable-next-line react-hooks/exhaustive-deps -- hanya saat mount`).
-- Tidak push ke branch PR setelah PR di-approve (dihitung pelanggaran, tidak direview).
-
-## Standar review Kinerja
-
-PR dinilai otomatis di kinerja.venturo.id; `yarn check:all`, hook, dan CI menegakkan sebagian besar.
-
-- Struktur (−10 per temuan): fungsi ≤50 baris dari signature sampai `}` termasuk baris kosong dan
-  komentar (komponen fungsi React ikut dihitung); kompleksitas ≤10; nesting ≤4; parameter ≤5 (satu objek
-  props = 1); file ≤800 baris, file `.tsx`/`.jsx` ≤300; tanpa duplikasi; tanpa magic value di logika
-  (literal di test, `src/theme`, `src/_mock`, dan config dikecualikan); tanpa kode mati.
-- Aturan stack React yang paling sering kena: komponen >200 baris dipecah; dependency `useEffect`
-  lengkap dan langganan/timer di-cleanup; tidak mendefinisikan komponen di dalam komponen; `key` list
-  dinamis bukan index; logika bisnis di hook atau `api/`, bukan di komponen.
-- Doc sync (10 poin, biner): perubahan `src/**/api/**`, `src/**/services/**`, atau `endpoints` di
-  `src/shared/lib/axios.ts` membawa `docs/api/` di PR yang sama (`yarn check:doc-sync`). Setiap
-  perubahan kode aplikasi = entri di `CHANGELOG.md` bagian `## [Unreleased]` (`yarn check:changelog`).
-- Custom hook dan util yang diubah punya unit test; alur auth, form, dan pembayaran punya integration
-  test yang menguji interaksi user (Testing Library).
-- Commit: subject `type(scope)?!?: deskripsi` (type `build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test`)
-  dan kode issue Space `[KODE-123]` di setiap commit; tanpa itu PR tidak dinilai.
-- Deskripsi PR ditulis sebelum push pertama (mengedit deskripsi tidak memicu review ulang) dan hanya
-  berisi fakta yang ada di diff.
-
-## Delegasi sub-agent
-
-Batas umum: sub-agent tidak commit, push, atau membuat PR; hasilnya diperiksa agent utama.
-
-1. **Eksplorasi sebelum mengubah kode** — agent `Explore`
-   - Pemicu: akan mengubah hook, util, komponen bersama, tipe, atau fungsi `api/` yang dipakai di luar file itu.
-   - Input: path file + nama simbol yang akan diubah; scope `src/`, `docs/api/`.
-   - Output: daftar `path:line` pemakai, test yang menutupinya, dan dokumen API terkait — satu baris per item, maks 30 baris.
-   - Batas: read-only; maks 4 paralel (satu per file atau fitur).
-2. **Rencana perubahan besar** — agent `Plan`
-   - Pemicu: perubahan menyentuh lebih dari 3 file, lebih dari satu fitur, atau alur auth/token/permission.
-   - Input: tujuan issue Space, hasil eksplorasi, file `.claude/rules/` yang berlaku.
-   - Output: langkah bernomor; tiap langkah menyebut file, test yang ditambah, dan dokumen yang diupdate.
-   - Batas: read-only; 1 agent.
-3. **Verifikasi calon temuan** — agent `general-purpose`
-   - Pemicu: ada temuan dari review, lint, atau agent lain yang belum terbukti.
-   - Input: satu temuan (kategori, `path:line`, klaim); scope file itu dan pemakainya.
-   - Output: `CONFIRMED` / `REJECTED` + bukti `path:line` + alasan maks 2 kalimat.
-   - Batas: read-only (boleh menjalankan `yarn test` dan `yarn lint:changed`); maks 3 paralel.
-4. **Review diff sebelum PR** — agent `general-purpose`
-   - Pemicu: sebelum push pertama atau sebelum membuka PR.
-   - Input: output `git diff <BASE>...HEAD`, bagian "Standar review Kinerja" di atas, dan rules yang berlaku untuk file di diff.
-   - Output: daftar `[severity] kategori path:line — ringkasan` maks 15 butir, atau `bersih`.
-   - Batas: read-only; 1 agent.
-5. **Sinkron dokumen setelah API berubah** — agent `general-purpose`
-   - Pemicu: `yarn check:doc-sync` atau `yarn check:changelog` gagal.
-   - Input: diff `src/**/api/**` dan `src/shared/lib/axios.ts`; scope hanya `docs/api/` dan `CHANGELOG.md`.
-   - Output: daftar file dokumen yang diubah + satu kalimat per file.
-   - Batas: boleh edit hanya file di scope itu; 1 agent.
+- No secrets in `VITE_*` or committed files: every `VITE_*` ends up in the browser bundle.
+- Never log tokens, passwords or personal data. No `console.log` in committed code (`no-console`;
+  `console.warn`/`console.error` are allowed).
+- No second axios instance and no `fetch` to the backend: those skip the auth header and refresh.
+- No `any` (use `unknown` and narrow) and no unsanitised `dangerouslySetInnerHTML`.
+- No code comments in new code. `eslint-disable` must name the rule and the reason.
+- Changing `src/**/api/**` or `endpoints` requires a `docs/api/` update with a new
+  `**Last Updated:**` line (`yarn check:doc-sync`); app code changes need a `CHANGELOG.md` entry
+  under `## [Unreleased]` (`yarn check:changelog`).
+- Changed hooks and utils have unit tests; auth and form flows have integration tests with
+  Testing Library and the fake backend (`src/test/fake-backend.ts`).

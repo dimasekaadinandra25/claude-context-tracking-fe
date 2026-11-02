@@ -1,4 +1,4 @@
-import type { SessionDetail } from '../../../types';
+import type { OutputUsage, SessionDetail } from '../../../types';
 
 import { useCallback } from 'react';
 
@@ -18,6 +18,9 @@ import { ChartCard } from '../../../components/chart-card';
 import { formatTokens, formatDateTime } from '../../../utils/format';
 import { StackedBarChart } from '../../../components/stacked-bar-chart';
 
+const sum = (detail: SessionDetail, field: keyof OutputUsage) =>
+  detail.hours.reduce((total, h) => total + h[field], 0);
+
 function facts(detail: SessionDetail): [string, string][] {
   const s = detail.session;
   return [
@@ -31,6 +34,9 @@ function facts(detail: SessionDetail): [string, string][] {
     ['latestPeak', `${formatTokens(s.latest_context)} / ${formatTokens(s.peak_context)}`],
     ['newContext', formatTokens(s.new_context)],
     ['requests', s.requests.toLocaleString()],
+    ['outputTokens', formatTokens(sum(detail, 'output_tokens'))],
+    ['subagentRequests', sum(detail, 'subagent_requests').toLocaleString()],
+    ['subagentOutput', formatTokens(sum(detail, 'subagent_output_tokens'))],
     ['compactions', String(s.compactions)],
     ['firstRequest', formatDateTime(s.first_request_at)],
     ['lastRequest', formatDateTime(s.last_request_at)],

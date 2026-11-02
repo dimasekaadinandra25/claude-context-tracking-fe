@@ -9,6 +9,7 @@ import type {
   AdminUser,
   IssuedKey,
   ModelUsage,
+  OutputUsage,
   UsageSession,
   SessionDetail,
   SessionsQuery,
@@ -24,14 +25,29 @@ import { buildRangeParams } from '../utils/range';
 const ADMIN_USERS_LIMIT = 1000;
 const KEYS_LIMIT = 100;
 
+const NO_OUTPUT: OutputUsage = {
+  output_tokens: 0,
+  subagent_requests: 0,
+  subagent_output_tokens: 0,
+};
+
+const NO_TOTALS = {
+  total_output_tokens: 0,
+  total_subagent_requests: 0,
+  total_subagent_output_tokens: 0,
+};
+
+const withOutput = <T extends OutputUsage>(row: T): T => ({ ...NO_OUTPUT, ...row });
+
 function rangeParams(range: ReportRange, userId?: string) {
   return userId ? { ...buildRangeParams(range), user_id: userId } : buildRangeParams(range);
 }
 
-export function getOverview(range: ReportRange, userId?: string) {
-  return unwrap<Overview>(
+export async function getOverview(range: ReportRange, userId?: string): Promise<Overview> {
+  const overview = await unwrap<Overview>(
     axios.get(endpoints.usage.overview, { params: rangeParams(range, userId) })
   );
+  return { ...NO_TOTALS, ...overview, people: overview.people.map(withOutput) };
 }
 
 export function getTimeseries(
@@ -47,23 +63,30 @@ export function getTimeseries(
   );
 }
 
-export function getModels(range: ReportRange, userId?: string) {
-  return unwrap<ModelUsage[]>(
+export async function getModels(range: ReportRange, userId?: string) {
+  const models = await unwrap<ModelUsage[]>(
     axios.get(endpoints.usage.models, { params: rangeParams(range, userId) })
   );
+  return models.map(withOutput);
 }
 
-export function getSessions(
+export async function getSessions(
   range: ReportRange,
   query: SessionsQuery
 ): Promise<Paged<UsageSession>> {
-  return unwrapList<UsageSession>(
+  const page = await unwrapList<UsageSession>(
     axios.get(endpoints.usage.sessions, { params: { ...buildRangeParams(range), ...query } })
   );
+  return { ...page, items: page.items.map(withOutput) };
 }
 
-export function getSession(id: string) {
-  return unwrap<SessionDetail>(axios.get(endpoints.usage.session(id)));
+export async function getSession(id: string): Promise<SessionDetail> {
+  const detail = await unwrap<SessionDetail>(axios.get(endpoints.usage.session(id)));
+  return {
+    ...detail,
+    session: withOutput(detail.session),
+    hours: (detail.hours ?? []).map(withOutput),
+  };
 }
 
 export function getPeople() {

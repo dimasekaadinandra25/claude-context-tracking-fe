@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import ButtonBase from '@mui/material/ButtonBase';
 
+import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useTranslate } from 'src/locales';
@@ -59,6 +60,11 @@ export function AccountDrawer({ compact, sx, ...other }: AccountDrawerProps) {
   const handleProfile = () => {
     closeMenu();
     onOpenDrawer();
+  };
+
+  const handleChangePassword = () => {
+    closeMenu();
+    router.push(paths.dashboard.changePassword);
   };
 
   const handleTheme = () => {
@@ -175,6 +181,10 @@ export function AccountDrawer({ compact, sx, ...other }: AccountDrawerProps) {
         <MenuItem onClick={handleProfile} sx={{ gap: 1 }}>
           <Iconify icon="solar:user-rounded-bold" />
           {t('account.profile')}
+        </MenuItem>
+        <MenuItem onClick={handleChangePassword} sx={{ gap: 1 }}>
+          <Iconify icon="solar:lock-password-outline" />
+          {t('account.changePassword')}
         </MenuItem>
         <MenuItem onClick={handleTheme} sx={{ gap: 1 }}>
           <Iconify icon="solar:palette-bold-duotone" />

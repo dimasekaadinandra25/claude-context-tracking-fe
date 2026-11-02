@@ -15,6 +15,7 @@
       "title": "Logout Confirmation",
       "description": "Are you sure you want to log out?",
       "confirm": "Logout"
-    }
+    },
+    "changePassword": "Change password"
   }
 }

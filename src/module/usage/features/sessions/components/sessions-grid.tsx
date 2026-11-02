@@ -1,16 +1,17 @@
-import type { GridColDef } from '@mui/x-data-grid';
-import type { UsageSession } from '../../../types';
 import type { useSessionsList } from '../hooks/use-sessions-list';
 
-import { DataGrid } from '@mui/x-data-grid';
+import { useMemo } from 'react';
+
+import { Toolbar, DataGrid } from '@mui/x-data-grid';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useTranslate } from 'src/locales';
 
-import { ModelChips } from '../../../components/model-chips';
-import { formatTokens, formatDateTime } from '../../../utils/format';
+import { GridActions } from '../../../components/grid-actions';
+import { sessionColumns, defaultSessionColumns } from './session-columns';
+import { useColumnVisibility } from '../../../hooks/use-column-visibility';
 
 type Props = Pick<
   ReturnType<typeof useSessionsList>,
@@ -24,52 +25,27 @@ type Props = Pick<
 >;
 
 const PAGE_SIZES = [10, 25, 50, 100];
-const WIDE = 220;
-const NARROW = 120;
+const VISIBILITY_KEY = 'usage.sessions.columns';
+const TITLE_FIELD = 'title';
+const EXPORT_FILE = 'sessions';
 
-function useColumns(): GridColDef<UsageSession>[] {
-  const { t } = useTranslate('usage');
-  const tokens = (value: number) => formatTokens(value);
-  const fixed = { sortable: false, width: NARROW };
-
-  return [
-    { field: 'title', headerName: t('col.title'), sortable: false, flex: 1, minWidth: WIDE },
-    { field: 'user_name', headerName: t('col.person'), ...fixed },
-    { field: 'project', headerName: t('col.project'), sortable: false, minWidth: WIDE },
-    {
-      field: 'models',
-      headerName: t('col.models'),
-      sortable: false,
-      width: WIDE,
-      renderCell: ({ row }) => <ModelChips models={row.models} />,
-    },
-    {
-      field: 'new_context',
-      headerName: t('col.newContext'),
-      width: NARROW,
-      valueFormatter: tokens,
-    },
-    {
-      field: 'latest_context',
-      headerName: t('col.latestPeak'),
-      ...fixed,
-      valueGetter: (_v, row) =>
-        `${formatTokens(row.latest_context)} / ${formatTokens(row.peak_context)}`,
-    },
-    { field: 'requests', headerName: t('col.requests'), ...fixed },
-    { field: 'compactions', headerName: t('col.compactions'), ...fixed },
-    {
-      field: 'last_request_at',
-      headerName: t('col.lastRequest'),
-      width: WIDE,
-      valueFormatter: (value: string) => formatDateTime(value),
-    },
-  ];
+function SessionsToolbar() {
+  return (
+    <Toolbar>
+      <GridActions fileName={EXPORT_FILE} />
+    </Toolbar>
+  );
 }
 
 export function SessionsGrid(props: Props) {
+  const { t } = useTranslate('usage');
   const router = useRouter();
-  const columns = useColumns();
+  const columns = useMemo(() => sessionColumns(t), [t]);
+  const [visibility, setVisibility] = useColumnVisibility(
+    VISIBILITY_KEY,
+    defaultSessionColumns,
+    TITLE_FIELD
+  );
 
   return (
     <DataGrid
@@ -84,7 +60,13 @@ export function SessionsGrid(props: Props) {
       onPaginationModelChange={props.setPaginationModel}
       sortModel={props.sortModel}
       onSortModelChange={props.setSortModel}
+      columnVisibilityModel={visibility}
+      onColumnVisibilityModelChange={setVisibility}
+      showToolbar
+      slots={{ toolbar: SessionsToolbar }}
+      ignoreValueFormatterDuringExport
       onRowClick={(params) => router.push(paths.dashboard.session(String(params.id)))}
+      autoHeight
       disableColumnFilter
       disableRowSelectionOnClick
       sx={{ cursor: 'pointer', minHeight: 400 }}

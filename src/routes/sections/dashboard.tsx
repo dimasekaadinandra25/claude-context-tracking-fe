@@ -9,8 +9,8 @@ import { CONFIG } from 'src/shared/config';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import { LoadingScreen } from 'src/shared/ui/loading-screen';
 import { useAuthContext } from 'src/module/core/features/auth/hooks';
-import { AuthGuard, AdminGuard } from 'src/module/core/features/auth/guard';
 import { ReportRangeProvider } from 'src/module/usage/hooks/use-report-range';
+import { AuthGuard, AdminGuard, PasswordChangeGuard } from 'src/module/core/features/auth/guard';
 
 import { usePathname } from '../hooks';
 
@@ -20,6 +20,9 @@ const SessionsPage = lazy(() => import('src/module/usage/features/sessions/pages
 const SessionPage = lazy(() => import('src/module/usage/features/sessions/pages/detail'));
 const ModelsPage = lazy(() => import('src/module/usage/features/models/pages'));
 const AdminPeoplePage = lazy(() => import('src/module/usage/features/admin-people/pages'));
+const ChangePasswordPage = lazy(
+  () => import('src/module/core/features/auth/pages/change-password')
+);
 
 function SuspenseOutlet() {
   const pathname = usePathname();
@@ -41,11 +44,13 @@ function HomeRedirect() {
 }
 
 const dashboardLayout = () => (
-  <ReportRangeProvider>
-    <DashboardLayout>
-      <SuspenseOutlet />
-    </DashboardLayout>
-  </ReportRangeProvider>
+  <PasswordChangeGuard>
+    <ReportRangeProvider>
+      <DashboardLayout>
+        <SuspenseOutlet />
+      </DashboardLayout>
+    </ReportRangeProvider>
+  </PasswordChangeGuard>
 );
 
 const admin = (element: React.ReactElement) => <AdminGuard>{element}</AdminGuard>;
@@ -64,6 +69,7 @@ export const dashboardRoutes: RouteObject[] = [
       { path: 'sessions/:id', element: <SessionPage /> },
       { path: 'models', element: <ModelsPage /> },
       { path: 'admin/people', element: admin(<AdminPeoplePage />) },
+      { path: 'account/password', element: <ChangePasswordPage /> },
     ],
   },
 ];

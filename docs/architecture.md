@@ -1,112 +1,83 @@
-# Arsitektur
+# Architecture
 
-Ringkasan yang dipindah dari `CLAUDE.md` lama dan dicocokkan ulang dengan kode. Isinya bisa
-dibaca dari kode, jadi tidak dimuat otomatis ke sesi agent; buka file ini bila butuh gambaran
-besar. Pola UI per topik ada di [docs/README.md](README.md), kontrak API yang dipakai FE di
-[docs/api](api/README.md).
+Big-picture notes for the Claude Usage dashboard. Not loaded into agent sessions; read when you
+need the overview. API calls the dashboard makes: [docs/api](api/README.md).
 
-## Gambaran umum
+## Overview
 
-Frontend skeleton produk multi-tenant Venturo, berbasis Minimals MUI starter (v7.6.1):
-Vite 7, React 19, React Router 7 (data router), MUI v7 + Emotion, React Hook Form + Zod,
-Axios, i18next, Firebase Web SDK (login Google). State lokal + React Context; tidak ada Redux,
-SWR, atau React Query.
+React 19 + Vite 7 single-page app for `claude-usage-server`. MUI 7 with Emotion, `@mui/x-data-grid`
+and `@mui/x-charts`, React Router 7 (data router), React Hook Form + Zod, Axios, i18next. State is
+local plus React Context; no Redux, SWR or React Query. Built from a starter skeleton; leftovers
+that no route reaches (`src/_mock`, unused shared UI) are not used by new code.
 
-## Struktur kode
+## Code layout
 
 ```
 src/
-├── main.tsx          # createBrowserRouter + <App>, ErrorBoundary sebagai errorElement
-├── app.tsx           # provider global
+├── main.tsx          # createBrowserRouter + <App>
+├── app.tsx           # global providers, Snackbar, settings drawer
 ├── module/
-│   ├── core/features/   # auth, settings, error, home, users, roles, branches, companies,
-│   │                    # audit-log, translation-override, demo, demo-order
-│   └── dashboard/       # halaman dashboard finance/monitoring/sales + komponen & util-nya
-├── shared/           # api, config, constants, hooks, lib (axios, permissions, cache-registry,
-│                     # firebase), types, ui, utils
-├── layouts/          # auth-split, dashboard, simple, nav-config-*.tsx
-├── routes/           # paths.ts, sections/{auth,dashboard,index}.tsx, hooks, components
-├── locales/          # i18next + JSON per bahasa (langs/{id,en}/<namespace>.json)
-├── theme/            # tema MUI (core, with-settings)
-├── test/             # helper test bersama (setup, fake backend, render dengan provider)
-└── _mock/            # data mock sisa starter; tidak dipakai fitur
+│   ├── core/features/   # auth (sign-in, guards, change password), settings, error pages
+│   └── usage/           # api/usage.ts, types.ts, shared components, hooks, utils
+│       └── features/    # overview, person, sessions, models, admin-people
+├── shared/           # api envelope helpers, config, lib/axios.ts, ui kit
+├── layouts/          # auth-split, dashboard (sidebar + account menu), nav-config-dashboard.tsx
+├── routes/           # paths.ts, sections/{auth,dashboard,index}.tsx
+├── locales/          # i18next, JSON per namespace in langs/en/<namespace>.json
+├── theme/            # Claude palette and component overrides
+└── test/             # setup, fake backend, render with providers, fixtures
 ```
 
-Bentuk folder fitur: `api/`, `components/`, `hooks/`, `pages/`, `types/`, `views/`, `utils/`
-(plus `context/`, `guard/` bila perlu). `pages/` adalah route leaf yang di-lazy-load; isi halaman
-di `views/`. Aturan lengkapnya di `.claude/rules/feature-module.md`.
+A feature folder holds `components/`, `hooks/`, `pages/` (lazy route leaf) and `views/` (page
+content), plus `utils/` when needed. All usage endpoints live in `src/module/usage/api/usage.ts`.
 
 ## Routing
 
-- [src/routes/sections/index.tsx](../src/routes/sections/index.tsx) menggabungkan `authRoutes`
-  (`/auth/jwt/sign-in`, `/auth/jwt/sign-up`, dibungkus `GuestGuard`), `dashboardRoutes` (dipasang
-  di `/`, dibungkus `AuthGuard` kecuali `CONFIG.auth.skip`), dan halaman 404.
-- Halaman dimuat dengan `lazy()` di dalam `<Suspense>` yang di-key dengan `pathname`, jadi fallback
-  muncul lagi di setiap pindah route.
-- Halaman yang butuh permission dibungkus `gated(require, element)` (`PermissionGuard` dengan
-  `showForbidden`).
-- Semua path di [src/routes/paths.ts](../src/routes/paths.ts). `CONFIG.auth.redirectPath` =
-  `paths.dashboard.root` (`/`).
+- `/auth/jwt/sign-in` behind `GuestGuard`.
+- `/dashboard/*` behind `AuthGuard` (sign-in redirect with `returnTo`) and `PasswordChangeGuard`
+  (while `user.must_change_password` is set, every route redirects to
+  `/dashboard/account/password`).
+- Views: `overview` and `admin/people` (admins only, `AdminGuard`), `person[/:id]`,
+  `sessions[/:id]`, `models`, `account/password`. `/dashboard` sends admins to the overview and
+  members to their person page.
+- Pages load with `lazy()` inside a `<Suspense>` keyed by pathname. All paths are in
+  [src/routes/paths.ts](../src/routes/paths.ts).
 
-## App shell
+## Auth
 
-[src/app.tsx](../src/app.tsx): `I18nProvider → AuthProvider → SettingsProvider → ThemeProvider →
-LocalizationProvider → MotionLazy`, plus `ProgressBar`, `Snackbar`, `SettingsDrawer`,
-`OnboardingDialog`, dan `TranslationOverrideSync`. Provider atau overlay global baru ditaruh di sini.
+[auth-provider.tsx](../src/module/core/features/auth/context/jwt/auth-provider.tsx) owns the
+session. The access token is in `sessionStorage`, the refresh token in `localStorage`. On mount it
+refreshes an expired access token, then loads `GET /core/v1/auth/me`; `user` carries
+`is_super_admin` (admin views) and `must_change_password`. `checkUserSession()` reloads `me`, for
+example after a password change.
 
-## Auth (JWT + multi-company)
+## HTTP
 
-[auth-provider.tsx](../src/module/core/features/auth/context/jwt/auth-provider.tsx) adalah
-sumber kebenaran sesi:
+[src/shared/lib/axios.ts](../src/shared/lib/axios.ts) exports the only axios instance and all
+endpoint URLs (`endpoints`). It sends `Authorization: Bearer`, refreshes once on 401 for all
+concurrent requests and retries them, and turns failures into `Error` with `.status` and the
+server message. `usage.ts` fills fields an older server does not send (output and subagent
+counts) with 0, so views never see `undefined`.
 
-- Access token di `sessionStorage` (`tuai.access_token`), refresh token dan company aktif di
-  `localStorage` (`tuai.refresh_token`, `tuai.active_company_id`).
-- Saat mount, `checkUserSession` me-refresh token bila access token tidak ada atau `exp`-nya lewat
-  (payload JWT di-decode tanpa library), lalu memanggil `GET /core/v1/auth/me`. Bila `me` belum
-  punya company, company tersimpan (atau primary/owner/pertama dari `GET /core/v1/auth/companies`)
-  dipulihkan lewat `switch-company`.
-- State: `user`, `company`, `client`, `roles`, `permissions`, `isSuperAdmin`, `companyVersion`.
-  `switchCompany` meminta token pair baru untuk company itu, memanggil
-  `invalidateAllCompanyCaches()` (`src/shared/lib/cache-registry.ts`), dan menaikkan
-  `companyVersion` supaya hook data mengambil ulang.
-- Guard di `auth/guard/`: `AuthGuard` (redirect ke sign-in dengan `returnTo`), `GuestGuard`
-  (pengguna yang sudah login diarahkan ke `returnTo`), `PermissionGuard` (`require`, `mode`
-  `all`/`any`, `fallback`, `showForbidden`; super admin selalu lolos).
+## Report range and refresh
 
-## HTTP (shared axios)
+`ReportRangeProvider` holds the selected range; report calls send it as UTC `from`/`to` plus the
+browser `tz`. `useFetch` reloads on range change and every 60 s.
 
-[src/shared/lib/axios.ts](../src/shared/lib/axios.ts) mengekspor satu instance:
+## Tables
 
-- Interceptor request memasang `Authorization: Bearer <access>`.
-- Interceptor response: pada 401, memanggil handler refresh yang didaftarkan `AuthProvider` lewat
-  `configureAxiosAuth(...)`, sekali untuk semua request yang gagal bersamaan (`refreshPromise`),
-  lalu mengulang request. Refresh gagal → `onUnauthorized` → sesi dihapus.
-  `withoutAuthRefresh(config)` mengecualikan request dari alur ini.
-- Error dinormalisasi ke `Error` dengan `.status` dan pesan dari `errors` atau `message` envelope.
-- `endpoints` memuat semua URL backend; `fetcher` adalah helper GET.
+Overview People and Sessions use `DataGrid` with a toolbar from `components/grid-actions.tsx`
+(Columns panel and CSV export). Column visibility is stored per table in `localStorage` through
+`hooks/use-column-visibility.ts`; Sessions hides low-value columns by default so the grid fits a
+1440px screen. CSV export includes hidden columns and ignores value formatters, so numbers are
+raw and dates ISO. Sessions export covers the loaded page.
 
-## i18n
+## Quality
 
-i18next + react-i18next dengan loader JSON lazy
-([locales-config.ts](../src/locales/locales-config.ts)). Bahasa: `en` (fallback) dan `id`, pilihan
-user disimpan di `localStorage.i18nextLng`. `LocalizationProvider` menyelaraskan locale dayjs.
-`TranslationOverrideSync` menerapkan override label dari backend.
-
-## Layout
-
-[src/layouts/](../src/layouts/): `auth-split` (sign-in/up), `dashboard` (shell utama + nav), `simple`.
-Route disusun `<Guard><Layout><SuspenseOutlet /></Layout></Guard>`.
-
-## Kualitas: lint dan test
-
-- [eslint.config.mjs](../eslint.config.mjs) memasang ambang review Kinerja (`thresholdRules`:
-  panjang fungsi, kompleksitas, nesting, parameter, panjang file, magic number, duplikasi,
-  `no-explicit-any`, `no-console`) berlevel `warn`. `yarn lint` di seluruh `src/` tidak gagal
-  karena pelanggaran lama; [scripts/lint-changed.sh](../scripts/lint-changed.sh) menjalankan
-  ESLint dengan `--max-warnings 0` dan Prettier hanya pada file `src/` yang berubah sejak base.
-- Test: Vitest + jsdom + Testing Library ([vitest.config.ts](../vitest.config.ts)), file
-  `*.test.ts(x)` di samping kodenya. `src/test/fake-backend.ts` mengganti adapter axios sehingga
-  test integrasi menjalankan interceptor auth yang sebenarnya.
-- Gerbang PR: [.github/workflows/ci.yml](../.github/workflows/ci.yml) (lint file berubah,
-  `tsc --noEmit`, test, CHANGELOG, doc-sync, batas 200 baris `CLAUDE.md`) dan
-  [.githooks/commit-msg](../.githooks/commit-msg).
+- ESLint structure thresholds (function ≤ 50 lines, complexity ≤ 10, `.tsx` ≤ 300 lines, no
+  magic numbers outside tests/theme/config) are warnings; `yarn lint:changed` fails on any
+  warning or Prettier difference in changed `src/` files.
+- Vitest + jsdom + Testing Library, `*.test.ts(x)` next to the code. `src/test/fake-backend.ts`
+  replaces the axios adapter so integration tests run the real auth interceptors.
+- CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)): changed-file lint, typecheck,
+  tests, CHANGELOG and doc-sync checks, `CLAUDE.md` at most 200 lines.

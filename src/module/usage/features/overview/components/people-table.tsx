@@ -1,24 +1,25 @@
 import type { GridColDef } from '@mui/x-data-grid';
 import type { OverviewPerson } from 'src/module/usage/types';
 
+import { DataGrid } from '@mui/x-data-grid';
 import CardHeader from '@mui/material/CardHeader';
-import IconButton from '@mui/material/IconButton';
-import { DataGrid, GridViewColumnIcon, ColumnsPanelTrigger } from '@mui/x-data-grid';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useTranslate } from 'src/locales';
 import { niceMax } from 'src/module/usage/utils/scale';
+import { GridActions } from 'src/module/usage/components/grid-actions';
 import { formatTokens, formatDateTime } from 'src/module/usage/utils/format';
 import { ShareBar } from 'src/module/usage/features/overview/components/share-bar';
 import {
   useColumnVisibility,
   defaultPeopleColumns,
-} from 'src/module/usage/features/overview/hooks/use-column-visibility';
+} from 'src/module/usage/hooks/use-column-visibility';
 
 const VISIBILITY_KEY = 'usage.overview.people.columns';
 const NAME_FIELD = 'name';
+const EXPORT_FILE = 'people';
 const WIDE = 180;
 const NARROW = 120;
 
@@ -34,6 +35,16 @@ function dateColumn(
   };
 }
 
+const count = (value: number) => value.toLocaleString();
+
+function numberColumn(
+  field: keyof OverviewPerson & string,
+  headerName: string,
+  format: (value: number) => string
+): GridColDef<OverviewPerson> {
+  return { field, headerName, width: NARROW, valueFormatter: (value: number) => format(value) };
+}
+
 function useColumns(people: OverviewPerson[]): GridColDef<OverviewPerson>[] {
   const { t } = useTranslate('usage');
   const scale = niceMax(Math.max(0, ...people.map((p) => p.new_context)));
@@ -47,27 +58,21 @@ function useColumns(people: OverviewPerson[]): GridColDef<OverviewPerson>[] {
       minWidth: WIDE,
       valueGetter: (_v, row) => row.full_name || row.email,
     },
-    {
-      field: 'new_context',
-      headerName: t('col.newContext'),
-      width: NARROW,
-      valueFormatter: (value: number) => formatTokens(value),
-    },
+    numberColumn('new_context', t('col.newContext'), formatTokens),
     {
       field: 'share',
       headerName: t('col.share'),
       description: t('col.shareScale', { max: formatTokens(scale) }),
       width: WIDE,
       display: 'flex',
+      disableExport: true,
       valueGetter: (_v, row) => row.new_context,
       renderCell: ({ row }) => <ShareBar value={row.new_context} max={scale} />,
     },
-    {
-      field: 'requests',
-      headerName: t('col.requests'),
-      width: NARROW,
-      valueFormatter: (value: number) => value.toLocaleString(),
-    },
+    numberColumn('requests', t('col.requests'), count),
+    numberColumn('output_tokens', t('col.outputTokens'), formatTokens),
+    { ...numberColumn('subagent_requests', t('col.subagentRequests'), count), width: WIDE },
+    numberColumn('subagent_output_tokens', t('col.subagentOutput'), formatTokens),
     { field: 'sessions', headerName: t('col.sessions'), width: NARROW },
     {
       field: 'current_model',
@@ -85,11 +90,7 @@ function PeopleHeader() {
   return (
     <CardHeader
       title={t('overview.people')}
-      action={
-        <ColumnsPanelTrigger render={<IconButton aria-label={t('overview.columns')} />}>
-          <GridViewColumnIcon />
-        </ColumnsPanelTrigger>
-      }
+      action={<GridActions fileName={EXPORT_FILE} />}
       sx={{ pb: 2 }}
     />
   );
@@ -116,6 +117,7 @@ export function PeopleTable({ people }: { people: OverviewPerson[] }) {
       localeText={{ noRowsLabel: t('empty.people') }}
       showToolbar
       slots={{ toolbar: PeopleHeader }}
+      ignoreValueFormatterDuringExport
       autoHeight
       disableColumnFilter
       disableDensitySelector

@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 
 import { RouterLink } from 'src/routes/components';
 
+import { useTranslate } from 'src/locales';
 import { CONFIG } from 'src/shared/config';
 import { LogoMark } from 'src/shared/ui/logo';
 
@@ -34,10 +35,13 @@ export function AuthSplitSection({
   method,
   methods,
   layoutQuery = 'md',
-  title = 'Manage the job',
-  subtitle = 'More effectively with optimized workflows.',
+  title = CONFIG.appName,
+  subtitle,
   ...other
 }: AuthSplitSectionProps) {
+  const { t } = useTranslate('auth');
+  const tagline = subtitle ?? t('signIn.subtitle');
+
   return (
     <Box
       sx={[
@@ -72,11 +76,9 @@ export function AuthSplitSection({
           {title}
         </Typography>
 
-        {subtitle && (
-          <Typography sx={{ color: 'text.secondary', textAlign: 'center', mt: 2 }}>
-            {subtitle}
-          </Typography>
-        )}
+        <Typography sx={{ color: 'text.secondary', textAlign: 'center', mt: 2 }}>
+          {tagline}
+        </Typography>
       </div>
 
       <LogoMark size={HERO_MARK_SIZE} />

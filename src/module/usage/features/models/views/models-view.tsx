@@ -57,6 +57,24 @@ function ModelsTable({ models }: { models: ModelUsage[] }) {
       align: 'right',
       render: (m) => m.requests.toLocaleString(),
     },
+    {
+      id: 'outputTokens',
+      label: t('col.outputTokens'),
+      align: 'right',
+      render: (m) => formatTokens(m.output_tokens),
+    },
+    {
+      id: 'subagentRequests',
+      label: t('col.subagentRequests'),
+      align: 'right',
+      render: (m) => m.subagent_requests.toLocaleString(),
+    },
+    {
+      id: 'subagentOutput',
+      label: t('col.subagentOutput'),
+      align: 'right',
+      render: (m) => formatTokens(m.subagent_output_tokens),
+    },
     { id: 'sessions', label: t('col.sessions'), align: 'right', render: (m) => m.sessions },
   ];
 

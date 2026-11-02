@@ -2,7 +2,7 @@
 
 **Module:** usage
 **Kode FE:** `src/module/usage/api/usage.ts`
-**Last Updated:** 2026-11-02
+**Last Updated:** 2026-11-02 (output tokens and subagent usage)
 
 Server contract: `claude-usage-server/docs/api-contract/usage/README.md`. All calls send
 `Authorization: Bearer <access_token>`. Report calls send `from`/`to` as UTC `Z` strings and `tz`
@@ -24,6 +24,12 @@ as the browser time zone (`buildRangeParams`).
 | GET | `/core/v1/admin/users/:id/api-keys` | `adminListKeys(userId)` |
 | POST | `/core/v1/admin/api-keys/:id/revoke` | `adminRevokeKey(keyId)` |
 | GET | `/core/v1/admin/api-keys/:id/reveal` | `adminRevealKey(keyId)` |
+
+`output_tokens`, `subagent_requests` and `subagent_output_tokens` are read from overview people,
+models rows, session rows (range sums) and session `hours`; overview totals are
+`total_output_tokens`, `total_subagent_requests` and `total_subagent_output_tokens`. Timeseries
+points carry the same three fields but no view reads them yet. `usage.ts` sets each missing field
+to 0, so an older server shows zeros instead of breaking the page.
 
 Session rows from `getSessions` and the `getSession` detail carry `models`: every model the
 session used, largest new context first. The `model` filter matches any of them.

@@ -1,4 +1,10 @@
-import type { TokenPair, MeResponse, SignInParams, SignInResponse } from '../types';
+import type {
+  TokenPair,
+  MeResponse,
+  SignInParams,
+  SignInResponse,
+  ChangePasswordParams,
+} from '../types';
 
 import { unwrap } from 'src/shared/api';
 import axios, { endpoints, withoutAuthRefresh } from 'src/shared/lib/axios';
@@ -19,4 +25,8 @@ export function logout(refresh_token: string) {
 
 export function getMe() {
   return unwrap<MeResponse>(axios.get(endpoints.auth.me));
+}
+
+export async function changePassword(params: ChangePasswordParams) {
+  await axios.post(endpoints.auth.changePassword, params);
 }

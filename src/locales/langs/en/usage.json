@@ -10,7 +10,9 @@
     "newContext": "New context",
     "requests": "Requests",
     "activePeople": "Active people",
-    "sessions": "Sessions"
+    "sessions": "Sessions",
+    "outputTokens": "Output tokens",
+    "subagentRequests": "Subagent requests"
   },
   "col": {
     "name": "Name",
@@ -25,7 +27,7 @@
     "newContext": "New context",
     "share": "New context share",
     "shareScale": "Scale: 0 to {{max}}",
-    "latestPeak": "Latest / peak context",
+    "latestPeak": "Latest / peak",
     "requests": "Requests",
     "sessions": "Sessions",
     "compactions": "Compactions",
@@ -34,7 +36,12 @@
     "lastSynced": "Last synced",
     "prefix": "Prefix",
     "created": "Created",
-    "lastUsed": "Last used"
+    "lastUsed": "Last used",
+    "outputTokens": "Output tokens",
+    "subagentRequests": "Subagent requests",
+    "subagentOutput": "Subagent output",
+    "latestContext": "Latest context",
+    "peakContext": "Peak context"
   },
   "fact": {
     "person": "Person",
@@ -49,7 +56,10 @@
     "requests": "Requests",
     "compactions": "Compactions",
     "firstRequest": "First request",
-    "lastRequest": "Last request"
+    "lastRequest": "Last request",
+    "outputTokens": "Output tokens (all time)",
+    "subagentRequests": "Subagent requests (all time)",
+    "subagentOutput": "Subagent output (all time)"
   },
   "filter": {
     "all": "All",
@@ -70,8 +80,7 @@
   "overview": {
     "title": "Team overview",
     "chart": "New context per day by person",
-    "people": "People",
-    "columns": "Columns"
+    "people": "People"
   },
   "person": {
     "title": "Person detail",
@@ -129,5 +138,9 @@
     "revoked": "API key revoked",
     "revokeTitle": "Revoke API key",
     "revokeConfirm": "Revoke {{prefix}}? The desktop app using it stops syncing."
+  },
+  "grid": {
+    "columns": "Columns",
+    "exportCsv": "Export CSV"
   }
 }

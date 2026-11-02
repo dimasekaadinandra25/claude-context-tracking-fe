@@ -3,6 +3,7 @@ export type User = {
   email: string;
   username: string;
   full_name: string;
+  must_change_password?: boolean;
 };
 
 export type AuthUser = User & {
@@ -32,6 +33,11 @@ export type MeResponse = {
 export type AuthState = {
   loading: boolean;
   user: AuthUser | null;
+};
+
+export type ChangePasswordParams = {
+  current_password: string;
+  new_password: string;
 };
 
 export type SignInParams = {

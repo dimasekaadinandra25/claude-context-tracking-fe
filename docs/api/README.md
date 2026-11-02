@@ -20,5 +20,5 @@ Format tiap dokumen: `.claude/rules/api-docs.md`. Envelope semua response:
 
 | Fitur | Dokumen              | Endpoint |
 | ----- | -------------------- | -------- |
-| auth  | [auth.md](auth.md)   | 4        |
+| auth  | [auth.md](auth.md)   | 5        |
 | usage | [usage.md](usage.md) | 13       |

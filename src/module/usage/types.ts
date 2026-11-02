@@ -1,3 +1,9 @@
+export type OutputUsage = {
+  output_tokens: number;
+  subagent_requests: number;
+  subagent_output_tokens: number;
+};
+
 export type OverviewPerson = {
   user_id: string;
   full_name: string;
@@ -8,7 +14,7 @@ export type OverviewPerson = {
   sessions: number;
   last_request_at: string | null;
   last_synced_at: string | null;
-};
+} & OutputUsage;
 
 export type Overview = {
   people: OverviewPerson[];
@@ -16,6 +22,9 @@ export type Overview = {
   total_requests: number;
   total_sessions: number;
   active_people: number;
+  total_output_tokens: number;
+  total_subagent_requests: number;
+  total_subagent_output_tokens: number;
 };
 
 export type Interval = 'hour' | 'day';
@@ -27,14 +36,14 @@ export type TimeseriesPoint = {
   key: string;
   new_context: number;
   requests: number;
-};
+} & Partial<OutputUsage>;
 
 export type ModelUsage = {
   model: string;
   new_context: number;
   requests: number;
   sessions: number;
-};
+} & OutputUsage;
 
 export type UsageSession = {
   id: string;
@@ -55,14 +64,14 @@ export type UsageSession = {
   last_reported_at: string;
   user_name?: string;
   models: string[];
-};
+} & OutputUsage;
 
 export type SessionHour = {
   hour: string;
   model: string;
   new_context: number;
   requests: number;
-};
+} & OutputUsage;
 
 export type SessionDetail = {
   session: UsageSession;

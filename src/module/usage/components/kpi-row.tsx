@@ -12,22 +12,22 @@ type Props = {
   showPeople?: boolean;
 };
 
-const GRID_COLUMNS = 12;
-
 export function KpiRow({ overview, showPeople = true }: Props) {
   const { t } = useTranslate('usage');
 
   const tiles = [
     { key: 'newContext', value: formatTokens(overview.total_new_context) },
+    { key: 'outputTokens', value: formatTokens(overview.total_output_tokens) },
     { key: 'requests', value: overview.total_requests.toLocaleString() },
-    ...(showPeople ? [{ key: 'activePeople', value: String(overview.active_people) }] : []),
+    { key: 'subagentRequests', value: overview.total_subagent_requests.toLocaleString() },
     { key: 'sessions', value: overview.total_sessions.toLocaleString() },
+    ...(showPeople ? [{ key: 'activePeople', value: String(overview.active_people) }] : []),
   ];
 
   return (
     <Grid container spacing={3}>
       {tiles.map((tile) => (
-        <Grid key={tile.key} size={{ xs: 12, sm: 6, md: GRID_COLUMNS / tiles.length }}>
+        <Grid key={tile.key} size={{ xs: 12, sm: 6, md: 4 }}>
           <KpiTile title={t(`kpi.${tile.key}`)} value={tile.value} />
         </Grid>
       ))}

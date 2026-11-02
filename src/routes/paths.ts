@@ -18,5 +18,6 @@ export const paths = {
     session: (id: string) => `${ROOTS.DASHBOARD}/sessions/${id}`,
     models: `${ROOTS.DASHBOARD}/models`,
     adminPeople: `${ROOTS.DASHBOARD}/admin/people`,
+    changePassword: `${ROOTS.DASHBOARD}/account/password`,
   },
 };

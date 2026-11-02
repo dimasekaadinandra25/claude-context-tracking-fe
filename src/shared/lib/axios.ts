@@ -121,6 +121,7 @@ export const endpoints = {
     refresh: '/core/v1/auth/refresh',
     logout: '/core/v1/auth/logout',
     me: '/core/v1/auth/me',
+    changePassword: '/core/v1/auth/change-password',
   },
   usage: {
     overview: '/usage/v1/overview',

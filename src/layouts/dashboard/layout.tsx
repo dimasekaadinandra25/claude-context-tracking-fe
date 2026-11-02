@@ -19,6 +19,7 @@ import { NavVertical } from './nav-vertical';
 import { NavHorizontal } from './nav-horizontal';
 import { useNavData } from '../nav-config-dashboard';
 import { MenuButton } from '../components/menu-button';
+import { ModeButton } from '../components/mode-button';
 import { AccountDrawer } from '../components/account-drawer';
 import { HeaderBreadcrumbs } from '../components/header-breadcrumbs';
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
@@ -170,6 +171,7 @@ export function DashboardLayout({
       })}
     >
       <AccountDrawer compact={compact} />
+      <ModeButton />
     </Box>
   );
 

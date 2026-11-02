@@ -130,6 +130,8 @@ export const endpoints = {
     sessions: '/usage/v1/sessions',
     session: (id: string) => `/usage/v1/sessions/${id}`,
     people: '/usage/v1/people',
+    budgets: '/usage/v1/budgets',
+    budget: (userId: string) => `/usage/v1/budgets/${userId}`,
   },
   admin: {
     users: '/core/v1/admin/users',

@@ -3,18 +3,43 @@ import dayjs from 'dayjs';
 export type ReportRange = { from: Date; to: Date; tz: string };
 
 const DEFAULT_DAYS = 7;
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export function browserTimeZone(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
-export function defaultRange(now: Date = new Date(), tz: string = browserTimeZone()): ReportRange {
+export function lastDays(
+  days: number,
+  now: Date = new Date(),
+  tz: string = browserTimeZone()
+): ReportRange {
   const today = dayjs(now).startOf('day');
   return {
-    from: today.subtract(DEFAULT_DAYS - 1, 'day').toDate(),
+    from: today.subtract(days - 1, 'day').toDate(),
     to: today.add(1, 'day').toDate(),
     tz,
   };
+}
+
+export function defaultRange(now: Date = new Date(), tz: string = browserTimeZone()): ReportRange {
+  return lastDays(DEFAULT_DAYS, now, tz);
+}
+
+export function rangeDays(range: ReportRange): number {
+  return dayjs(range.to).diff(range.from, 'day');
+}
+
+export function previousRange(range: ReportRange): ReportRange {
+  return {
+    from: dayjs(range.from).subtract(rangeDays(range), 'day').toDate(),
+    to: range.from,
+    tz: range.tz,
+  };
+}
+
+export function isSameRange(a: ReportRange, b: ReportRange): boolean {
+  return a.from.getTime() === b.from.getTime() && a.to.getTime() === b.to.getTime();
 }
 
 export function buildRangeParams(range: ReportRange): Record<string, string> {
@@ -23,8 +48,8 @@ export function buildRangeParams(range: ReportRange): Record<string, string> {
 
 export function rangeToDays(range: ReportRange): { start: string; end: string } {
   return {
-    start: dayjs(range.from).format('YYYY-MM-DD'),
-    end: dayjs(range.to).subtract(1, 'day').format('YYYY-MM-DD'),
+    start: dayjs(range.from).format(DATE_FORMAT),
+    end: dayjs(range.to).subtract(1, 'day').format(DATE_FORMAT),
   };
 }
 
@@ -34,4 +59,10 @@ export function daysToRange(start: string, end: string, tz: string): ReportRange
     to: dayjs(end).add(1, 'day').startOf('day').toDate(),
     tz,
   };
+}
+
+export function rangeDates(range: ReportRange): string[] {
+  return Array.from({ length: rangeDays(range) }, (_, i) =>
+    dayjs(range.from).add(i, 'day').format(DATE_FORMAT)
+  );
 }

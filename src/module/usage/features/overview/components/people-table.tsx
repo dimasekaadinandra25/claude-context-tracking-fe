@@ -2,7 +2,9 @@ import type { GridColDef } from '@mui/x-data-grid';
 import type { OverviewPerson } from 'src/module/usage/types';
 
 import { DataGrid } from '@mui/x-data-grid';
+import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
+import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -22,6 +24,9 @@ const NAME_FIELD = 'name';
 const EXPORT_FILE = 'people';
 const WIDE = 180;
 const NARROW = 120;
+const TREND_DAYS = 7;
+const SPARK_HEIGHT = 32;
+const NO_TREND = Array<number>(TREND_DAYS).fill(0);
 
 function dateColumn(
   field: 'last_request_at' | 'last_synced_at',
@@ -45,8 +50,36 @@ function numberColumn(
   return { field, headerName, width: NARROW, valueFormatter: (value: number) => format(value) };
 }
 
-function useColumns(people: OverviewPerson[]): GridColDef<OverviewPerson>[] {
+function trendColumn(
+  headerName: string,
+  trends: Map<string, number[]>,
+  color: string
+): GridColDef<OverviewPerson> {
+  return {
+    field: 'trend',
+    headerName,
+    width: WIDE,
+    display: 'flex',
+    sortable: false,
+    disableExport: true,
+    renderCell: ({ row }) => (
+      <SparkLineChart
+        data={trends.get(row.user_id) ?? NO_TREND}
+        height={SPARK_HEIGHT}
+        color={color}
+        showTooltip
+        valueFormatter={(value) => formatTokens(value ?? 0)}
+      />
+    ),
+  };
+}
+
+function useColumns(
+  people: OverviewPerson[],
+  trends: Map<string, number[]>
+): GridColDef<OverviewPerson>[] {
   const { t } = useTranslate('usage');
+  const theme = useTheme();
   const scale = niceMax(Math.max(0, ...people.map((p) => p.new_context)));
 
   return [
@@ -69,6 +102,7 @@ function useColumns(people: OverviewPerson[]): GridColDef<OverviewPerson>[] {
       valueGetter: (_v, row) => row.new_context,
       renderCell: ({ row }) => <ShareBar value={row.new_context} max={scale} />,
     },
+    trendColumn(t('col.trend'), trends, theme.vars.palette.primary.main),
     numberColumn('requests', t('col.requests'), count),
     numberColumn('output_tokens', t('col.outputTokens'), formatTokens),
     { ...numberColumn('subagent_requests', t('col.subagentRequests'), count), width: WIDE },
@@ -96,10 +130,15 @@ function PeopleHeader() {
   );
 }
 
-export function PeopleTable({ people }: { people: OverviewPerson[] }) {
+type Props = {
+  people: OverviewPerson[];
+  trends: Map<string, number[]>;
+};
+
+export function PeopleTable({ people, trends }: Props) {
   const { t } = useTranslate('usage');
   const router = useRouter();
-  const columns = useColumns(people);
+  const columns = useColumns(people, trends);
   const [visibility, setVisibility] = useColumnVisibility(
     VISIBILITY_KEY,
     defaultPeopleColumns,

@@ -4,16 +4,24 @@ import { toast } from 'src/shared/ui/snackbar';
 
 import { useFetch } from '../../../hooks/use-fetch';
 import { useReportRange } from '../../../hooks/use-report-range';
-import { getOverview, adminListUsers } from '../../../api/usage';
+import { getBudgets, getOverview, adminListUsers } from '../../../api/usage';
 
 export function useAdminPeople() {
   const { range } = useReportRange();
-  const load = useCallback(() => Promise.all([adminListUsers(), getOverview(range)]), [range]);
+  const load = useCallback(
+    () => Promise.all([adminListUsers(), getOverview(range), getBudgets(range.tz)]),
+    [range]
+  );
   const { data, error, loading, reload } = useFetch(load);
 
   const users = useMemo(() => {
     const synced = new Map(data?.[1].people.map((p) => [p.user_id, p.last_synced_at]));
-    return (data?.[0] ?? []).map((u) => ({ ...u, last_synced_at: synced.get(u.id) ?? null }));
+    const budgets = new Map(data?.[2].map((b) => [b.user_id, b.monthly_new_context]));
+    return (data?.[0] ?? []).map((u) => ({
+      ...u,
+      last_synced_at: synced.get(u.id) ?? null,
+      monthly_new_context: budgets.get(u.id) ?? null,
+    }));
   }, [data]);
 
   return { users, error, loading, reload };

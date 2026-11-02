@@ -1,10 +1,17 @@
 import type { UserRow } from './users-table';
 
+import Button from '@mui/material/Button';
+
 import { useTranslate } from 'src/locales';
 import { ConfirmDialog } from 'src/shared/ui/confirm-dialog';
 
 import { FormDialog } from './form-dialog';
-import { adminSetActive, adminResetPassword } from '../../../api/usage';
+import {
+  adminSetActive,
+  adminSetBudget,
+  adminDeleteBudget,
+  adminResetPassword,
+} from '../../../api/usage';
 
 export const PASSWORD_MIN = 8;
 
@@ -61,6 +68,45 @@ export function ToggleActiveDialog({ open, user, busy, onClose, onRun }: UserDia
       loading={busy}
       onClose={onClose}
       onConfirm={() => onRun(() => adminSetActive(user?.id ?? '', !active), t('admin.updated'))}
+    />
+  );
+}
+
+export function BudgetDialog({ open, user, busy, onClose, onRun }: UserDialogProps) {
+  const { t } = useTranslate('usage');
+  const id = user?.id ?? '';
+
+  return (
+    <FormDialog
+      open={open}
+      title={t('budget.dialogTitle', { name: displayName(user) })}
+      submitLabel={t('budget.save')}
+      fields={[
+        {
+          name: 'monthly_new_context',
+          label: t('budget.tokens'),
+          type: 'number',
+          required: true,
+          min: 1,
+          step: 1,
+        },
+      ]}
+      busy={busy}
+      secondaryAction={
+        user?.monthly_new_context ? (
+          <Button
+            color="error"
+            disabled={busy}
+            onClick={() => onRun(() => adminDeleteBudget(id), t('budget.cleared'))}
+          >
+            {t('budget.clear')}
+          </Button>
+        ) : null
+      }
+      onClose={onClose}
+      onSubmit={(v) =>
+        onRun(() => adminSetBudget(id, Number(v.monthly_new_context)), t('budget.saved'))
+      }
     />
   );
 }

@@ -1,11 +1,12 @@
 import { it, expect, describe } from 'vitest';
-import { within, screen, fireEvent } from '@testing-library/react';
+import { within, screen, waitFor, fireEvent } from '@testing-library/react';
 
 import { renderWithAppProviders } from 'src/test/render';
 import { captureCsvDownloads } from 'src/test/csv-export';
 import { envelope, installFakeBackend } from 'src/test/fake-backend';
 
 import { OverviewView } from './overview-view';
+import { lastDays } from '../../../utils/range';
 import { ReportRangeProvider } from '../../../hooks/use-report-range';
 
 const emptyOverview = {
@@ -99,6 +100,7 @@ describe('OverviewView CSV export', () => {
     expect(csv).toContain('31000');
     expect(csv).toContain('2026-11-01T10:00:00Z');
     expect(csv).not.toContain('120K');
+    expect(csv).not.toContain('Last 7 days');
   });
 });
 
@@ -116,7 +118,7 @@ describe('OverviewView', () => {
     );
 
     expect(await screen.findByText('No usage in this range yet.')).toBeInTheDocument();
-    expect(screen.getByText('No people yet.')).toBeInTheDocument();
+    expect(screen.getByText('No members yet.')).toBeInTheDocument();
     expect(container.querySelector('.MuiChartsSurface-root')).toBeNull();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     expect(backend.requests.map((r) => r.url)).toEqual(
@@ -136,12 +138,122 @@ describe('OverviewView', () => {
       </ReportRangeProvider>
     );
 
-    const title = await screen.findByText('People');
+    const title = await screen.findByText('Members');
     const button = screen.getByRole('button', { name: 'Columns' });
     expect(title.closest('.MuiCardHeader-root')).toBe(button.closest('.MuiCardHeader-root'));
     expect(title.closest('.MuiCardHeader-root')).not.toBeNull();
 
     fireEvent.click(button);
     expect(await screen.findByText('Show/Hide All')).toBeInTheDocument();
+  });
+});
+
+const previousOverview = {
+  ...fullOverview,
+  total_new_context: 100000,
+  total_requests: 50,
+  total_sessions: 0,
+};
+
+const isCurrent = (params: Record<string, string> | undefined) =>
+  new Date(params?.to ?? 0) > new Date();
+
+function renderWithRoutes(timeseries: (params: Record<string, string>) => unknown[]) {
+  const backend = installFakeBackend({
+    'GET /usage/v1/overview': ({ params }) => ({
+      status: 200,
+      data: envelope(isCurrent(params) ? fullOverview : previousOverview),
+    }),
+    'GET /usage/v1/timeseries': ({ params }) => ({
+      status: 200,
+      data: envelope(timeseries(params ?? {})),
+    }),
+  });
+  renderWithAppProviders(
+    <ReportRangeProvider>
+      <OverviewView />
+    </ReportRangeProvider>
+  );
+  return backend;
+}
+
+async function tileChange(title: string) {
+  const heading = await screen.findByText(title, { selector: 'h6' });
+  const tile = heading.closest('.MuiCard-root') as HTMLElement;
+  return within(tile).getByText(/vs prev|—/).textContent;
+}
+
+describe('OverviewView compare periods', () => {
+  it('kpiTilesShowChangeVsPreviousPeriod', async () => {
+    renderWithRoutes(() => []);
+
+    expect(await tileChange('New context')).toBe('▲ 20% vs prev 7d');
+    expect(await tileChange('Requests')).toBe('▼ 20% vs prev 7d');
+    expect(await tileChange('Sessions')).toBe('—');
+    expect(await tileChange('Output tokens')).toBe('0% vs prev 7d');
+  });
+
+  it('quickRangeRefetchesBothPeriods', async () => {
+    const backend = renderWithRoutes(() => []);
+
+    fireEvent.click(await screen.findByRole('button', { name: '30d' }));
+
+    const expected = lastDays(30);
+    await waitFor(() =>
+      expect(backend.requests).toContainEqual(
+        expect.objectContaining({
+          url: '/usage/v1/overview',
+          params: expect.objectContaining({ from: expected.from.toISOString() }),
+        })
+      )
+    );
+    expect(backend.requests).toContainEqual(
+      expect.objectContaining({
+        url: '/usage/v1/overview',
+        params: expect.objectContaining({ to: expected.from.toISOString() }),
+      })
+    );
+    expect(await tileChange('New context')).toBe('▲ 20% vs prev 30d');
+    expect(screen.getByRole('button', { name: '30d' })).toHaveAttribute('aria-pressed', 'true');
+  });
+});
+
+describe('OverviewView activity heatmap and trends', () => {
+  it('heatmapSumsHourlyBucketsByWeekdayAndHour', async () => {
+    const backend = renderWithRoutes((params) =>
+      params.interval === 'hour'
+        ? [
+            { bucket: '2026-11-02T09:00:00+07:00', key: 'u-1', new_context: 15000, requests: 1 },
+            { bucket: '2026-11-02T09:00:00+07:00', key: 'u-2', new_context: 5000, requests: 1 },
+          ]
+        : []
+    );
+
+    expect(await screen.findByLabelText('Mon 09:00 · 20K')).toBeInTheDocument();
+    expect(screen.getByLabelText('Sun 23:00 · 0')).toBeInTheDocument();
+    expect(backend.requests).toContainEqual(
+      expect.objectContaining({
+        url: '/usage/v1/timeseries',
+        params: expect.objectContaining({ interval: 'hour', group_by: 'user' }),
+      })
+    );
+  });
+
+  it('peopleTrendIgnoresSelectedRange', async () => {
+    const week = lastDays(7).from.toISOString();
+    const backend = renderWithRoutes(() => []);
+    const weekCalls = () =>
+      backend.requests.filter(
+        (r) =>
+          r.url === '/usage/v1/timeseries' &&
+          r.params?.interval === 'day' &&
+          r.params.group_by === 'user' &&
+          r.params.from === week
+      );
+
+    expect(await screen.findByRole('columnheader', { name: 'Last 7 days' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '30d' }));
+
+    await waitFor(() => expect(weekCalls()).toHaveLength(3));
   });
 });

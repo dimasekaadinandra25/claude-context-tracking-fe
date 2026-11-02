@@ -13,7 +13,7 @@ import { UsersTable } from '../components/users-table';
 import { PageShell } from '../../../components/page-shell';
 import { CreateUserDialog } from '../components/create-user-dialog';
 import { useAdminAction, useAdminPeople } from '../hooks/use-admin-people';
-import { ToggleActiveDialog, ResetPasswordDialog } from '../components/user-dialogs';
+import { BudgetDialog, ToggleActiveDialog, ResetPasswordDialog } from '../components/user-dialogs';
 
 export type AdminDialog = { kind: UserAction | 'create'; user: UserRow | null } | null;
 
@@ -49,6 +49,7 @@ export function AdminPeopleView() {
         <UsersTable users={users} onAction={(kind, user) => setDialog({ kind, user })} />
       </Card>
       <CreateUserDialog open={dialog?.kind === 'create'} {...dialogProps} />
+      <BudgetDialog open={dialog?.kind === 'budget'} {...dialogProps} />
       <ResetPasswordDialog open={dialog?.kind === 'reset'} {...dialogProps} />
       <ToggleActiveDialog open={dialog?.kind === 'toggle'} {...dialogProps} />
       <KeysDrawer user={dialog?.kind === 'keys' ? target : null} onClose={close} />

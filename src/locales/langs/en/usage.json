@@ -1,7 +1,7 @@
 {
   "empty": {
     "chart": "No usage in this range yet.",
-    "people": "No people yet.",
+    "people": "No members yet.",
     "sessions": "No sessions in this range.",
     "models": "No model usage in this range.",
     "keys": "No API keys yet."
@@ -9,10 +9,14 @@
   "kpi": {
     "newContext": "New context",
     "requests": "Requests",
-    "activePeople": "Active people",
+    "activePeople": "Active members",
     "sessions": "Sessions",
     "outputTokens": "Output tokens",
-    "subagentRequests": "Subagent requests"
+    "subagentRequests": "Subagent requests",
+    "up": "▲ {{percent}}% vs prev {{days}}d",
+    "down": "▼ {{percent}}% vs prev {{days}}d",
+    "flat": "0% vs prev {{days}}d",
+    "noPrevious": "—"
   },
   "col": {
     "name": "Name",
@@ -20,7 +24,7 @@
     "role": "Role",
     "status": "Status",
     "title": "Title",
-    "person": "Person",
+    "person": "Member",
     "project": "Project",
     "model": "Model",
     "models": "Models",
@@ -34,6 +38,7 @@
     "currentModel": "Current model",
     "lastRequest": "Last request",
     "lastSynced": "Last synced",
+    "budget": "Monthly budget",
     "prefix": "Prefix",
     "created": "Created",
     "lastUsed": "Last used",
@@ -41,10 +46,11 @@
     "subagentRequests": "Subagent requests",
     "subagentOutput": "Subagent output",
     "latestContext": "Latest context",
-    "peakContext": "Peak context"
+    "peakContext": "Peak context",
+    "trend": "Last 7 days"
   },
   "fact": {
-    "person": "Person",
+    "person": "Member",
     "project": "Project",
     "model": "Current model",
     "models": "Models used",
@@ -63,7 +69,7 @@
   },
   "filter": {
     "all": "All",
-    "person": "Person",
+    "person": "Member",
     "project": "Project",
     "model": "Model",
     "search": "Search title or project"
@@ -79,12 +85,13 @@
   },
   "overview": {
     "title": "Team overview",
-    "chart": "New context per day by person",
-    "people": "People"
+    "chart": "New context per day by member",
+    "people": "Members",
+    "heatmap": "New context by weekday and hour"
   },
   "person": {
-    "title": "Person detail",
-    "picker": "Person",
+    "title": "Member detail",
+    "picker": "Member",
     "chart": "New context per day by model",
     "recent": "Recent sessions",
     "viewAll": "All sessions"
@@ -94,7 +101,7 @@
   },
   "session": {
     "title": "Session",
-    "chart": "New context per hour by model"
+    "lineChart": "Hourly new context trend by model"
   },
   "models": {
     "title": "Models",
@@ -102,7 +109,7 @@
     "chart": "New context per day by model"
   },
   "adminPeople": {
-    "title": "People"
+    "title": "Members"
   },
   "admin": {
     "create": "Create member",
@@ -119,7 +126,22 @@
     "deactivate": "Deactivate",
     "activateConfirm": "Activate {{name}}? Keys revoked on deactivation stay revoked; issue a new key.",
     "deactivateConfirm": "Deactivate {{name}}? They can no longer sign in, and all their API keys are revoked.",
-    "updated": "User updated"
+    "updated": "User updated",
+    "budget": "Budget"
+  },
+  "budget": {
+    "title": "Monthly budget",
+    "usage": "{{used}} of {{budget}} · {{percent}}%",
+    "warning": "Near budget",
+    "error": "Over budget",
+    "empty": "No budgets yet. Set budgets in Admin → Members.",
+    "dialogTitle": "Monthly budget for {{name}}",
+    "tokens": "New context tokens per month",
+    "save": "Save",
+    "clear": "Clear",
+    "saved": "Budget saved",
+    "cleared": "Budget cleared",
+    "invalid": "Enter a whole number greater than 0."
   },
   "keys": {
     "title": "API keys of {{name}}",
@@ -142,5 +164,20 @@
   "grid": {
     "columns": "Columns",
     "exportCsv": "Export CSV"
+  },
+  "range": {
+    "today": "Today",
+    "last7": "7d",
+    "last30": "30d"
+  },
+  "heatmap": {
+    "cell": "{{day}} {{hour}}:00 · {{tokens}}",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
   }
 }

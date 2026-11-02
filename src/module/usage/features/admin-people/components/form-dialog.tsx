@@ -13,10 +13,12 @@ import { useTranslate } from 'src/locales';
 export type FormField = {
   name: string;
   label: string;
-  type?: 'text' | 'email' | 'password';
+  type?: 'text' | 'email' | 'password' | 'number';
   required?: boolean;
   minLength?: number;
   maxLength?: number;
+  min?: number;
+  step?: number;
 };
 
 type Props = {
@@ -25,11 +27,21 @@ type Props = {
   submitLabel: string;
   fields: FormField[];
   busy?: boolean;
+  secondaryAction?: React.ReactNode;
   onClose: () => void;
   onSubmit: (values: Record<string, string>) => void;
 };
 
-export function FormDialog({ open, title, submitLabel, fields, busy, onClose, onSubmit }: Props) {
+export function FormDialog({
+  open,
+  title,
+  submitLabel,
+  fields,
+  busy,
+  secondaryAction,
+  onClose,
+  onSubmit,
+}: Props) {
   const { t } = useTranslate('common');
   const [values, setValues] = useState<Record<string, string>>({});
 
@@ -50,22 +62,21 @@ export function FormDialog({ open, title, submitLabel, fields, busy, onClose, on
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ pt: 1 }}>
-            {fields.map((field) => (
+            {fields.map(({ name, label, type, required, ...htmlInput }) => (
               <TextField
-                key={field.name}
-                label={field.label}
-                type={field.type ?? 'text'}
-                required={field.required}
-                value={values[field.name] ?? ''}
-                onChange={(event) => setValues({ ...values, [field.name]: event.target.value })}
-                slotProps={{
-                  htmlInput: { minLength: field.minLength, maxLength: field.maxLength },
-                }}
+                key={name}
+                label={label}
+                type={type ?? 'text'}
+                required={required}
+                value={values[name] ?? ''}
+                onChange={(event) => setValues({ ...values, [name]: event.target.value })}
+                slotProps={{ htmlInput }}
               />
             ))}
           </Stack>
         </DialogContent>
         <DialogActions>
+          {secondaryAction}
           <Button color="inherit" onClick={onClose}>
             {t('actions.cancel')}
           </Button>

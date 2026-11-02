@@ -23,7 +23,6 @@ import { Scrollbar } from 'src/shared/ui/scrollbar';
 import { AnimateBorder } from 'src/shared/ui/animate';
 import { ConfirmDialog } from 'src/shared/ui/confirm-dialog';
 import { useAuthContext } from 'src/module/core/features/auth/hooks';
-import { useSettingsContext } from 'src/module/core/features/settings';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +32,6 @@ export type AccountDrawerProps = IconButtonProps & {
 
 export function AccountDrawer({ compact, sx, ...other }: AccountDrawerProps) {
   const router = useRouter();
-  const settings = useSettingsContext();
   const { user, signOut } = useAuthContext();
   const { t } = useTranslate('navigation');
 
@@ -65,11 +63,6 @@ export function AccountDrawer({ compact, sx, ...other }: AccountDrawerProps) {
   const handleChangePassword = () => {
     closeMenu();
     router.push(paths.dashboard.changePassword);
-  };
-
-  const handleTheme = () => {
-    closeMenu();
-    settings.onToggleDrawer();
   };
 
   const handleLogout = () => {
@@ -185,10 +178,6 @@ export function AccountDrawer({ compact, sx, ...other }: AccountDrawerProps) {
         <MenuItem onClick={handleChangePassword} sx={{ gap: 1 }}>
           <Iconify icon="solar:lock-password-outline" />
           {t('account.changePassword')}
-        </MenuItem>
-        <MenuItem onClick={handleTheme} sx={{ gap: 1 }}>
-          <Iconify icon="solar:palette-bold-duotone" />
-          {t('account.theme')}
         </MenuItem>
 
         <Divider sx={{ my: 0.5 }} />

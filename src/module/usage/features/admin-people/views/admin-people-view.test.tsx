@@ -35,6 +35,7 @@ function fakeBackend() {
   return installFakeBackend({
     'GET /core/v1/admin/users': ok([mia]),
     'GET /usage/v1/overview': ok(emptyOverview),
+    'GET /usage/v1/budgets': ok([]),
     'GET /core/v1/admin/users/u-1/api-keys': ok({ api_keys: [], total: 0, page: 1, limit: 100 }),
     'POST /core/v1/admin/users/u-1/api-keys': {
       status: 201,
@@ -69,6 +70,7 @@ function keysBackend(reveal: { status: number; data: unknown }) {
   return installFakeBackend({
     'GET /core/v1/admin/users': ok([mia]),
     'GET /usage/v1/overview': ok(emptyOverview),
+    'GET /usage/v1/budgets': ok([]),
     'GET /core/v1/admin/users/u-1/api-keys': ok({
       api_keys: [activeKey, revokedKey],
       total: 2,
@@ -150,5 +152,97 @@ describe('AdminPeopleView API keys', () => {
     document.querySelectorAll('input, textarea').forEach((el) => {
       expect((el as HTMLInputElement).value).not.toContain('wiz_live_x_y');
     });
+  });
+});
+
+const miaBudget = {
+  user_id: 'u-1',
+  full_name: 'Mia',
+  email: 'mia@example.test',
+  monthly_new_context: 10000000,
+  used_new_context: 7600000,
+  month_start: '2026-11-01T00:00:00+07:00',
+};
+
+function budgetBackend(monthly: number | null) {
+  return installFakeBackend({
+    'GET /core/v1/admin/users': ok([mia]),
+    'GET /usage/v1/overview': ok(emptyOverview),
+    'GET /usage/v1/budgets': ok([{ ...miaBudget, monthly_new_context: monthly }]),
+    'PUT /usage/v1/budgets/u-1': ok(null),
+    'DELETE /usage/v1/budgets/u-1': ok(null),
+  });
+}
+
+async function openBudgetDialog() {
+  const user = userEvent.setup();
+  renderWithAppProviders(
+    <ReportRangeProvider>
+      <AdminPeopleView />
+      <Snackbar />
+    </ReportRangeProvider>
+  );
+  await user.click(await screen.findByRole('button', { name: 'Budget' }));
+  await screen.findByText('Monthly budget for Mia');
+  return user;
+}
+
+describe('AdminPeopleView budget column', () => {
+  it('budgetColumnShowsBudgetOrDash', async () => {
+    budgetBackend(10000000);
+    renderWithAppProviders(
+      <ReportRangeProvider>
+        <AdminPeopleView />
+      </ReportRangeProvider>
+    );
+
+    expect(await screen.findByRole('columnheader', { name: 'Monthly budget' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: '10M' })).toBeInTheDocument();
+  });
+});
+
+describe('AdminPeopleView budget dialog', () => {
+  it('adminSetsBudget', async () => {
+    const backend = budgetBackend(null);
+    const user = await openBudgetDialog();
+
+    expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument();
+    await user.type(screen.getByRole('spinbutton', { name: /New context tokens/ }), '5000000');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(await screen.findByText('Budget saved')).toBeInTheDocument();
+    expect(backend.requests).toContainEqual(
+      expect.objectContaining({
+        method: 'PUT',
+        url: '/usage/v1/budgets/u-1',
+        body: { monthly_new_context: 5000000 },
+      })
+    );
+  });
+
+  it('adminClearsBudget', async () => {
+    const backend = budgetBackend(10000000);
+    const user = await openBudgetDialog();
+
+    await user.click(screen.getByRole('button', { name: 'Clear' }));
+
+    expect(await screen.findByText('Budget cleared')).toBeInTheDocument();
+    expect(backend.requests).toContainEqual(
+      expect.objectContaining({ method: 'DELETE', url: '/usage/v1/budgets/u-1' })
+    );
+    expect(backend.requests.some((r) => r.method === 'PUT')).toBe(false);
+  });
+
+  it('budgetRejectsZero', async () => {
+    const backend = budgetBackend(null);
+    const user = await openBudgetDialog();
+
+    const input = screen.getByRole('spinbutton', { name: /New context tokens/ });
+    await user.type(input, '0');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(input).toBeInvalid();
+    expect(screen.getByText('Monthly budget for Mia')).toBeInTheDocument();
+    expect(backend.requests.some((r) => r.method === 'PUT')).toBe(false);
   });
 });

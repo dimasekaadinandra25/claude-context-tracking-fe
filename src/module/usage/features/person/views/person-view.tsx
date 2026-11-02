@@ -14,17 +14,19 @@ import { PersonPicker } from '../components/person-picker';
 import { PageShell } from '../../../components/page-shell';
 import { ChartCard } from '../../../components/chart-card';
 import { RangePicker } from '../../../components/range-picker';
+import { BudgetCard } from '../../overview/components/budget-card';
 import { StackedBarChart } from '../../../components/stacked-bar-chart';
 import { RecentSessionsTable } from '../../../components/recent-sessions-table';
 
 export function PersonView() {
   const { t } = useTranslate('usage');
-  const { isAdmin, userId, overview, person, points, sessions, error, loading } = usePerson();
+  const { isAdmin, userId, overview, previous, person, points, sessions, error, loading } =
+    usePerson();
 
   const action = (
     <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
       {isAdmin && <PersonPicker userId={userId} />}
-      <RangePicker />
+      <RangePicker quick />
     </Box>
   );
 
@@ -43,7 +45,8 @@ export function PersonView() {
     >
       {overview && (
         <>
-          <KpiRow overview={overview} showPeople={false} />
+          <KpiRow overview={overview} previous={previous} showPeople={false} />
+          <BudgetCard userId={userId} />
           <ChartCard title={t('person.chart')}>
             <StackedBarChart points={points} interval="day" />
           </ChartCard>

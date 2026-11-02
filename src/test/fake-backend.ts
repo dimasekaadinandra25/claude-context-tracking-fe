@@ -13,6 +13,7 @@ export type FakeRoute = FakeReply | ((request: RecordedRequest) => FakeReply);
 export type RecordedRequest = {
   method: string;
   url: string;
+  params: Record<string, string> | undefined;
   body: unknown;
   authorization: string | undefined;
 };
@@ -25,6 +26,7 @@ function record(config: InternalAxiosRequestConfig): RecordedRequest {
   return {
     method: (config.method ?? 'get').toUpperCase(),
     url: config.url ?? '',
+    params: config.params,
     body,
     authorization: typeof authorization === 'string' ? authorization : undefined,
   };

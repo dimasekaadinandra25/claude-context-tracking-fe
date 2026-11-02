@@ -6,12 +6,18 @@ import { formatTokens } from 'src/module/usage/utils/format';
 
 const PERCENT = 100;
 
-export function ShareBar({ value, max }: { value: number; max: number }) {
+type Props = {
+  value: number;
+  max: number;
+  color?: 'primary' | 'warning' | 'error';
+};
+
+export function ShareBar({ value, max, color = 'primary' }: Props) {
   return (
     <Tooltip title={formatTokens(value)}>
       <LinearProgress
         variant="determinate"
-        color="primary"
+        color={color}
         value={shareOf(value, max) * PERCENT}
         aria-label={formatTokens(value)}
         sx={{ width: 1, height: 8 }}

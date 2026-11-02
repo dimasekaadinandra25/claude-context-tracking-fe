@@ -290,7 +290,7 @@ const MuiDataGrid: Components<Theme>['MuiDataGrid'] = {
      */
     columnHeader: ({ theme }) => ({
       color: theme.vars.palette.text.secondary,
-      backgroundColor: theme.vars.palette.background.neutral,
+      backgroundColor: varAlpha(theme.vars.palette.background.neutralChannel, 0.6),
       [`&.${gridClasses['columnHeader--sorted']}, &.${gridClasses['columnHeader--sorted']} .${gridClasses.sortIcon}`]:
         {
           color: theme.vars.palette.text.primary,

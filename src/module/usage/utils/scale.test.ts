@@ -1,6 +1,6 @@
 import { it, expect, describe } from 'vitest';
 
-import { niceMax, shareOf } from './scale';
+import { niceMax, shareOf, percentChange } from './scale';
 
 describe('niceMax', () => {
   it.each([
@@ -26,5 +26,17 @@ describe('shareOf', () => {
     [5, 0, 0],
   ])('shareOf(%d, %d) is %d', (value, max, expected) => {
     expect(shareOf(value, max)).toBe(expected);
+  });
+});
+
+describe('percentChange', () => {
+  it.each([
+    [112, 100, 12],
+    [97, 100, -3],
+    [100, 100, 0],
+    [5, 0, null],
+    [0, 0, null],
+  ])('percentChange(%d, %d) is %s', (current, previous, expected) => {
+    expect(percentChange(current, previous)).toBe(expected);
   });
 });

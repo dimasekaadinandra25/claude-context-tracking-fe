@@ -97,20 +97,20 @@ export const grey = createPaletteChannel(themeConfig.palette.grey);
  * ➤
  */
 export const text = {
-  light: createPaletteChannel({ primary: '#141413', secondary: '#3D3D3A', disabled: grey[500] }),
-  dark: createPaletteChannel({ primary: grey[50], secondary: grey[400], disabled: grey[600] }),
+  light: createPaletteChannel({ primary: '#1E1726', secondary: '#5F566C', disabled: grey[500] }),
+  dark: createPaletteChannel({ primary: '#F5F1FA', secondary: '#A9A1B8', disabled: grey[600] }),
 };
 
 export const background = {
-  light: createPaletteChannel({ paper: '#FFFFFF', default: grey[50], neutral: grey[200] }),
-  dark: createPaletteChannel({ paper: grey[800], default: '#262624', neutral: grey[900] }),
+  light: createPaletteChannel({ paper: '#FFFFFF', default: '#FAF6F8', neutral: '#F1ECF3' }),
+  dark: createPaletteChannel({ paper: '#1C1720', default: '#0F0C12', neutral: '#251F2A' }),
 };
 
 export const border = { light: grey[300], dark: grey[700] };
 
 export const chartColors = {
-  light: ['#D97757', '#5C8DC2', '#5F8A7D', '#8582B5', '#9A7D50', '#8F7A6A'],
-  dark: ['#D97757', '#6A9BCC', '#BCD1CA', '#CBCADB', '#E3DACC', '#8F7A6A'],
+  light: ['#D97757', '#9B5FD0', '#4C7FE0', '#1F9D8A', '#C2557A', '#B8892E'],
+  dark: ['#E8875F', '#B17BE0', '#5B8DEF', '#4FC3A1', '#E0709A', '#E3B65C'],
 };
 
 export const action = (mode: 'light' | 'dark'): Partial<TypeAction> => ({

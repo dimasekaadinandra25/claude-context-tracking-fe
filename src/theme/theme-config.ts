@@ -23,7 +23,7 @@ export const themeConfig: ThemeConfig = {
   /** **************************************
    * Base
    *************************************** */
-  defaultMode: 'dark',
+  defaultMode: 'system',
   modeStorageKey: 'theme-mode',
   direction: 'ltr',
   classesPrefix: 'minimal',
@@ -54,11 +54,11 @@ export const themeConfig: ThemeConfig = {
       contrastText: '#141413',
     },
     secondary: {
-      lighter: '#EFD6FF',
-      light: '#C684FF',
-      main: '#8E33FF',
-      dark: '#5119B7',
-      darker: '#27097A',
+      lighter: '#EEE2FA',
+      light: '#C29BEA',
+      main: '#9B5FD0',
+      dark: '#6E3BA3',
+      darker: '#45216E',
       contrastText: '#FFFFFF',
     },
     info: {

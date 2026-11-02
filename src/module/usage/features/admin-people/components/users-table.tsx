@@ -7,12 +7,15 @@ import Button from '@mui/material/Button';
 import { useTranslate } from 'src/locales';
 import { Label } from 'src/shared/ui/label';
 
-import { formatDateTime } from '../../../utils/format';
 import { DataTable } from '../../../components/data-table';
+import { formatTokens, formatDateTime } from '../../../utils/format';
 
-export type UserRow = AdminUser & { last_synced_at: string | null };
+export type UserRow = AdminUser & {
+  last_synced_at: string | null;
+  monthly_new_context: number | null;
+};
 
-export type UserAction = 'keys' | 'reset' | 'toggle';
+export type UserAction = 'keys' | 'budget' | 'reset' | 'toggle';
 
 type Props = {
   users: UserRow[];
@@ -26,6 +29,9 @@ export function UsersTable({ users, onAction }: Props) {
     <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
       <Button size="small" onClick={() => onAction('keys', u)}>
         {t('admin.keys')}
+      </Button>
+      <Button size="small" onClick={() => onAction('budget', u)}>
+        {t('admin.budget')}
       </Button>
       <Button size="small" onClick={() => onAction('reset', u)}>
         {t('admin.resetPassword')}
@@ -61,6 +67,11 @@ export function UsersTable({ users, onAction }: Props) {
       id: 'lastSynced',
       label: t('col.lastSynced'),
       render: (u) => formatDateTime(u.last_synced_at),
+    },
+    {
+      id: 'budget',
+      label: t('col.budget'),
+      render: (u) => (u.monthly_new_context === null ? '—' : formatTokens(u.monthly_new_context)),
     },
     { id: 'actions', align: 'right', render: actions },
   ];

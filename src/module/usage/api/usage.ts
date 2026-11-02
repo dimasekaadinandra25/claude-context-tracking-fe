@@ -2,6 +2,7 @@ import type { Paged } from 'src/shared/api';
 import type { ReportRange } from '../utils/range';
 import type {
   ApiKey,
+  Budget,
   Person,
   GroupBy,
   Interval,
@@ -91,6 +92,18 @@ export async function getSession(id: string): Promise<SessionDetail> {
 
 export function getPeople() {
   return unwrap<Person[]>(axios.get(endpoints.usage.people));
+}
+
+export function getBudgets(tz: string) {
+  return unwrap<Budget[]>(axios.get(endpoints.usage.budgets, { params: { tz } }));
+}
+
+export async function adminSetBudget(userId: string, monthlyNewContext: number) {
+  await axios.put(endpoints.usage.budget(userId), { monthly_new_context: monthlyNewContext });
+}
+
+export async function adminDeleteBudget(userId: string) {
+  await axios.delete(endpoints.usage.budget(userId));
 }
 
 export async function adminListUsers() {

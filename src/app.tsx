@@ -10,11 +10,7 @@ import { ProgressBar } from 'src/shared/ui/progress-bar';
 import { MotionLazy } from 'src/shared/ui/animate/motion-lazy';
 import { I18nProvider, LocalizationProvider } from 'src/locales';
 import { AuthProvider } from 'src/module/core/features/auth/context/jwt';
-import {
-  SettingsDrawer,
-  defaultSettings,
-  SettingsProvider,
-} from 'src/module/core/features/settings';
+import { defaultSettings, SettingsProvider } from 'src/module/core/features/settings';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +33,6 @@ export default function App({ children }: AppProps) {
               <MotionLazy>
                 <ProgressBar />
                 <Snackbar />
-                <SettingsDrawer defaultSettings={defaultSettings} />
                 {children}
               </MotionLazy>
             </LocalizationProvider>

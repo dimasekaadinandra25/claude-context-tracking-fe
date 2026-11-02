@@ -91,6 +91,15 @@ export type Person = {
   is_active: boolean;
 };
 
+export type Budget = {
+  user_id: string;
+  full_name: string;
+  email: string;
+  monthly_new_context: number | null;
+  used_new_context: number;
+  month_start: string;
+};
+
 export type AdminUser = {
   id: string;
   email: string;

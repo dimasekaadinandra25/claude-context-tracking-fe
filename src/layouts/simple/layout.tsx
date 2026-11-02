@@ -10,7 +10,7 @@ import Alert from '@mui/material/Alert';
 import { BrandLogo } from 'src/shared/ui/logo';
 
 import { SimpleCompactContent } from './content';
-import { SettingsButton } from '../components/settings-button';
+import { ModeButton } from '../components/mode-button';
 import { MainSection, LayoutSection, HeaderSection } from '../core';
 
 // ----------------------------------------------------------------------
@@ -45,8 +45,7 @@ export function SimpleLayout({
       leftArea: <BrandLogo />,
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
-          {/** @slot Settings button */}
-          <SettingsButton />
+          <ModeButton />
         </Box>
       ),
     };

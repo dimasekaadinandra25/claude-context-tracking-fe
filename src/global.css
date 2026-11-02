@@ -37,6 +37,18 @@ body,
   min-height: 100%;
   flex-direction: column;
 }
+body {
+  font-variant-numeric: tabular-nums;
+  background-attachment: fixed;
+  background-image:
+    radial-gradient(1200px 800px at 0% 0%, rgba(255, 196, 168, 0.55), transparent 60%),
+    radial-gradient(1000px 720px at 100% 100%, rgba(196, 176, 246, 0.45), transparent 60%);
+}
+[data-color-scheme='dark'] body {
+  background-image:
+    radial-gradient(1100px 760px at 0% 0%, rgba(217, 119, 87, 0.26), transparent 60%),
+    radial-gradient(1000px 700px at 100% 100%, rgba(139, 95, 208, 0.2), transparent 60%);
+}
 img {
   max-width: 100%;
   vertical-align: middle;

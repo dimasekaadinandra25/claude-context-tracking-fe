@@ -36,3 +36,5 @@ build
 tsconfig.tsbuildinfo
 .ncurc.js
 .env.prod
+
+.superpowers/

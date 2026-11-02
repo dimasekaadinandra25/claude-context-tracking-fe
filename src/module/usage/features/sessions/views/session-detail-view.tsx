@@ -1,10 +1,11 @@
-import type { OutputUsage, SessionDetail } from '../../../types';
+import type { OutputUsage, SessionDetail, TimeseriesPoint } from '../../../types';
 
 import { useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+import { LineChart } from '@mui/x-charts/LineChart';
 
 import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
@@ -13,10 +14,16 @@ import { useTranslate } from 'src/locales';
 
 import { getSession } from '../../../api/usage';
 import { useFetch } from '../../../hooks/use-fetch';
+import { toStackedSeries } from '../../../utils/series';
 import { PageShell } from '../../../components/page-shell';
 import { ChartCard } from '../../../components/chart-card';
-import { formatTokens, formatDateTime } from '../../../utils/format';
-import { StackedBarChart } from '../../../components/stacked-bar-chart';
+import { EmptyState } from '../../../components/empty-state';
+import { formatTokens, formatBucket, formatDateTime } from '../../../utils/format';
+
+const CHART_HEIGHT = 320;
+const Y_AXIS_WIDTH = 56;
+
+const valueFormatter = (value: number | null) => formatTokens(value ?? 0);
 
 const sum = (detail: SessionDetail, field: keyof OutputUsage) =>
   detail.hours.reduce((total, h) => total + h[field], 0);
@@ -69,6 +76,25 @@ function Facts({ detail }: { detail: SessionDetail }) {
   );
 }
 
+function HourlyLineChart({ points }: { points: TimeseriesPoint[] }) {
+  const { t } = useTranslate('usage');
+
+  if (points.length === 0) {
+    return <EmptyState message={t('empty.chart')} />;
+  }
+
+  const { buckets, series } = toStackedSeries(points);
+
+  return (
+    <LineChart
+      height={CHART_HEIGHT}
+      xAxis={[{ scaleType: 'point', data: buckets.map((b) => formatBucket(b, 'hour')) }]}
+      yAxis={[{ width: Y_AXIS_WIDTH, valueFormatter: (value: number) => formatTokens(value) }]}
+      series={series.map((s) => ({ ...s, valueFormatter, showMark: false }))}
+    />
+  );
+}
+
 export function SessionDetailView() {
   const { t } = useTranslate('usage');
   const { id = '' } = useParams();
@@ -86,8 +112,8 @@ export function SessionDetailView() {
       {data && (
         <>
           <Facts detail={data} />
-          <ChartCard title={t('session.chart')}>
-            <StackedBarChart points={points} interval="hour" />
+          <ChartCard title={t('session.lineChart')}>
+            <HourlyLineChart points={points} />
           </ChartCard>
         </>
       )}

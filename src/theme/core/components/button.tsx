@@ -114,6 +114,11 @@ const textVariants = [
       color: theme.vars.palette.common[colorKey],
     }),
   })) satisfies ButtonVariants),
+  ...(colorKeys.palette.map((colorKey) => ({
+    props: (props) =>
+      (props.variant === 'text' || props.variant === 'outlined') && props.color === colorKey,
+    style: ({ theme }) => theme.applyStyles('light', { color: theme.vars.palette[colorKey].dark }),
+  })) satisfies ButtonVariants),
 ] satisfies ButtonVariants;
 
 const softVariants = [

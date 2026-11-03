@@ -38,6 +38,9 @@ const fullOverview = {
   total_output_tokens: 48200,
   total_subagent_requests: 1234,
   total_subagent_output_tokens: 9000,
+  total_input_tokens: 10000,
+  total_cache_write_tokens: 10000,
+  total_cache_read_tokens: 80000,
 };
 
 const oldServerOverview = {
@@ -191,6 +194,7 @@ describe('OverviewView compare periods', () => {
     expect(await tileChange('Requests')).toBe('▼ 20% vs prev 7d');
     expect(await tileChange('Sessions')).toBe('—');
     expect(await tileChange('Output tokens')).toBe('0% vs prev 7d');
+    expect(await tileChange('Cache hit rate')).toBe('0% vs prev 7d');
   });
 
   it('quickRangeRefetchesBothPeriods', async () => {

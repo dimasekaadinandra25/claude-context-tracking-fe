@@ -6,9 +6,9 @@ import { useTranslate } from 'src/locales';
 
 import { KpiTile } from './kpi-tile';
 import { rangeDays } from '../utils/range';
-import { formatTokens } from '../utils/format';
 import { percentChange } from '../utils/scale';
 import { useReportRange } from '../hooks/use-report-range';
+import { cacheHitRate, formatTokens, formatPercent } from '../utils/format';
 
 type Props = {
   overview: Overview;
@@ -22,6 +22,10 @@ type Total = {
 
 const count = (value: number) => value.toLocaleString();
 
+const SIZE = { xs: 6, md: 4 };
+const DENSE_SIZE = { ...SIZE, lg: 3 };
+const LAST_DENSE_SIZE = { xs: 12, lg: 3 };
+
 const TILES: { key: string; field: Total; format: (value: number) => string }[] = [
   { key: 'newContext', field: 'total_new_context', format: formatTokens },
   { key: 'outputTokens', field: 'total_output_tokens', format: formatTokens },
@@ -30,6 +34,13 @@ const TILES: { key: string; field: Total; format: (value: number) => string }[] 
   { key: 'sessions', field: 'total_sessions', format: count },
   { key: 'activePeople', field: 'active_people', format: String },
 ];
+
+const overallCacheHitRate = (overview: Overview) =>
+  cacheHitRate({
+    input_tokens: overview.total_input_tokens,
+    cache_write_tokens: overview.total_cache_write_tokens,
+    cache_read_tokens: overview.total_cache_read_tokens,
+  });
 
 function useChange() {
   const { t } = useTranslate('usage');
@@ -49,11 +60,13 @@ export function KpiRow({ overview, previous, showPeople = true }: Props) {
   const { t } = useTranslate('usage');
   const change = useChange();
   const tiles = showPeople ? TILES : TILES.filter((tile) => tile.key !== 'activePeople');
+  const cacheRate = overallCacheHitRate(overview);
+  const size = showPeople ? DENSE_SIZE : SIZE;
 
   return (
     <Grid container spacing={3}>
       {tiles.map((tile) => (
-        <Grid key={tile.key} size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid key={tile.key} size={size}>
           <KpiTile
             title={t(`kpi.${tile.key}`)}
             value={tile.format(overview[tile.field])}
@@ -61,6 +74,18 @@ export function KpiRow({ overview, previous, showPeople = true }: Props) {
           />
         </Grid>
       ))}
+      <Grid size={showPeople ? LAST_DENSE_SIZE : SIZE}>
+        <KpiTile
+          title={t('kpi.cacheHitRate')}
+          description={t('cache.hint')}
+          value={formatPercent(cacheRate)}
+          change={
+            previous && cacheRate !== null
+              ? change(cacheRate, overallCacheHitRate(previous) ?? 0)
+              : undefined
+          }
+        />
+      </Grid>
     </Grid>
   );
 }

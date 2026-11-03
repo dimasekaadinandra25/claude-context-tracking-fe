@@ -1,6 +1,8 @@
 import type { Column } from './data-table';
 import type { UsageSession } from '../types';
 
+import Box from '@mui/material/Box';
+
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
@@ -12,6 +14,12 @@ import { ModelChips } from './model-chips';
 import { sessionTitle } from '../utils/session';
 import { formatTokens, formatDateTime } from '../utils/format';
 
+const TITLE_SX = {
+  maxWidth: { xs: 240, md: 'none' },
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+};
+
 export function RecentSessionsTable({ sessions }: { sessions: UsageSession[] }) {
   const { t } = useTranslate('usage');
   const router = useRouter();
@@ -20,7 +28,11 @@ export function RecentSessionsTable({ sessions }: { sessions: UsageSession[] }) 
     {
       id: 'title',
       label: t('col.title'),
-      render: (s) => <RowLink href={paths.dashboard.session(s.id)}>{sessionTitle(s, t)}</RowLink>,
+      render: (s) => (
+        <Box sx={TITLE_SX}>
+          <RowLink href={paths.dashboard.session(s.id)}>{sessionTitle(s, t)}</RowLink>
+        </Box>
+      ),
     },
     { id: 'project', label: t('col.project'), render: (s) => s.project || '-' },
     { id: 'models', label: t('col.models'), render: (s) => <ModelChips models={s.models} /> },
@@ -33,6 +45,7 @@ export function RecentSessionsTable({ sessions }: { sessions: UsageSession[] }) 
     {
       id: 'lastRequest',
       label: t('col.lastRequest'),
+      sx: { whiteSpace: { xs: 'nowrap' } },
       render: (s) => formatDateTime(s.last_request_at),
     },
   ];

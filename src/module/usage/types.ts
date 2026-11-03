@@ -4,6 +4,24 @@ export type OutputUsage = {
   subagent_output_tokens: number;
 };
 
+export type CacheUsage = {
+  input_tokens: number;
+  cache_write_tokens: number;
+  cache_read_tokens: number;
+};
+
+export type ContextPressure = {
+  sessions_near_full: number;
+  compactions: number;
+};
+
+export type Overhead = {
+  system_tokens: number;
+  memory_tokens: number;
+  agents_tokens: number;
+  skills_tokens: number;
+};
+
 export type OverviewPerson = {
   user_id: string;
   full_name: string;
@@ -16,7 +34,9 @@ export type OverviewPerson = {
   last_synced_at: string | null;
   app_version: string | null;
   is_active?: boolean;
-} & OutputUsage;
+} & OutputUsage &
+  CacheUsage &
+  ContextPressure;
 
 export type Overview = {
   people: OverviewPerson[];
@@ -27,6 +47,11 @@ export type Overview = {
   total_output_tokens: number;
   total_subagent_requests: number;
   total_subagent_output_tokens: number;
+  total_input_tokens: number;
+  total_cache_write_tokens: number;
+  total_cache_read_tokens: number;
+  total_sessions_near_full: number;
+  total_compactions: number;
 };
 
 export type Interval = 'hour' | 'day';
@@ -66,7 +91,8 @@ export type UsageSession = {
   last_reported_at: string;
   user_name?: string;
   models: string[];
-} & OutputUsage;
+} & OutputUsage &
+  CacheUsage;
 
 export type SessionHour = {
   hour: string;
@@ -80,7 +106,20 @@ export type SessionDetail = {
   user_name: string;
   models: string[];
   hours: SessionHour[];
+  overhead: Overhead | null;
 };
+
+export type ProjectUsage = {
+  project: string;
+  new_context: number;
+  requests: number;
+  output_tokens: number;
+  sessions: number;
+  members: number;
+  models: string[];
+  overhead: Overhead | null;
+} & CacheUsage &
+  ContextPressure;
 
 export type SessionSort = 'last_request_at' | '-last_request_at' | 'new_context' | '-new_context';
 

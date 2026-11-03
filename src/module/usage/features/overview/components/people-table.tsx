@@ -21,6 +21,7 @@ import { niceMax } from 'src/module/usage/utils/scale';
 import { RowLink } from 'src/module/usage/components/row-link';
 import { GridActions } from 'src/module/usage/components/grid-actions';
 import { formatTokens, formatDateTime } from 'src/module/usage/utils/format';
+import { cacheRateColumn } from 'src/module/usage/components/cache-rate-column';
 import { ShareBar } from 'src/module/usage/features/overview/components/share-bar';
 import {
   useColumnVisibility,
@@ -36,6 +37,15 @@ const TREND_DAYS = 7;
 const SPARK_HEIGHT = 32;
 const NO_TREND = Array<number>(TREND_DAYS).fill(0);
 const STALE_HOURS = 24;
+const PHONE_HIDDEN = [
+  'share',
+  'trend',
+  'subagent_requests',
+  'subagent_output_tokens',
+  'current_model',
+  'app_version',
+  'last_synced_at',
+];
 
 const compareVersions = (a: string, b: string) => a.localeCompare(b, undefined, { numeric: true });
 
@@ -112,6 +122,22 @@ function numberColumn(
   return { field, headerName, width: NARROW, valueFormatter: (value: number) => format(value) };
 }
 
+function nameColumn(headerName: string): GridColDef<OverviewPerson> {
+  return {
+    field: NAME_FIELD,
+    headerName,
+    hideable: false,
+    flex: 1,
+    minWidth: WIDE,
+    valueGetter: (_v, row) => row.full_name || row.email,
+    renderCell: ({ row, value, tabIndex }) => (
+      <RowLink href={paths.dashboard.person(row.user_id)} tabIndex={tabIndex}>
+        {value}
+      </RowLink>
+    ),
+  };
+}
+
 function trendColumn(
   headerName: string,
   trends: Map<string, number[]>,
@@ -155,19 +181,7 @@ function useColumns(
   const scale = niceMax(Math.max(0, ...people.map((p) => p.new_context)));
 
   return [
-    {
-      field: NAME_FIELD,
-      headerName: t('col.name'),
-      hideable: false,
-      flex: 1,
-      minWidth: WIDE,
-      valueGetter: (_v, row) => row.full_name || row.email,
-      renderCell: ({ row, value, tabIndex }) => (
-        <RowLink href={paths.dashboard.person(row.user_id)} tabIndex={tabIndex}>
-          {value}
-        </RowLink>
-      ),
-    },
+    nameColumn(t('col.name')),
     numberColumn('new_context', t('col.newContext'), formatTokens),
     {
       field: 'share',
@@ -182,6 +196,7 @@ function useColumns(
     trendColumn(t('col.trend'), trends, theme.vars.palette.primary.main),
     numberColumn('requests', t('col.requests'), count),
     numberColumn('output_tokens', t('col.outputTokens'), formatTokens),
+    cacheRateColumn<OverviewPerson>(t),
     { ...numberColumn('subagent_requests', t('col.subagentRequests'), count), width: WIDE },
     numberColumn('subagent_output_tokens', t('col.subagentOutput'), formatTokens),
     { field: 'sessions', headerName: t('col.sessions'), width: NARROW },
@@ -224,7 +239,8 @@ export function PeopleTable({ people, trends }: Props) {
   const [visibility, setVisibility] = useColumnVisibility(
     VISIBILITY_KEY,
     defaultPeopleColumns,
-    NAME_FIELD
+    NAME_FIELD,
+    PHONE_HIDDEN
   );
 
   return (

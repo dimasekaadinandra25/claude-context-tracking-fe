@@ -1,3 +1,5 @@
+import type { CacheUsage } from '../types';
+
 import dayjs from 'dayjs';
 
 const THOUSAND = 1_000;
@@ -17,6 +19,17 @@ export function formatBucket(iso: string, interval: 'hour' | 'day'): string {
 
 export function formatDateTime(iso: string | null | undefined): string {
   return iso ? dayjs(iso).format('DD MMM YYYY HH:mm') : '-';
+}
+
+const PERCENT = 100;
+
+export function cacheHitRate(usage: CacheUsage): number | null {
+  const total = usage.input_tokens + usage.cache_write_tokens + usage.cache_read_tokens;
+  return total > 0 ? usage.cache_read_tokens / total : null;
+}
+
+export function formatPercent(ratio: number | null): string {
+  return ratio === null ? '—' : `${Math.round(ratio * PERCENT)}%`;
 }
 
 const MODEL_PREFIX = 'claude-';

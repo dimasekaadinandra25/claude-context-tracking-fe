@@ -3,7 +3,9 @@ import type { Column } from '../../../components/data-table';
 
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
 import { PieChart } from '@mui/x-charts/PieChart';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useTranslate } from 'src/locales';
 
@@ -20,6 +22,8 @@ const DONUT_HEIGHT = 320;
 const DONUT_INNER = 70;
 
 function ModelDonut({ models }: { models: ModelUsage[] }) {
+  const theme = useTheme();
+  const legendBelow = useMediaQuery(theme.breakpoints.down('lg'));
   const { t } = useTranslate('usage');
   const data = models.filter((m) => m.new_context > 0);
 
@@ -30,6 +34,16 @@ function ModelDonut({ models }: { models: ModelUsage[] }) {
   return (
     <PieChart
       height={DONUT_HEIGHT}
+      slotProps={
+        legendBelow
+          ? {
+              legend: {
+                direction: 'horizontal',
+                position: { vertical: 'bottom', horizontal: 'center' },
+              },
+            }
+          : undefined
+      }
       series={[
         {
           innerRadius: DONUT_INNER,

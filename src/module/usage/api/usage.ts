@@ -9,8 +9,10 @@ import type {
   Overview,
   AdminUser,
   IssuedKey,
+  CacheUsage,
   ModelUsage,
   OutputUsage,
+  ProjectUsage,
   UsageSession,
   SessionDetail,
   SessionsQuery,
@@ -32,13 +34,28 @@ const NO_OUTPUT: OutputUsage = {
   subagent_output_tokens: 0,
 };
 
+const NO_CACHE: CacheUsage = {
+  input_tokens: 0,
+  cache_write_tokens: 0,
+  cache_read_tokens: 0,
+};
+
+const NO_PRESSURE = { sessions_near_full: 0, compactions: 0 };
+
 const NO_TOTALS = {
   total_output_tokens: 0,
   total_subagent_requests: 0,
   total_subagent_output_tokens: 0,
+  total_input_tokens: 0,
+  total_cache_write_tokens: 0,
+  total_cache_read_tokens: 0,
+  total_sessions_near_full: 0,
+  total_compactions: 0,
 };
 
 const withOutput = <T extends OutputUsage>(row: T): T => ({ ...NO_OUTPUT, ...row });
+
+const withSession = (row: UsageSession): UsageSession => withOutput({ ...NO_CACHE, ...row });
 
 function rangeParams(range: ReportRange, userId?: string) {
   return userId ? { ...buildRangeParams(range), user_id: userId } : buildRangeParams(range);
@@ -51,7 +68,12 @@ export async function getOverview(range: ReportRange, userId?: string): Promise<
   return {
     ...NO_TOTALS,
     ...overview,
-    people: overview.people.map((p) => ({ ...withOutput(p), app_version: p.app_version ?? null })),
+    people: overview.people.map((p) => ({
+      ...NO_CACHE,
+      ...NO_PRESSURE,
+      ...withOutput(p),
+      app_version: p.app_version ?? null,
+    })),
   };
 }
 
@@ -82,16 +104,30 @@ export async function getSessions(
   const page = await unwrapList<UsageSession>(
     axios.get(endpoints.usage.sessions, { params: { ...buildRangeParams(range), ...query } })
   );
-  return { ...page, items: page.items.map(withOutput) };
+  return { ...page, items: page.items.map(withSession) };
 }
 
 export async function getSession(id: string): Promise<SessionDetail> {
   const detail = await unwrap<SessionDetail>(axios.get(endpoints.usage.session(id)));
   return {
     ...detail,
-    session: withOutput(detail.session),
+    session: withSession(detail.session),
     hours: (detail.hours ?? []).map(withOutput),
+    overhead: detail.overhead ?? null,
   };
+}
+
+export async function getProjects(range: ReportRange, userId?: string) {
+  const projects = await unwrap<ProjectUsage[]>(
+    axios.get(endpoints.usage.projects, { params: rangeParams(range, userId) })
+  );
+  return projects.map((p) => ({
+    ...NO_CACHE,
+    ...NO_PRESSURE,
+    ...p,
+    models: p.models ?? [],
+    overhead: p.overhead ?? null,
+  }));
 }
 
 export function getPeople() {

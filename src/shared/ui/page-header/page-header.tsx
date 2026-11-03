@@ -46,9 +46,10 @@ export function PageHeader({
   return (
     <Box sx={[{ mb: 3 }, ...(Array.isArray(sx) ? sx : [sx])]}>
       <Stack
-        direction={{ xs: 'column', sm: 'row' }}
+        direction="row"
         spacing={2}
-        sx={{ alignItems: { sm: 'center' }, justifyContent: 'space-between' }}
+        useFlexGap
+        sx={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}
       >
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center', minWidth: 0 }}>
           {backHref && (
@@ -79,7 +80,11 @@ export function PageHeader({
 
           <Box sx={{ minWidth: 0 }}>
             {title && (
-              <Typography variant={titleVariant} noWrap>
+              <Typography
+                variant={titleVariant}
+                noWrap
+                sx={{ whiteSpace: { xs: 'normal', md: 'nowrap' } }}
+              >
                 {title}
               </Typography>
             )}

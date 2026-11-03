@@ -1,5 +1,5 @@
-import { it, expect, describe } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
+import { it, vi, expect, describe, afterEach } from 'vitest';
 
 import { useColumnVisibility, defaultPeopleColumns } from './use-column-visibility';
 
@@ -36,5 +36,29 @@ describe('useColumnVisibility', () => {
     act(() => result.current[1]({ sessions: false }));
     expect(result.current[0]).toEqual({ sessions: false });
     expect(JSON.parse(localStorage.getItem(KEY) ?? '{}')).toEqual({ sessions: false });
+  });
+});
+
+describe('useColumnVisibility on a phone', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  const renderPhone = () => {
+    vi.stubGlobal('matchMedia', () => ({
+      matches: true,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
+    return renderHook(() => useColumnVisibility(KEY, { requests: false }, 'name', ['trend']));
+  };
+
+  it('also hides the phone-hidden columns by default', () => {
+    const { result } = renderPhone();
+    expect(result.current[0]).toEqual({ requests: false, trend: false, name: true });
+  });
+
+  it('keeps a saved choice over the phone defaults', () => {
+    localStorage.setItem(KEY, JSON.stringify({ trend: true }));
+    const { result } = renderPhone();
+    expect(result.current[0]).toEqual({ trend: true, name: true });
   });
 });

@@ -19,8 +19,15 @@ type Props = {
 };
 
 const FIELD_WIDTH = 200;
+const FIELD_SX = { minWidth: FIELD_WIDTH, flex: { xs: 1, sm: 'none' } };
 
-function PersonFilter({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+export function PersonFilter({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
   const { t } = useTranslate('usage');
   const load = useCallback(() => getPeople(), []);
   const people = useFetch(load).data ?? [];
@@ -32,7 +39,7 @@ function PersonFilter({ value, onChange }: { value: string; onChange: (v: string
       label={t('filter.person')}
       value={people.some((p) => p.id === value) ? value : ''}
       onChange={(event) => onChange(event.target.value)}
-      sx={{ minWidth: FIELD_WIDTH }}
+      sx={FIELD_SX}
     >
       <MenuItem value="">{t('filter.all')}</MenuItem>
       {people.map((p) => (
@@ -57,7 +64,7 @@ export function SessionFilters({ filters, models, isAdmin, onChange }: Props) {
         label={t('filter.project')}
         value={filters.project ?? ''}
         onChange={(event) => onChange({ project: event.target.value })}
-        sx={{ minWidth: FIELD_WIDTH }}
+        sx={FIELD_SX}
       />
       <TextField
         select
@@ -65,7 +72,7 @@ export function SessionFilters({ filters, models, isAdmin, onChange }: Props) {
         label={t('filter.model')}
         value={models.includes(filters.model ?? '') ? filters.model : ''}
         onChange={(event) => onChange({ model: event.target.value })}
-        sx={{ minWidth: FIELD_WIDTH }}
+        sx={FIELD_SX}
       >
         <MenuItem value="">{t('filter.all')}</MenuItem>
         {models.map((model) => (
@@ -79,7 +86,7 @@ export function SessionFilters({ filters, models, isAdmin, onChange }: Props) {
         label={t('filter.search')}
         value={filters.q ?? ''}
         onChange={(event) => onChange({ q: event.target.value })}
-        sx={{ minWidth: FIELD_WIDTH }}
+        sx={FIELD_SX}
       />
     </Box>
   );

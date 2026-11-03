@@ -8,6 +8,7 @@ import { sessionTitle } from '../../../utils/session';
 import { RowLink } from '../../../components/row-link';
 import { ModelChips } from '../../../components/model-chips';
 import { formatTokens, formatDateTime } from '../../../utils/format';
+import { cacheRateColumn } from '../../../components/cache-rate-column';
 
 const WIDTH = { title: 150, person: 120, models: 170, tokens: 110, latestPeak: 140, date: 170 };
 
@@ -18,6 +19,7 @@ export const defaultSessionColumns: GridColumnVisibilityModel = {
   requests: false,
   subagent_requests: false,
   compactions: false,
+  cache_hit_rate: false,
 };
 
 type Field = keyof UsageSession & string;
@@ -63,6 +65,7 @@ export function sessionColumns(t: TFunction): GridColDef<UsageSession>[] {
     },
     { ...tokenColumn('new_context', t('col.newContextInRange')), sortable: true },
     tokenColumn('output_tokens', t('col.outputTokensInRange')),
+    { ...cacheRateColumn<UsageSession>(t, t('col.cacheHitRateInRange')), sortable: false },
     {
       field: 'latest_peak',
       headerName: t('col.latestPeak'),

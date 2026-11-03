@@ -19,6 +19,7 @@ const PersonPage = lazy(() => import('src/module/usage/features/person/pages'));
 const SessionsPage = lazy(() => import('src/module/usage/features/sessions/pages/list'));
 const SessionPage = lazy(() => import('src/module/usage/features/sessions/pages/detail'));
 const ModelsPage = lazy(() => import('src/module/usage/features/models/pages'));
+const ProjectsPage = lazy(() => import('src/module/usage/features/projects/pages'));
 const AdminPeoplePage = lazy(() => import('src/module/usage/features/admin-people/pages'));
 const ChangePasswordPage = lazy(
   () => import('src/module/core/features/auth/pages/change-password')
@@ -68,6 +69,7 @@ export const dashboardRoutes: RouteObject[] = [
       { path: 'sessions', element: <SessionsPage /> },
       { path: 'sessions/:id', element: <SessionPage /> },
       { path: 'models', element: <ModelsPage /> },
+      { path: 'projects', element: <ProjectsPage /> },
       { path: 'admin/people', element: admin(<AdminPeoplePage />) },
       { path: 'account/password', element: <ChangePasswordPage /> },
     ],

@@ -114,16 +114,18 @@ export function KeysDrawer({ user, onClose }: Props) {
   return (
     <Drawer anchor="right" open={!!user} onClose={onClose}>
       <Box sx={{ width: { xs: '100vw', md: DRAWER_WIDTH }, p: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mb: 2 }}>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             {t('keys.title', { name: displayName(user) })}
           </Typography>
-          <Button variant="contained" onClick={() => keys.setIssuing(true)}>
-            {t('keys.issue')}
-          </Button>
-          <Button color="inherit" onClick={onClose}>
-            {tCommon('actions.close')}
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="contained" onClick={() => keys.setIssuing(true)}>
+              {t('keys.issue')}
+            </Button>
+            <Button color="inherit" onClick={onClose}>
+              {tCommon('actions.close')}
+            </Button>
+          </Box>
         </Box>
         {keys.error && <Alert severity="error">{keys.error}</Alert>}
         <DataTable

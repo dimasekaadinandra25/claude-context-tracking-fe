@@ -28,6 +28,7 @@ const PAGE_SIZES = [10, 25, 50, 100];
 const VISIBILITY_KEY = 'usage.sessions.columns';
 const TITLE_FIELD = 'title';
 const EXPORT_FILE = 'sessions';
+const PHONE_HIDDEN = ['user_name', 'models', 'latest_peak'];
 
 function SessionsToolbar() {
   return (
@@ -44,7 +45,8 @@ export function SessionsGrid(props: Props) {
   const [visibility, setVisibility] = useColumnVisibility(
     VISIBILITY_KEY,
     defaultSessionColumns,
-    TITLE_FIELD
+    TITLE_FIELD,
+    PHONE_HIDDEN
   );
 
   return (

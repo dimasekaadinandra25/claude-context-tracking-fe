@@ -4,6 +4,17 @@
 
 ### Added
 
+- Cache hit rate (cache reads / all input): a KPI tile on the overview and member detail with the
+  previous-period change, and a column in Members, Sessions (in range, hidden by default) and
+  Projects. Shows "—" when there was no input.
+- Context pressure: an overview card listing members with near-full sessions or compactions, and
+  the member's own two numbers on member detail.
+- Projects page (`/dashboard/projects`, `GET /usage/v1/projects`): new context, requests, sessions,
+  members (admin), models, cache hit rate, compactions, near-full sessions and overhead per request
+  with a breakdown bar; project links open the sessions list filtered by project; CSV export and an
+  admin member filter.
+- Session detail: an Overhead per request card (system prompt & tools, memory files, agents,
+  skills, total) when the server sends `overhead`.
 - Members table: an App version column with an Outdated chip for versions below the newest one,
   and a warning icon on Last synced when a member has not synced for over 24 hours.
 - Heatmap drill-down: clicking a cell lists the dates behind it, newest first, each linking to the
@@ -32,6 +43,16 @@
 - Sessions grid fits a 1440px screen: Project, Requests, Subagent requests, Compactions and the
   separate latest / peak context columns are hidden by default (Columns menu, remembered per
   browser), and the latest / peak column no longer truncates.
+- Phone and tablet layouts: KPI tiles two per row on phones, page header actions wrap under the
+  title, filters stack, tables scroll sideways instead of wrapping into tall rows, heatmap day
+  labels stay pinned while its hours scroll, the models donut legend moves below the chart, and the
+  Members, Sessions and Projects grids hide low-value columns by default on phones.
+- Contrast: placeholder, unshrunk label and nav subheader text (`text.disabled`) and the dark
+  status shades (accent, success, warning) meet WCAG AA on glass cards in both themes; colored
+  text and outlined buttons use the dark shade in light mode.
+- Overview KPI tiles sit 4 + 3 on wide screens and the last tile spans the row below that; chart
+  cards in a row share one height and align their content with the card title; Context pressure
+  names truncate on phones so both counts stay visible; dates and admin actions no longer wrap.
 - Sign-in page tagline reads "Track Claude Code context usage across your team."
 - `CLAUDE.md` and `docs/` describe this dashboard; the starter skeleton's finance pattern docs
   (`docs/patterns/`, `docs/CONVENTIONS.md`) are removed.

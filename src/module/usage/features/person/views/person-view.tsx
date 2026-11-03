@@ -17,6 +17,7 @@ import { RangePicker } from '../../../components/range-picker';
 import { BudgetCard } from '../../overview/components/budget-card';
 import { StackedBarChart } from '../../../components/stacked-bar-chart';
 import { RecentSessionsTable } from '../../../components/recent-sessions-table';
+import { PersonPressureCard } from '../../overview/components/context-pressure-card';
 
 export function PersonView() {
   const { t } = useTranslate('usage');
@@ -47,6 +48,7 @@ export function PersonView() {
         <>
           <KpiRow overview={overview} previous={previous} showPeople={false} />
           <BudgetCard userId={userId} />
+          {person && <PersonPressureCard person={person} />}
           <ChartCard title={t('person.chart')}>
             <StackedBarChart points={points} />
           </ChartCard>

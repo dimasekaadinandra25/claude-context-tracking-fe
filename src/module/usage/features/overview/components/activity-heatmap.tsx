@@ -26,6 +26,16 @@ const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 const HOURS = Array.from({ length: 24 }, (_, hour) => hour);
 const HOUR_LABEL_STEP = 3;
 const MIN_WIDTH = 560;
+const STICKY_SX = {
+  position: 'sticky',
+  left: 0,
+  zIndex: 1,
+  alignSelf: 'stretch',
+  display: 'flex',
+  alignItems: 'center',
+  bgcolor: { xs: 'background.paper', sm: 'transparent' },
+} as const;
+const LABEL_SX = { ...STICKY_SX, color: 'text.secondary' } as const;
 
 type CellProps = {
   label: string;
@@ -122,14 +132,14 @@ export function ActivityHeatmap({ points }: { points: TimeseriesPoint[] }) {
           gridTemplateColumns: `40px repeat(${HOURS.length}, 1fr)`,
         }}
       >
-        <Box />
+        <Box sx={STICKY_SX} />
         {HOURS.map((hour) => (
           <Typography key={hour} variant="caption" sx={{ color: 'text.secondary' }}>
             {hour % HOUR_LABEL_STEP === 0 ? hour : ''}
           </Typography>
         ))}
         {grid.map((row, day) => [
-          <Typography key={DAY_KEYS[day]} variant="caption" sx={{ color: 'text.secondary' }}>
+          <Typography key={DAY_KEYS[day]} variant="caption" sx={LABEL_SX}>
             {t(`heatmap.${DAY_KEYS[day]}`)}
           </Typography>,
           ...row.map((value, hour) => (

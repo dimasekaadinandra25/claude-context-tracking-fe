@@ -1,6 +1,6 @@
 import { it, expect, describe } from 'vitest';
 
-import { shortModel, formatTokens } from './format';
+import { shortModel, cacheHitRate, formatTokens, formatPercent } from './format';
 
 describe('formatTokens', () => {
   it.each([
@@ -24,5 +24,31 @@ describe('shortModel', () => {
     ['my-claude-model', 'my-claude-model'],
   ])('shortens %s to %s', (model, expected) => {
     expect(shortModel(model)).toBe(expected);
+  });
+});
+
+describe('formatPercent', () => {
+  it.each([
+    [null, '—'],
+    [0, '0%'],
+    [0.8, '80%'],
+    [0.666, '67%'],
+    [1, '100%'],
+  ])('formats %s as %s', (ratio, expected) => {
+    expect(formatPercent(ratio)).toBe(expected);
+  });
+});
+
+describe('cacheHitRate', () => {
+  it.each([
+    [0, 0, 0, null],
+    [100, 0, 0, 0],
+    [10, 10, 80, 0.8],
+    [0, 0, 500, 1],
+    [25, 25, 50, 0.5],
+  ])('input %d, write %d, read %d gives %s', (input, write, read, expected) => {
+    expect(
+      cacheHitRate({ input_tokens: input, cache_write_tokens: write, cache_read_tokens: read })
+    ).toBe(expected);
   });
 });

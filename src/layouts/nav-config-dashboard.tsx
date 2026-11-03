@@ -18,6 +18,7 @@ const ICONS = {
   person: icon('ic-user'),
   sessions: icon('ic-kanban'),
   models: icon('ic-analytics'),
+  projects: icon('ic-folder'),
   people: icon('ic-lock'),
 };
 
@@ -40,6 +41,7 @@ export function useNavData(): NavSectionProps['data'] {
         icon: ICONS.sessions,
         deepMatch: true,
       },
+      { title: t('projects'), path: paths.dashboard.projects, icon: ICONS.projects },
       { title: t('models'), path: paths.dashboard.models, icon: ICONS.models },
     ];
 

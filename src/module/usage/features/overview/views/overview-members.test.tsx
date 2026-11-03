@@ -67,7 +67,9 @@ describe('OverviewView app version and sync', () => {
     expect(await screen.findByText('1.10.0')).toBeInTheDocument();
     expect(screen.getAllByText('Outdated')).toHaveLength(1);
     expect(screen.getByLabelText('Latest is 1.10.0')).toHaveTextContent('Outdated');
-    expect(screen.getByRole('gridcell', { name: '—' })).toBeInTheDocument();
+    expect(
+      screen.getAllByRole('gridcell', { name: '—' }).filter((c) => c.dataset.field === 'app_version')
+    ).toHaveLength(1);
   });
 
   it('staleSyncShowsWarningIcon', async () => {

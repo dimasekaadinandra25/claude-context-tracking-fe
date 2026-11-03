@@ -10,9 +10,9 @@ type Props = {
 
 export function ChartCard({ title, action, children }: Props) {
   return (
-    <Card>
+    <Card sx={{ height: '100%' }}>
       <CardHeader title={title} action={action} />
-      <Box sx={{ p: 2 }}>{children}</Box>
+      <Box sx={{ p: 2, px: { sm: 3 } }}>{children}</Box>
     </Card>
   );
 }

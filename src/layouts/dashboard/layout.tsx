@@ -172,8 +172,10 @@ export function DashboardLayout({
         borderTop: `dashed 1px ${t.vars.palette.divider}`,
       })}
     >
-      <AccountDrawer compact={compact} />
-      <Box sx={{ display: 'flex', flexDirection: 'inherit', gap: 1 }}>
+      <Box sx={compact ? undefined : { flex: 1, minWidth: 0 }}>
+        <AccountDrawer compact={compact} />
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'inherit', gap: 1, flexShrink: 0 }}>
         <QuickSearchButton onClick={search.onTrue} />
         <ModeButton />
       </Box>

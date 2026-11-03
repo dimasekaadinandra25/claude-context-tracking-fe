@@ -11,6 +11,7 @@ import { ChartCard } from '../../../components/chart-card';
 import { RangePicker } from '../../../components/range-picker';
 import { ActivityHeatmap } from '../components/activity-heatmap';
 import { StackedBarChart } from '../../../components/stacked-bar-chart';
+import { ContextPressureCard } from '../components/context-pressure-card';
 
 export function OverviewView() {
   const { t } = useTranslate('usage');
@@ -33,6 +34,7 @@ export function OverviewView() {
           <ChartCard title={t('overview.heatmap')}>
             <ActivityHeatmap points={hourly} />
           </ChartCard>
+          <ContextPressureCard people={overview.people} />
           <Card>
             <PeopleTable people={overview.people} trends={trends} />
           </Card>

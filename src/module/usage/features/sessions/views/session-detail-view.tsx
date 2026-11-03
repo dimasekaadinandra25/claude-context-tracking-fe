@@ -18,6 +18,7 @@ import { useFetch } from '../../../hooks/use-fetch';
 import { sessionTitle } from '../../../utils/session';
 import { PageShell } from '../../../components/page-shell';
 import { ChartCard } from '../../../components/chart-card';
+import { OverheadCard } from '../../../components/overhead';
 import { EmptyState } from '../../../components/empty-state';
 import { toHourlyStackedSeries } from '../../../utils/series';
 import { formatTokens, formatBucket, formatDateTime } from '../../../utils/format';
@@ -55,12 +56,15 @@ function facts(detail: SessionDetail): [string, string][] {
 function Facts({ detail }: { detail: SessionDetail }) {
   const { t } = useTranslate('usage');
   return (
-    <Card sx={{ p: 3 }}>
+    <Card sx={{ p: { xs: 2, sm: 3 } }}>
       <Box
         sx={{
           display: 'grid',
           gap: 2,
-          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+          gridTemplateColumns: {
+            xs: 'repeat(2, minmax(0, 1fr))',
+            sm: 'repeat(auto-fill, minmax(200px, 1fr))',
+          },
         }}
       >
         {facts(detail).map(([key, value]) => (
@@ -117,6 +121,7 @@ export function SessionDetailView() {
       {data && (
         <>
           <Facts detail={data} />
+          {data.overhead && <OverheadCard overhead={data.overhead} />}
           <ChartCard title={t('session.lineChart')}>
             <HourlyLineChart points={points} />
           </ChartCard>

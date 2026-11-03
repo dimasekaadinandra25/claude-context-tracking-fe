@@ -48,7 +48,7 @@ function BudgetRow({ budget }: { budget: Budgeted }) {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mb: 1 }}>
         <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
           {budget.full_name || budget.email}
         </Typography>

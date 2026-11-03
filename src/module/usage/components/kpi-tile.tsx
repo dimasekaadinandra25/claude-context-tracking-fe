@@ -1,18 +1,22 @@
 import Card from '@mui/material/Card';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 type Props = {
   title: string;
   value: string;
   change?: string;
+  description?: string;
 };
 
-export function KpiTile({ title, value, change }: Props) {
+export function KpiTile({ title, value, change, description }: Props) {
   return (
-    <Card sx={{ p: 3, height: '100%' }}>
-      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-        {title}
-      </Typography>
+    <Card sx={{ p: { xs: 2, sm: 3 }, height: '100%' }}>
+      <Tooltip title={description}>
+        <Typography variant="subtitle2" sx={{ color: 'text.secondary', width: 'fit-content' }}>
+          {title}
+        </Typography>
+      </Tooltip>
       <Typography
         variant="h3"
         sx={(theme) => ({

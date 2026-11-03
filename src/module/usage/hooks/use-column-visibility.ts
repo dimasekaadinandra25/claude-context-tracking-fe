@@ -2,6 +2,9 @@ import type { GridColumnVisibilityModel } from '@mui/x-data-grid';
 
 import { useState, useCallback } from 'react';
 
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 export const defaultPeopleColumns: GridColumnVisibilityModel = {};
 
 function readModel(key: string): GridColumnVisibilityModel | null {
@@ -19,10 +22,16 @@ function readModel(key: string): GridColumnVisibilityModel | null {
 export function useColumnVisibility(
   key: string,
   defaults: GridColumnVisibilityModel,
-  alwaysVisible: string
+  alwaysVisible: string,
+  phoneHidden: string[] = []
 ) {
+  const theme = useTheme();
+  const phone = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
   const [model, setModel] = useState(() => ({
-    ...(readModel(key) ?? defaults),
+    ...(readModel(key) ?? {
+      ...defaults,
+      ...(phone && Object.fromEntries(phoneHidden.map((field) => [field, false]))),
+    }),
     [alwaysVisible]: true,
   }));
 

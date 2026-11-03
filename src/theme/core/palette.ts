@@ -97,8 +97,8 @@ export const grey = createPaletteChannel(themeConfig.palette.grey);
  * ➤
  */
 export const text = {
-  light: createPaletteChannel({ primary: '#1E1726', secondary: '#5F566C', disabled: grey[500] }),
-  dark: createPaletteChannel({ primary: '#F5F1FA', secondary: '#A9A1B8', disabled: grey[600] }),
+  light: createPaletteChannel({ primary: '#1E1726', secondary: '#5F566C', disabled: '#636259' }),
+  dark: createPaletteChannel({ primary: '#F5F1FA', secondary: '#A9A1B8', disabled: grey[500] }),
 };
 
 export const background = {

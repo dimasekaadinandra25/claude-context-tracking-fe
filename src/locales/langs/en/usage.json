@@ -4,7 +4,8 @@
     "people": "No members yet.",
     "sessions": "No sessions in this range.",
     "models": "No model usage in this range.",
-    "keys": "No API keys yet."
+    "keys": "No API keys yet.",
+    "projects": "No project usage in this range."
   },
   "kpi": {
     "newContext": "New context",
@@ -16,7 +17,8 @@
     "up": "▲ {{percent}}% vs prev {{days}}d",
     "down": "▼ {{percent}}% vs prev {{days}}d",
     "flat": "0% vs prev {{days}}d",
-    "noPrevious": "—"
+    "noPrevious": "—",
+    "cacheHitRate": "Cache hit rate"
   },
   "col": {
     "name": "Name",
@@ -52,7 +54,11 @@
     "newContextInRange": "New context (in range)",
     "outputTokensInRange": "Output tokens (in range)",
     "subagentRequestsInRange": "Subagent requests (in range)",
-    "requestsAllTime": "Requests (all time)"
+    "requestsAllTime": "Requests (all time)",
+    "cacheHitRate": "Cache hit rate",
+    "cacheHitRateInRange": "Cache hit rate (in range)",
+    "members": "Members",
+    "overhead": "Overhead per request"
   },
   "fact": {
     "person": "Member",
@@ -204,5 +210,26 @@
     "members": "Members",
     "sessions": "Sessions",
     "empty": "No results"
+  },
+  "cache": {
+    "hint": "Share of input served from prompt cache. Higher means less fresh context per request."
+  },
+  "pressure": {
+    "title": "Context pressure",
+    "nearFull": "Near-full sessions",
+    "compactions": "Compactions",
+    "empty": "No sessions came close to their context limit in this range."
+  },
+  "projects": {
+    "title": "Projects",
+    "private": "Private sessions"
+  },
+  "overhead": {
+    "title": "Overhead per request",
+    "system": "System prompt & tools",
+    "memory": "Memory files",
+    "agents": "Agents",
+    "skills": "Skills",
+    "total": "Total"
   }
 }

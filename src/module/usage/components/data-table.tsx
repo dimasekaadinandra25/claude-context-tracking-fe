@@ -1,3 +1,4 @@
+import type { Theme, SxProps } from '@mui/material/styles';
 import type { TableHeadCellProps } from 'src/shared/ui/table';
 
 import Table from '@mui/material/Table';
@@ -7,6 +8,13 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 
 import { TableNoData, TableHeadCustom } from 'src/shared/ui/table';
+
+const CELL_SX = { whiteSpace: { xs: 'nowrap', md: 'normal' } } as const;
+
+const cellSx = (sx?: SxProps<Theme>): SxProps<Theme> => [
+  CELL_SX,
+  ...(Array.isArray(sx) ? sx : [sx]),
+];
 
 export type Column<T> = TableHeadCellProps & {
   render: (row: T) => React.ReactNode;
@@ -24,7 +32,9 @@ export function DataTable<T>({ columns, rows, rowKey, emptyMessage, onRowClick }
   return (
     <TableContainer sx={{ overflowX: 'auto' }}>
       <Table size="small">
-        <TableHeadCustom headCells={columns} />
+        <TableHeadCustom
+          headCells={columns.map((column) => ({ ...column, sx: cellSx(column.sx) }))}
+        />
         <TableBody>
           {rows.map((row) => (
             <TableRow
@@ -34,7 +44,7 @@ export function DataTable<T>({ columns, rows, rowKey, emptyMessage, onRowClick }
               sx={{ cursor: onRowClick ? 'pointer' : 'default' }}
             >
               {columns.map((column) => (
-                <TableCell key={column.id} align={column.align}>
+                <TableCell key={column.id} align={column.align} sx={cellSx(column.sx)}>
                   {column.render(row)}
                 </TableCell>
               ))}

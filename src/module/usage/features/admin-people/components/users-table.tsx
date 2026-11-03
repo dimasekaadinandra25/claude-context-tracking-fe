@@ -26,7 +26,7 @@ export function UsersTable({ users, onAction }: Props) {
   const { t } = useTranslate('usage');
 
   const actions = (u: UserRow) => (
-    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+    <Box sx={{ display: 'flex', gap: 1, whiteSpace: 'nowrap' }}>
       <Button size="small" onClick={() => onAction('keys', u)}>
         {t('admin.keys')}
       </Button>

@@ -1,4 +1,4 @@
-import type { OutputUsage, SessionDetail, TimeseriesPoint } from '../../../types';
+import type { OutputUsage, CodeActivity, SessionDetail, TimeseriesPoint } from '../../../types';
 
 import { useCallback } from 'react';
 import { useLocation } from 'react-router';
@@ -21,6 +21,7 @@ import { ChartCard } from '../../../components/chart-card';
 import { OverheadCard } from '../../../components/overhead';
 import { EmptyState } from '../../../components/empty-state';
 import { toHourlyStackedSeries } from '../../../utils/series';
+import { ActivityCard } from '../../../components/activity-card';
 import { formatTokens, formatBucket, formatDateTime } from '../../../utils/format';
 
 const CHART_HEIGHT = 320;
@@ -30,6 +31,9 @@ const valueFormatter = (value: number | null) => formatTokens(value ?? 0);
 
 const sum = (detail: SessionDetail, field: keyof OutputUsage) =>
   detail.hours.reduce((total, h) => total + h[field], 0);
+
+const toolTotal = (detail: SessionDetail, field: keyof CodeActivity) =>
+  detail.tools.reduce((total, tool) => total + tool[field], 0);
 
 function facts(detail: SessionDetail): [string, string][] {
   const s = detail.session;
@@ -122,6 +126,14 @@ export function SessionDetailView() {
         <>
           <Facts detail={data} />
           {data.overhead && <OverheadCard overhead={data.overhead} />}
+          {data.tools.length > 0 && (
+            <ActivityCard
+              linesAdded={toolTotal(data, 'lines_added')}
+              linesRemoved={toolTotal(data, 'lines_removed')}
+              commits={toolTotal(data, 'commits')}
+              tools={data.tools}
+            />
+          )}
           <ChartCard title={t('session.lineChart')}>
             <HourlyLineChart points={points} />
           </ChartCard>

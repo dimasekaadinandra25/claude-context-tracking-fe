@@ -51,6 +51,10 @@
     "peakContext": "Peak context (all time)",
     "trend": "Last 7 days",
     "appVersion": "App version",
+    "fiveHourLimit": "5h limit",
+    "sevenDayLimit": "7d limit",
+    "linesChanged": "Lines changed",
+    "commits": "Commits",
     "newContextInRange": "New context (in range)",
     "outputTokensInRange": "Output tokens (in range)",
     "subagentRequestsInRange": "Subagent requests (in range)",
@@ -213,6 +217,23 @@
   },
   "cache": {
     "hint": "Share of input served from prompt cache. Higher means less fresh context per request."
+  },
+  "activity": {
+    "title": "Code activity",
+    "linesAdded": "Lines added",
+    "linesRemoved": "Lines removed",
+    "commits": "Commits",
+    "tokensPerCommit": "Output tokens per commit",
+    "tools": "Tool calls",
+    "empty": "No code activity in this range. Counts appear once members update the app."
+  },
+  "limits": {
+    "title": "Plan limits",
+    "fiveHour": "5-hour window",
+    "sevenDay": "7-day window",
+    "used": "{{percent}}% used",
+    "resets": "Resets {{when}}",
+    "reported": "Reported {{ago}} ago"
   },
   "pressure": {
     "title": "Context pressure",

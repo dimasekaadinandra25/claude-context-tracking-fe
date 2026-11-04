@@ -14,8 +14,10 @@ import { PersonPicker } from '../components/person-picker';
 import { PageShell } from '../../../components/page-shell';
 import { ChartCard } from '../../../components/chart-card';
 import { RangePicker } from '../../../components/range-picker';
+import { PlanLimitsCard } from '../../../components/plan-limits';
 import { BudgetCard } from '../../overview/components/budget-card';
 import { StackedBarChart } from '../../../components/stacked-bar-chart';
+import { RangeActivityCard } from '../../../components/range-activity-card';
 import { RecentSessionsTable } from '../../../components/recent-sessions-table';
 import { PersonPressureCard } from '../../overview/components/context-pressure-card';
 
@@ -47,7 +49,9 @@ export function PersonView() {
       {overview && (
         <>
           <KpiRow overview={overview} previous={previous} showPeople={false} />
+          {person && <PlanLimitsCard person={person} />}
           <BudgetCard userId={userId} />
+          <RangeActivityCard overview={overview} userId={userId} />
           {person && <PersonPressureCard person={person} />}
           <ChartCard title={t('person.chart')}>
             <StackedBarChart points={points} />

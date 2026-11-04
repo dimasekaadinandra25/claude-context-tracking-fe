@@ -15,6 +15,22 @@ export type ContextPressure = {
   compactions: number;
 };
 
+export type CodeActivity = {
+  lines_added: number;
+  lines_removed: number;
+  commits: number;
+};
+
+export type PlanLimitUsage = {
+  five_hour_used: number | null;
+  five_hour_resets_at: string | null;
+  seven_day_used: number | null;
+  seven_day_resets_at: string | null;
+  limits_captured_at: string | null;
+};
+
+export type ToolUsage = { tool: string; calls: number } & CodeActivity;
+
 export type Overhead = {
   system_tokens: number;
   memory_tokens: number;
@@ -36,7 +52,9 @@ export type OverviewPerson = {
   is_active?: boolean;
 } & OutputUsage &
   CacheUsage &
-  ContextPressure;
+  ContextPressure &
+  CodeActivity &
+  PlanLimitUsage;
 
 export type Overview = {
   people: OverviewPerson[];
@@ -52,6 +70,9 @@ export type Overview = {
   total_cache_read_tokens: number;
   total_sessions_near_full: number;
   total_compactions: number;
+  total_lines_added: number;
+  total_lines_removed: number;
+  total_commits: number;
 };
 
 export type Interval = 'hour' | 'day';
@@ -107,6 +128,7 @@ export type SessionDetail = {
   models: string[];
   hours: SessionHour[];
   overhead: Overhead | null;
+  tools: ToolUsage[];
 };
 
 export type ProjectUsage = {

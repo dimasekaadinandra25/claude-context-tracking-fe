@@ -10,6 +10,7 @@ import type {
   AdminUser,
   IssuedKey,
   CacheUsage,
+  ToolUsage,
   ModelUsage,
   OutputUsage,
   ProjectUsage,
@@ -42,6 +43,16 @@ const NO_CACHE: CacheUsage = {
 
 const NO_PRESSURE = { sessions_near_full: 0, compactions: 0 };
 
+const NO_ACTIVITY = { lines_added: 0, lines_removed: 0, commits: 0 };
+
+const NO_LIMITS = {
+  five_hour_used: null,
+  five_hour_resets_at: null,
+  seven_day_used: null,
+  seven_day_resets_at: null,
+  limits_captured_at: null,
+};
+
 const NO_TOTALS = {
   total_output_tokens: 0,
   total_subagent_requests: 0,
@@ -51,6 +62,9 @@ const NO_TOTALS = {
   total_cache_read_tokens: 0,
   total_sessions_near_full: 0,
   total_compactions: 0,
+  total_lines_added: 0,
+  total_lines_removed: 0,
+  total_commits: 0,
 };
 
 const withOutput = <T extends OutputUsage>(row: T): T => ({ ...NO_OUTPUT, ...row });
@@ -71,6 +85,8 @@ export async function getOverview(range: ReportRange, userId?: string): Promise<
     people: overview.people.map((p) => ({
       ...NO_CACHE,
       ...NO_PRESSURE,
+      ...NO_ACTIVITY,
+      ...NO_LIMITS,
       ...withOutput(p),
       app_version: p.app_version ?? null,
     })),
@@ -97,6 +113,12 @@ export async function getModels(range: ReportRange, userId?: string) {
   return models.map(withOutput);
 }
 
+export function getTools(range: ReportRange, userId?: string) {
+  return unwrap<ToolUsage[]>(
+    axios.get(endpoints.usage.tools, { params: rangeParams(range, userId) })
+  );
+}
+
 export async function getSessions(
   range: ReportRange,
   query: SessionsQuery
@@ -114,6 +136,7 @@ export async function getSession(id: string): Promise<SessionDetail> {
     session: withSession(detail.session),
     hours: (detail.hours ?? []).map(withOutput),
     overhead: detail.overhead ?? null,
+    tools: detail.tools ?? [],
   };
 }
 

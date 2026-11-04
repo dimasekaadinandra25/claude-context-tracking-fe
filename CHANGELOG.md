@@ -4,6 +4,11 @@
 
 ### Added
 
+- Code activity card on the overview, member detail and session detail: lines added and removed,
+  commits, output tokens per commit and tool calls (`GET /usage/v1/tools`). Lines changed and
+  commits columns in Members.
+- Plan limits: 5h and 7d limit columns in Members, with a warning colour at 80% and an alert colour
+  at 90%, and a card on member detail. Shown for members who turned on plan limits in the app.
 - Cache hit rate (cache reads / all input): a KPI tile on the overview and member detail with the
   previous-period change, and a column in Members, Sessions (in range, hidden by default) and
   Projects. Shows "—" when there was no input.

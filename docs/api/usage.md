@@ -39,6 +39,13 @@ Overview people and session rows carry `input_tokens`, `cache_write_tokens` and
 also carry `sessions_near_full` and `compactions` (totals `total_sessions_near_full`,
 `total_compactions`). `usage.ts` sets each missing field to 0.
 
+Overview people also carry `lines_added`, `lines_removed` and `commits` in the range (totals
+`total_lines_added`, `total_lines_removed`, `total_commits`), and the latest plan limits regardless
+of range: `five_hour_used`, `five_hour_resets_at`, `seven_day_used`, `seven_day_resets_at` and
+`limits_captured_at`, each null when never sent or once the window has reset. `getTools` returns
+`{ tool, calls, lines_added, lines_removed, commits }` rows for the range, most calls first, and the
+`getSession` detail has the same rows as `tools`.
+
 `getProjects` returns one row per project (`""` = private sessions), sorted by `new_context` desc,
 with the same cache and pressure fields plus `requests`, `output_tokens`, `sessions`, `members`,
 `models` and `overhead`. `overhead` (`system_tokens`, `memory_tokens`, `agents_tokens`,

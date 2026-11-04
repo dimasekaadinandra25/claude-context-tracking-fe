@@ -19,6 +19,7 @@ import { Iconify } from 'src/shared/ui/iconify';
 import { fToNow } from 'src/shared/utils/format-time';
 import { niceMax } from 'src/module/usage/utils/scale';
 import { RowLink } from 'src/module/usage/components/row-link';
+import { LimitCell } from 'src/module/usage/components/plan-limits';
 import { GridActions } from 'src/module/usage/components/grid-actions';
 import { formatTokens, formatDateTime } from 'src/module/usage/utils/format';
 import { cacheRateColumn } from 'src/module/usage/components/cache-rate-column';
@@ -40,6 +41,10 @@ const STALE_HOURS = 24;
 const PHONE_HIDDEN = [
   'share',
   'trend',
+  'five_hour_used',
+  'seven_day_used',
+  'lines_changed',
+  'commits',
   'subagent_requests',
   'subagent_output_tokens',
   'current_model',
@@ -122,6 +127,22 @@ function numberColumn(
   return { field, headerName, width: NARROW, valueFormatter: (value: number) => format(value) };
 }
 
+function limitColumn(
+  field: 'five_hour_used' | 'seven_day_used',
+  resets: 'five_hour_resets_at' | 'seven_day_resets_at',
+  headerName: string
+): GridColDef<OverviewPerson> {
+  return {
+    field,
+    headerName,
+    width: NARROW,
+    display: 'flex',
+    renderCell: ({ row }) => (
+      <LimitCell used={row[field]} resetsAt={row[resets]} capturedAt={row.limits_captured_at} />
+    ),
+  };
+}
+
 function nameColumn(headerName: string): GridColDef<OverviewPerson> {
   return {
     field: NAME_FIELD,
@@ -194,6 +215,16 @@ function useColumns(
       renderCell: ({ row }) => <ShareBar value={row.new_context} max={scale} />,
     },
     trendColumn(t('col.trend'), trends, theme.vars.palette.primary.main),
+    limitColumn('five_hour_used', 'five_hour_resets_at', t('col.fiveHourLimit')),
+    limitColumn('seven_day_used', 'seven_day_resets_at', t('col.sevenDayLimit')),
+    {
+      field: 'lines_changed',
+      headerName: t('col.linesChanged'),
+      width: WIDE,
+      valueGetter: (_v, row) => row.lines_added + row.lines_removed,
+      renderCell: ({ row }) => `+${count(row.lines_added)} / -${count(row.lines_removed)}`,
+    },
+    numberColumn('commits', t('col.commits'), count),
     numberColumn('requests', t('col.requests'), count),
     numberColumn('output_tokens', t('col.outputTokens'), formatTokens),
     cacheRateColumn<OverviewPerson>(t),

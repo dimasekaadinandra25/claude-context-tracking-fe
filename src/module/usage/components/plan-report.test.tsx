@@ -6,8 +6,9 @@ import { screen } from '@testing-library/react';
 
 import { renderWithAppProviders } from 'src/test/render';
 import { installFakeBackend } from 'src/test/fake-backend';
+import { modelLabel } from 'src/module/usage/utils/format';
 
-import { PlanReport, modelLabel, mainAccount } from './plan-report';
+import { PlanReport, mainAccount } from './plan-report';
 
 const person = (fields: Partial<OverviewPerson>) =>
   ({

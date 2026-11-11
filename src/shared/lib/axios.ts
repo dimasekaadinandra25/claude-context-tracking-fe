@@ -129,6 +129,7 @@ export const endpoints = {
     models: '/usage/v1/models',
     tools: '/usage/v1/tools',
     daily: '/usage/v1/daily',
+    memberModels: '/usage/v1/member-models',
     projects: '/usage/v1/projects',
     sessions: '/usage/v1/sessions',
     session: (id: string) => `/usage/v1/sessions/${id}`,

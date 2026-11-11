@@ -16,6 +16,7 @@ import { DataTable } from '../../../components/data-table';
 import { ChartCard } from '../../../components/chart-card';
 import { EmptyState } from '../../../components/empty-state';
 import { RangePicker } from '../../../components/range-picker';
+import { MemberModelsCard } from '../components/member-models-card';
 import { StackedBarChart } from '../../../components/stacked-bar-chart';
 
 const DONUT_HEIGHT = 320;
@@ -106,7 +107,7 @@ function ModelsTable({ models }: { models: ModelUsage[] }) {
 
 export function ModelsView() {
   const { t } = useTranslate('usage');
-  const { models, points, error, loading } = useModels();
+  const { models, points, members, error, loading } = useModels();
 
   return (
     <PageShell title={t('models.title')} action={<RangePicker />} loading={loading} error={error}>
@@ -124,6 +125,7 @@ export function ModelsView() {
               </ChartCard>
             </Grid>
           </Grid>
+          <MemberModelsCard rows={members} />
           <ModelsTable models={models} />
         </>
       )}

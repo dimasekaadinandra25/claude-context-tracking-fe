@@ -125,7 +125,9 @@
   "models": {
     "title": "Models",
     "share": "Share of new context",
-    "chart": "New context per day by model"
+    "chart": "New context per day by model",
+    "byMember": "Models by member",
+    "byMemberNote": "Each member's share of their own tokens per model (input including cache, output counts 5×) with requests."
   },
   "adminPeople": {
     "title": "Members"

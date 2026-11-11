@@ -46,6 +46,16 @@ export type DailyUsage = {
   account_members: number;
 };
 
+export type MemberModel = {
+  user_id: string;
+  full_name: string;
+  email: string;
+  model: string;
+  requests: number;
+  sessions: number;
+  output_tokens: number;
+} & CacheUsage;
+
 export type ToolUsage = { tool: string; calls: number } & CodeActivity;
 
 export type Overhead = {

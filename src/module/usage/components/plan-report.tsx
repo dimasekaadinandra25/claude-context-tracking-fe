@@ -13,7 +13,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 import { useTranslate } from 'src/locales';
 import { getDaily, getModels } from 'src/module/usage/api/usage';
-import { shortModel, formatTokens } from 'src/module/usage/utils/format';
+import { modelLabel, formatTokens } from 'src/module/usage/utils/format';
 import { lastDays, rangeDates, browserTimeZone } from 'src/module/usage/utils/range';
 import {
   PERCENT,
@@ -64,14 +64,6 @@ const modelWeight = (model: ModelUsage) =>
   model.cache_write_tokens +
   model.cache_read_tokens +
   OUTPUT_WEIGHT * model.output_tokens;
-
-export function modelLabel(model: string): string {
-  const [family = '', ...version] = shortModel(model)
-    .replace(/-\d{8}$/, '')
-    .split('-');
-  const name = family.charAt(0).toUpperCase() + family.slice(1);
-  return version.length > 0 ? `${name} ${version.join('.')}` : name;
-}
 
 export function ModelRows({ models }: { models: ModelUsage[] }) {
   const { t } = useTranslate('usage');

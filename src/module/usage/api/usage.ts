@@ -12,6 +12,7 @@ import type {
   ToolUsage,
   CacheUsage,
   DailyUsage,
+  MemberModel,
   ModelUsage,
   OutputUsage,
   ProjectUsage,
@@ -120,6 +121,12 @@ export async function getModels(range: ReportRange, userId?: string) {
 export function getTools(range: ReportRange, userId?: string) {
   return unwrap<ToolUsage[]>(
     axios.get(endpoints.usage.tools, { params: rangeParams(range, userId) })
+  );
+}
+
+export function getMemberModels(range: ReportRange, userId?: string) {
+  return unwrap<MemberModel[]>(
+    axios.get(endpoints.usage.memberModels, { params: rangeParams(range, userId) })
   );
 }
 

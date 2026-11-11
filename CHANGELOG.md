@@ -16,6 +16,7 @@
   input and output.
 - Shares are rounded together so they always add up to 100%.
 - Request count under each member's name in the plan usage grid and the report image.
+- Models by member card on the Models page: each member's share and requests per model (`GET /usage/v1/member-models`).
 - Code activity card on the overview, member detail and session detail: lines added and removed,
   commits, output tokens per commit and tool calls (`GET /usage/v1/tools`). Lines changed and
   commits columns in Members.

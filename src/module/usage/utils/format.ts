@@ -37,3 +37,11 @@ const MODEL_PREFIX = 'claude-';
 export function shortModel(model: string): string {
   return model.startsWith(MODEL_PREFIX) ? model.slice(MODEL_PREFIX.length) : model;
 }
+
+export function modelLabel(model: string): string {
+  const [family = '', ...version] = shortModel(model)
+    .replace(/-\d{8}$/, '')
+    .split('-');
+  const name = family.charAt(0).toUpperCase() + family.slice(1);
+  return version.length > 0 ? `${name} ${version.join('.')}` : name;
+}

@@ -265,6 +265,7 @@
     "in": "in",
     "out": "out",
     "unused": "Not used: {{names}}",
+    "requests": "{{count}} req",
     "empty": "No usage in the last 7 days.",
     "footnote": "In includes cache read and write. Share weighs output 5×. Cost is the 7-day limit used times the weekly plan allowance, estimated from the plan tier. Members on the same Claude account split its cost by share each day."
   },

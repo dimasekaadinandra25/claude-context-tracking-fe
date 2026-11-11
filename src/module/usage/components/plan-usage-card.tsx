@@ -53,6 +53,7 @@ type MemberRow = {
   input: number;
   output: number;
   weight: number;
+  requests: number;
   cost: number | null;
 };
 
@@ -75,6 +76,7 @@ function memberRows(people: OverviewPerson[], daily: DailyUsage[]): MemberRow[] 
         input: rows.reduce((total, row) => total + inputOf(row), 0),
         output: rows.reduce((total, row) => total + row.output_tokens, 0),
         weight: rows.reduce((total, row) => total + weightOf(row), 0),
+        requests: rows.reduce((total, row) => total + row.requests, 0),
         cost: costs.length > 0 ? costs.reduce((total, cost) => total + cost, 0) : null,
       };
     })
@@ -190,7 +192,13 @@ export function UsageGrid({
                     </Box>
                     <Typography
                       variant="caption"
-                      sx={{ display: 'block', color: 'text.secondary', wordBreak: 'break-all' }}
+                      sx={{ display: 'block', color: 'text.secondary' }}
+                    >
+                      {t('planUsage.requests', { count: row.requests.toLocaleString() })}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{ display: 'block', color: 'text.disabled', wordBreak: 'break-all' }}
                     >
                       {person.claude_email ?? person.email}
                     </Typography>

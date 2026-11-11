@@ -75,6 +75,7 @@ describe('PlanUsageCard', () => {
     expect(await screen.findByText('Naufal')).toBeInTheDocument();
     expect(screen.getByText('Max 20x')).toBeInTheDocument();
     expect(screen.getByText('naufal@claude.test')).toBeInTheDocument();
+    expect(screen.getAllByText('1 req')).toHaveLength(2);
     expect(screen.getByText('3M in')).toBeInTheDocument();
     expect(screen.getByText('+10%')).toBeInTheDocument();
     expect(screen.getAllByText('$4.62')).toHaveLength(2);

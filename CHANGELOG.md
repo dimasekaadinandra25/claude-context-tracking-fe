@@ -15,6 +15,7 @@
 - The exported image lists each model under the weekly limit with its share of tokens, requests,
   input and output.
 - Shares are rounded together so they always add up to 100%.
+- Request count under each member's name in the plan usage grid and the report image.
 - Code activity card on the overview, member detail and session detail: lines added and removed,
   commits, output tokens per commit and tool calls (`GET /usage/v1/tools`). Lines changed and
   commits columns in Members.

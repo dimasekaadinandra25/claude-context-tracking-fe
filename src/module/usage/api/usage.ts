@@ -9,8 +9,9 @@ import type {
   Overview,
   AdminUser,
   IssuedKey,
-  CacheUsage,
   ToolUsage,
+  CacheUsage,
+  DailyUsage,
   ModelUsage,
   OutputUsage,
   ProjectUsage,
@@ -51,6 +52,9 @@ const NO_LIMITS = {
   seven_day_used: null,
   seven_day_resets_at: null,
   limits_captured_at: null,
+  claude_email: null,
+  claude_plan: null,
+  claude_tier: null,
 };
 
 const NO_TOTALS = {
@@ -110,12 +114,18 @@ export async function getModels(range: ReportRange, userId?: string) {
   const models = await unwrap<ModelUsage[]>(
     axios.get(endpoints.usage.models, { params: rangeParams(range, userId) })
   );
-  return models.map(withOutput);
+  return models.map((model) => withOutput({ ...NO_CACHE, ...model }));
 }
 
 export function getTools(range: ReportRange, userId?: string) {
   return unwrap<ToolUsage[]>(
     axios.get(endpoints.usage.tools, { params: rangeParams(range, userId) })
+  );
+}
+
+export function getDaily(range: ReportRange, userId?: string) {
+  return unwrap<DailyUsage[]>(
+    axios.get(endpoints.usage.daily, { params: rangeParams(range, userId) })
   );
 }
 

@@ -27,6 +27,23 @@ export type PlanLimitUsage = {
   seven_day_used: number | null;
   seven_day_resets_at: string | null;
   limits_captured_at: string | null;
+  claude_email: string | null;
+  claude_plan: string | null;
+  claude_tier: string | null;
+};
+
+export type DailyUsage = {
+  user_id: string;
+  day: string;
+  input_tokens: number;
+  cache_write_tokens: number;
+  cache_read_tokens: number;
+  output_tokens: number;
+  requests: number;
+  seven_day_used: number | null;
+  limit_used: number | null;
+  account_weight: number;
+  account_members: number;
 };
 
 export type ToolUsage = { tool: string; calls: number } & CodeActivity;
@@ -91,7 +108,8 @@ export type ModelUsage = {
   new_context: number;
   requests: number;
   sessions: number;
-} & OutputUsage;
+} & OutputUsage &
+  CacheUsage;
 
 export type UsageSession = {
   id: string;

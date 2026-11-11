@@ -10,6 +10,8 @@ import { PageShell } from '../../../components/page-shell';
 import { ChartCard } from '../../../components/chart-card';
 import { RangePicker } from '../../../components/range-picker';
 import { ActivityHeatmap } from '../components/activity-heatmap';
+import { PlanUsageCard } from '../../../components/plan-usage-card';
+import { ExportImageButton } from '../../../components/plan-report';
 import { StackedBarChart } from '../../../components/stacked-bar-chart';
 import { ContextPressureCard } from '../components/context-pressure-card';
 import { RangeActivityCard } from '../../../components/range-activity-card';
@@ -28,6 +30,10 @@ export function OverviewView() {
       {overview && (
         <>
           <KpiRow overview={overview} previous={previous} />
+          <PlanUsageCard
+            people={overview.people}
+            action={<ExportImageButton people={overview.people} />}
+          />
           <BudgetCard />
           <ChartCard title={t('overview.chart')}>
             <StackedBarChart points={points} labelOf={nameOf} />

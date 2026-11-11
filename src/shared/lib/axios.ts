@@ -128,6 +128,7 @@ export const endpoints = {
     timeseries: '/usage/v1/timeseries',
     models: '/usage/v1/models',
     tools: '/usage/v1/tools',
+    daily: '/usage/v1/daily',
     projects: '/usage/v1/projects',
     sessions: '/usage/v1/sessions',
     session: (id: string) => `/usage/v1/sessions/${id}`,

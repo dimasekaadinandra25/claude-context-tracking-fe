@@ -233,7 +233,40 @@
     "sevenDay": "7-day window",
     "used": "{{percent}}% used",
     "resets": "Resets {{when}}",
-    "reported": "Reported {{ago}} ago"
+    "reported": "Reported {{ago}} ago",
+    "elapsed": "Week {{percent}}% elapsed",
+    "allowance": "Weekly allowance {{weekly}} of the {{monthly}}/month plan",
+    "spent": "used {{percent}}% ≈ {{amount}}",
+    "left": "left {{percent}}% ≈ {{amount}}",
+    "daily": "7-day limit used per day",
+    "pace": "Pace {{percent}}%/day",
+    "dayLeft": "{{percent}}% left"
+  },
+  "report": {
+    "export": "Export image",
+    "exporting": "Exporting…",
+    "title": "Claude Usage",
+    "window": "Claude 7-day limit window · {{period}}",
+    "period": "Last 7 days · {{period}}",
+    "account": "Claude account limit",
+    "daily": "Claude limit used per day",
+    "members": "Per member",
+    "models": "By model",
+    "modelDetail": "{{requests}} requests · {{input}} in · {{output}} out",
+    "modelNote": "Per model is each model's share of tokens in this window (output counts 5×), not its own limit. Claude Code does not report per-model limits to apps.",
+    "generated": "Generated {{when}} · source: Claude Usage Monitor"
+  },
+  "planUsage": {
+    "title": "Plan usage, last 7 days",
+    "member": "Member",
+    "total": "Total",
+    "share": "Share",
+    "cost": "Cost",
+    "in": "in",
+    "out": "out",
+    "unused": "Not used: {{names}}",
+    "empty": "No usage in the last 7 days.",
+    "footnote": "In includes cache read and write. Share weighs output 5×. Cost is the 7-day limit used times the weekly plan allowance, estimated from the plan tier. Members on the same Claude account split its cost by share each day."
   },
   "pressure": {
     "title": "Context pressure",

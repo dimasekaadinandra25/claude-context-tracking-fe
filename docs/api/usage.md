@@ -46,6 +46,16 @@ of range: `five_hour_used`, `five_hour_resets_at`, `seven_day_used`, `seven_day_
 `{ tool, calls, lines_added, lines_removed, commits }` rows for the range, most calls first, and the
 `getSession` detail has the same rows as `tools`.
 
+Overview people also carry the Claude account the app last sent: `claude_email`, `claude_plan` and
+`claude_tier`, each null when never sent. `getDaily` returns one row per member and local day:
+`input_tokens`, `cache_write_tokens`, `cache_read_tokens`, `output_tokens`, `requests`,
+`seven_day_used` (last reading that day) and `limit_used` (7-day limit points used that day), the
+last two null on days without a reading. `utils/plan.ts` estimates the plan price from the tier
+(Max 20x $200, Max 5x $100, Pro $20 a month) and the weekly allowance as price × 12 / 52.
+Members whose apps report the same Claude account email share one limit timeline: each daily row
+carries the account's `limit_used`, `account_weight` (the account's input + 5 × output that day) and
+`account_members`, and `memberCost` splits the account's cost by the member's weight.
+
 `getProjects` returns one row per project (`""` = private sessions), sorted by `new_context` desc,
 with the same cache and pressure fields plus `requests`, `output_tokens`, `sessions`, `members`,
 `models` and `overhead`. `overhead` (`system_tokens`, `memory_tokens`, `agents_tokens`,

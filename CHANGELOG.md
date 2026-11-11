@@ -4,6 +4,17 @@
 
 ### Added
 
+- Plan usage report: a member x day grid for the last 7 days on the overview with input (including
+  cache), output, 7-day limit used and estimated cost per day, plus totals, share and members with no
+  usage (`GET /usage/v1/daily`).
+- Plan limits card on member detail shows the Claude account and plan, the week elapsed marker, the
+  weekly allowance in dollars and a per-day chart of the 7-day limit with a pace line.
+- Members sharing one Claude account split its daily cost by token share.
+- Export image on the plan usage card: downloads a PNG report with the Claude account limit, the
+  daily limit chart and the per member grid for the current 7-day window.
+- The exported image lists each model under the weekly limit with its share of tokens, requests,
+  input and output.
+- Shares are rounded together so they always add up to 100%.
 - Code activity card on the overview, member detail and session detail: lines added and removed,
   commits, output tokens per commit and tool calls (`GET /usage/v1/tools`). Lines changed and
   commits columns in Members.

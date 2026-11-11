@@ -196,12 +196,6 @@ export function UsageGrid({
                     >
                       {t('planUsage.requests', { count: row.requests.toLocaleString() })}
                     </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{ display: 'block', color: 'text.disabled', wordBreak: 'break-all' }}
-                    >
-                      {person.claude_email ?? person.email}
-                    </Typography>
                   </TableCell>
                   {days.map((day) => (
                     <DayCell

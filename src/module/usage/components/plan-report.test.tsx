@@ -98,7 +98,7 @@ describe('PlanReport', () => {
     );
 
     expect(await screen.findByText('Claude Usage')).toBeInTheDocument();
-    expect(screen.getAllByText('team@claude.test').length).toBeGreaterThan(1);
+    expect(screen.getAllByText('team@claude.test')).toHaveLength(1);
     expect(screen.getByText('+12%')).toBeInTheDocument();
     expect(screen.getByText('Owner')).toBeInTheDocument();
     expect(screen.getByText('Not used: Guest')).toBeInTheDocument();

@@ -68,6 +68,28 @@ export function weekElapsed(resetsAt: string, now: number = Date.now()): number 
   return Math.min(PERCENT, Math.max(0, (1 - left / WEEK_MS) * PERCENT));
 }
 
+export type Budget = {
+  perDay: number;
+  daysLeft: number;
+  projected: number | null;
+  runsOutAt: number | null;
+};
+
+export function budgetOf(used: number, resetsAt: string, now: number = Date.now()): Budget | null {
+  const leftMs = dayjs(resetsAt).valueOf() - now;
+  if (leftMs <= 0) return null;
+  const daysLeft = leftMs / DAY_MS;
+  const elapsedMs = WEEK_MS - leftMs;
+  const projected = elapsedMs >= DAY_MS ? (used / elapsedMs) * WEEK_MS : null;
+  const runsOut = projected !== null && projected > PERCENT && used < PERCENT;
+  return {
+    perDay: Math.max(0, PERCENT - used) / Math.max(daysLeft, 1),
+    daysLeft,
+    projected,
+    runsOutAt: runsOut ? now + ((PERCENT - used) / used) * elapsedMs : null,
+  };
+}
+
 export function windowDays(resetsAt: string): string[] {
   const end = dayjs(resetsAt).startOf('day');
   const start = dayjs(resetsAt).subtract(WEEK_DAYS, 'day').startOf('day');

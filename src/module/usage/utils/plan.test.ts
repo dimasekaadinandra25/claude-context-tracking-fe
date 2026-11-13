@@ -4,12 +4,13 @@ import { it, expect, describe } from 'vitest';
 
 import {
   costOf,
+  budgetOf,
   planLabel,
   planPrice,
   memberCost,
-  roundToTotal,
   windowDays,
   weekElapsed,
+  roundToTotal,
   weeklyAllowance,
 } from './plan';
 
@@ -87,5 +88,29 @@ describe('plan', () => {
     expect(shares.reduce((a, b) => a + b, 0)).toBeCloseTo(100);
     expect(roundToTotal([1, 1, 1], 83)).toEqual([27.7, 27.7, 27.6]);
     expect(roundToTotal([0, 0], 100)).toEqual([0, 0]);
+  });
+});
+
+describe('budgetOf', () => {
+  const now = Date.parse('2026-11-13T00:00:00Z');
+  const resets = (days: number) => new Date(now + days * 86_400_000).toISOString();
+
+  it('spreadsWhatIsLeftOverTheDaysLeft', () => {
+    const budget = budgetOf(20, resets(5), now);
+    expect(budget?.perDay).toBeCloseTo(16);
+    expect(budget?.projected).toBeCloseTo(70);
+    expect(budget?.runsOutAt).toBeNull();
+  });
+
+  it('saysWhenAFastWeekRunsOut', () => {
+    const budget = budgetOf(60, resets(4), now);
+    expect(budget?.projected).toBeCloseTo(140);
+    expect(budget?.runsOutAt).toBe(now + 2 * 86_400_000);
+  });
+
+  it('waitsADayBeforeProjectingAndStopsAfterTheReset', () => {
+    expect(budgetOf(10, resets(6.5), now)?.projected).toBeNull();
+    expect(budgetOf(10, resets(0.5), now)?.perDay).toBe(90);
+    expect(budgetOf(10, resets(-1), now)).toBeNull();
   });
 });

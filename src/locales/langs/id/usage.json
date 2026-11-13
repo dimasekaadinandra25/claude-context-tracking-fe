@@ -241,6 +241,9 @@
     "allowance": "Jatah mingguan {{weekly}} dari paket {{monthly}}/bulan",
     "spent": "terpakai {{percent}}% ≈ {{amount}}",
     "left": "sisa {{percent}}% ≈ {{amount}}",
+    "budget": "Jatah {{percent}}%/hari untuk {{days}} hari tersisa",
+    "projected": "dengan laju ini {{percent}}% saat reset",
+    "runsOut": "dengan laju ini habis {{when}}",
     "daily": "Batas 7 hari terpakai per hari",
     "pace": "Laju {{percent}}%/hari",
     "dayLeft": "sisa {{percent}}%"

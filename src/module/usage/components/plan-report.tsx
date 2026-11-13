@@ -27,7 +27,14 @@ import {
 } from 'src/module/usage/utils/plan';
 
 import { UsageGrid } from './plan-usage-card';
-import { LimitRow, Allowance, DailyBars, PlanBadge, ModelLimitRows } from './plan-limits';
+import {
+  LimitRow,
+  Allowance,
+  DailyBars,
+  PlanBadge,
+  BudgetLine,
+  ModelLimitRows,
+} from './plan-limits';
 
 const REPORT_WIDTH = 1180;
 const PIXEL_RATIO = 2;
@@ -174,6 +181,7 @@ export function PlanReport({ report }: { report: PlanReportData }) {
               <ModelLimitRows person={account} />
               <ModelRows models={models} />
               <Allowance used={used} tier={account.claude_tier ?? null} />
+              <BudgetLine used={used} resetsAt={resetsAt} />
             </Stack>
           </Section>
           <Section title={t('report.daily')}>

@@ -241,6 +241,9 @@
     "allowance": "Weekly allowance {{weekly}} of the {{monthly}}/month plan",
     "spent": "used {{percent}}% ≈ {{amount}}",
     "left": "left {{percent}}% ≈ {{amount}}",
+    "budget": "Budget {{percent}}%/day for the {{days}} days left",
+    "projected": "on pace for {{percent}}% at reset",
+    "runsOut": "at this pace it runs out {{when}}",
     "daily": "7-day limit used per day",
     "pace": "Pace {{percent}}%/day",
     "dayLeft": "{{percent}}% left"

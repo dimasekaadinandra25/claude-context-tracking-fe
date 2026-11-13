@@ -18,11 +18,13 @@ import { useFetch } from 'src/module/usage/hooks/use-fetch';
 import { ChartCard } from 'src/module/usage/components/chart-card';
 import {
   PERCENT,
+  budgetOf,
   formatUsd,
   planLabel,
   planPrice,
   daysRange,
   windowDays,
+  oneDecimal,
   weekElapsed,
   PACE_PERCENT,
   weeklyAllowance,
@@ -164,6 +166,28 @@ export function Allowance({ used, tier }: { used: number; tier: string | null })
           amount: formatUsd((left / PERCENT) * weekly),
         }),
       ].join(' · ')}
+    </Typography>
+  );
+}
+
+export function BudgetLine({ used, resetsAt }: { used: number; resetsAt: string }) {
+  const { t } = useTranslate('usage');
+  const budget = budgetOf(used, resetsAt);
+  if (!budget) return null;
+  const parts = [
+    t('limits.budget', { percent: oneDecimal(budget.perDay), days: oneDecimal(budget.daysLeft) }),
+  ];
+  if (budget.runsOutAt !== null) {
+    parts.push(t('limits.runsOut', { when: dayjs(budget.runsOutAt).format('ddd D MMM HH:mm') }));
+  } else if (budget.projected !== null) {
+    parts.push(t('limits.projected', { percent: Math.round(budget.projected) }));
+  }
+  return (
+    <Typography
+      variant="body2"
+      sx={{ color: budget.runsOutAt !== null ? 'warning.main' : 'text.secondary' }}
+    >
+      {parts.join(' · ')}
     </Typography>
   );
 }
@@ -342,6 +366,7 @@ export function PlanLimitsCard({ person }: { person: OverviewPerson }) {
         )}
         {seven !== null && <ModelLimitRows person={person} />}
         {seven !== null && <Allowance used={seven} tier={person.claude_tier ?? null} />}
+        {seven !== null && sevenResets && <BudgetLine used={seven} resetsAt={sevenResets} />}
         {seven !== null && sevenResets && (
           <DailyLimitChart userId={person.user_id} resetsAt={sevenResets} />
         )}

@@ -36,6 +36,21 @@ const privateSessions = {
   overhead: null,
 };
 
+const monthCost = {
+  user_id: 'u1',
+  full_name: 'Mia',
+  claude_email: 'team@example.test',
+  claude_tier: 'default_claude_max_20x',
+  project: 'billing',
+  input_tokens: 1000,
+  cache_write_tokens: 2000,
+  cache_read_tokens: 3000,
+  output_tokens: 4000,
+  requests: 12,
+  weight: 26000,
+  cost: 199.5,
+};
+
 const GRID_READY = { timeout: 5000 };
 
 function renderProjects(isAdmin = false) {
@@ -64,6 +79,7 @@ function renderProjects(isAdmin = false) {
       status: 200,
       data: envelope({ people: [{ user_id: 'u1', claude_tier: 'default_claude_max_20x' }] }),
     },
+    'GET /usage/v1/costs': { status: 200, data: envelope([monthCost]) },
   });
   const view = (
     <ReportRangeProvider>
@@ -150,5 +166,32 @@ describe('ProjectsView admin and export', () => {
     expect(csv).toContain('12000');
     expect(csv).toContain('Private sessions');
     expect(csv).not.toContain('48.2K');
+  });
+
+  it('exportMonthFetchesCostsForTheMonthAndDownloadsCsv', async () => {
+    const readCsv = captureCsvDownloads();
+    const backend = renderProjects();
+
+    fireEvent.change(await screen.findByLabelText('Month'), { target: { value: '2026-10' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Export month (CSV)' }));
+    const click = vi.mocked(HTMLAnchorElement.prototype.click);
+    await waitFor(() => expect(click).toHaveBeenCalled());
+    const csv = await readCsv();
+
+    expect(backend.requests).toContainEqual(
+      expect.objectContaining({
+        url: '/usage/v1/costs',
+        params: {
+          from: new Date(2026, 9, 1).toISOString(),
+          to: new Date(2026, 10, 1).toISOString(),
+          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
+      })
+    );
+    expect((click.mock.contexts[0] as HTMLAnchorElement).download).toBe('claude-usage-2026-10.csv');
+    expect(csv).toContain('Member,Claude account,Plan,Project,Input,Cache write,Cache read');
+    expect(csv).toContain(
+      'Mia,team@example.test,Max 20x,billing,1000,2000,3000,4000,12,26000,199.50'
+    );
   });
 });

@@ -52,6 +52,8 @@
     "trend": "Last 7 days",
     "appVersion": "App version",
     "fiveHourLimit": "5h limit",
+    "fiveHourShare": "5h share",
+    "fiveHourShareHint": "Points of the account's current 5-hour window this member used",
     "sevenDayLimit": "7d limit",
     "linesChanged": "Lines changed",
     "commits": "Commits",
@@ -209,7 +211,8 @@
   },
   "sync": {
     "stale": "Not synced for {{ago}}",
-    "never": "Never synced"
+    "never": "Never synced",
+    "activeNow": "Active now"
   },
   "search": {
     "open": "Search (Ctrl+K)",
@@ -289,6 +292,23 @@
     "private": "Private sessions",
     "share": "Share",
     "cost": "Est. cost"
+  },
+  "costs": {
+    "month": "Month",
+    "export": "Export month (CSV)",
+    "col": {
+      "person": "Member",
+      "account": "Claude account",
+      "plan": "Plan",
+      "project": "Project",
+      "input": "Input",
+      "cacheWrite": "Cache write",
+      "cacheRead": "Cache read",
+      "output": "Output",
+      "requests": "Requests",
+      "weighted": "Weighted tokens",
+      "cost": "Est. cost (USD)"
+    }
   },
   "overhead": {
     "title": "Overhead per request",

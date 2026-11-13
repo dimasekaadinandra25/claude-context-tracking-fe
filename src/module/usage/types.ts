@@ -98,6 +98,7 @@ export type OverviewPerson = {
   last_request_at: string | null;
   last_synced_at: string | null;
   app_version: string | null;
+  five_hour_share: number | null;
   is_active?: boolean;
 } & OutputUsage &
   CacheUsage &
@@ -192,6 +193,21 @@ export type ProjectUsage = {
   overhead: Overhead | null;
 } & CacheUsage &
   ContextPressure;
+
+export type CostUsage = {
+  user_id: string;
+  full_name: string;
+  claude_email: string | null;
+  claude_tier: string | null;
+  project: string;
+  input_tokens: number;
+  cache_write_tokens: number;
+  cache_read_tokens: number;
+  output_tokens: number;
+  requests: number;
+  weight: number;
+  cost: number;
+};
 
 export type SessionSort = 'last_request_at' | '-last_request_at' | 'new_context' | '-new_context';
 

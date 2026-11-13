@@ -106,6 +106,23 @@ describe('OverviewView app version and sync', () => {
     expect(screen.queryAllByLabelText(/^Not synced for/)).toHaveLength(0);
   });
 
+  it('activeDotAndFiveHourShare', async () => {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    renderPeople([
+      { ...mia, last_request_at: fiveMinutesAgo, five_hour_share: 21.6 },
+      { ...mia, user_id: 'u-2', full_name: 'Raka', last_request_at: hourAgo },
+    ]);
+
+    expect(await screen.findByText('Raka')).toBeInTheDocument();
+    expect(screen.getAllByLabelText('Active now')).toHaveLength(1);
+    const shares = screen
+      .getAllByRole('gridcell')
+      .filter((c) => c.dataset.field === 'five_hour_share');
+    expect(shares.map((c) => c.textContent)).toEqual(['22%', '—']);
+    expect(screen.getByRole('columnheader', { name: '5h share' })).toBeInTheDocument();
+  });
+
   it('memberNameIsALinkToTheirPage', async () => {
     renderPeople([{ ...mia, last_synced_at: justSynced() }]);
 

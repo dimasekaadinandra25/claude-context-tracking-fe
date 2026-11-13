@@ -10,6 +10,7 @@ import { useAuthContext } from 'src/module/core/features/auth/hooks';
 
 import { rangeCost } from '../../../utils/plan';
 import { useFetch } from '../../../hooks/use-fetch';
+import { ExportMonth } from '../components/export-month';
 import { PageShell } from '../../../components/page-shell';
 import { RangePicker } from '../../../components/range-picker';
 import { GridActions } from '../../../components/grid-actions';
@@ -66,11 +67,10 @@ export function ProjectsView() {
     <PageShell title={t('projects.title')} action={<RangePicker quick />} error={error}>
       <Card>
         <Stack spacing={2} sx={{ p: 2 }}>
-          {isAdmin && (
-            <Box>
-              <PersonFilter value={userId} onChange={setUserId} />
-            </Box>
-          )}
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between' }}>
+            {isAdmin && <PersonFilter value={userId} onChange={setUserId} />}
+            <ExportMonth userId={userId} />
+          </Box>
           <DataGrid
             rows={data ?? []}
             columns={columns}

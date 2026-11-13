@@ -12,6 +12,32 @@ import { fToNow } from 'src/shared/utils/format-time';
 import { formatDateTime } from 'src/module/usage/utils/format';
 
 const STALE_HOURS = 24;
+const ACTIVE_MINUTES = 10;
+const DOT_SIZE = 8;
+
+export function ActiveDot({ lastRequestAt }: { lastRequestAt: string | null }) {
+  const { t } = useTranslate('usage');
+  if (!lastRequestAt || dayjs().diff(lastRequestAt, 'minute', true) > ACTIVE_MINUTES) return null;
+  return (
+    <Tooltip title={t('sync.activeNow')}>
+      <Box
+        component="span"
+        sx={{
+          display: 'inline-block',
+          flexShrink: 0,
+          width: DOT_SIZE,
+          height: DOT_SIZE,
+          mr: 1,
+          borderRadius: '50%',
+          bgcolor: 'success.main',
+        }}
+      />
+    </Tooltip>
+  );
+}
+
+export const formatShare = (value: number | null) =>
+  value === null ? '—' : `${Math.round(value)}%`;
 
 const compareVersions = (a: string, b: string) => a.localeCompare(b, undefined, { numeric: true });
 

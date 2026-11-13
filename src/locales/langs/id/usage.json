@@ -52,6 +52,8 @@
     "trend": "7 hari terakhir",
     "appVersion": "Versi aplikasi",
     "fiveHourLimit": "Batas 5h",
+    "fiveHourShare": "Porsi 5h",
+    "fiveHourShareHint": "Poin jendela 5 jam akun saat ini yang dipakai anggota ini",
     "sevenDayLimit": "Batas 7d",
     "linesChanged": "Baris diubah",
     "commits": "Commit",
@@ -209,7 +211,8 @@
   },
   "sync": {
     "stale": "Belum sinkron selama {{ago}}",
-    "never": "Belum pernah sinkron"
+    "never": "Belum pernah sinkron",
+    "activeNow": "Sedang aktif"
   },
   "search": {
     "open": "Cari (Ctrl+K)",
@@ -289,6 +292,23 @@
     "private": "Sesi privat",
     "share": "Porsi",
     "cost": "Perkiraan biaya"
+  },
+  "costs": {
+    "month": "Bulan",
+    "export": "Ekspor bulan (CSV)",
+    "col": {
+      "person": "Anggota",
+      "account": "Akun Claude",
+      "plan": "Paket",
+      "project": "Proyek",
+      "input": "Masukan",
+      "cacheWrite": "Tulis cache",
+      "cacheRead": "Baca cache",
+      "output": "Keluaran",
+      "requests": "Permintaan",
+      "weighted": "Token berbobot",
+      "cost": "Perkiraan biaya (USD)"
+    }
   },
   "overhead": {
     "title": "Overhead per permintaan",

@@ -22,7 +22,7 @@ import {
   defaultPeopleColumns,
 } from 'src/module/usage/hooks/use-column-visibility';
 
-import { SyncedCell, VersionCell, latestVersion } from './people-cells';
+import { ActiveDot, SyncedCell, VersionCell, formatShare, latestVersion } from './people-cells';
 
 const VISIBILITY_KEY = 'usage.overview.people.columns';
 const NAME_FIELD = 'name';
@@ -36,6 +36,7 @@ const PHONE_HIDDEN = [
   'share',
   'trend',
   'five_hour_used',
+  'five_hour_share',
   'seven_day_used',
   'lines_changed',
   'commits',
@@ -91,11 +92,15 @@ function nameColumn(headerName: string): GridColDef<OverviewPerson> {
     hideable: false,
     flex: 1,
     minWidth: WIDE,
+    display: 'flex',
     valueGetter: (_v, row) => row.full_name || row.email,
     renderCell: ({ row, value, tabIndex }) => (
-      <RowLink href={paths.dashboard.person(row.user_id)} tabIndex={tabIndex}>
-        {value}
-      </RowLink>
+      <>
+        <ActiveDot lastRequestAt={row.last_request_at} />
+        <RowLink href={paths.dashboard.person(row.user_id)} tabIndex={tabIndex}>
+          {value}
+        </RowLink>
+      </>
     ),
   };
 }
@@ -175,6 +180,13 @@ function useColumns(
     shareColumn(t('col.share'), t('col.shareScale', { max: formatTokens(scale) }), scale),
     trendColumn(t('col.trend'), trends, theme.vars.palette.primary.main),
     limitColumn('five_hour_used', 'five_hour_resets_at', t('col.fiveHourLimit')),
+    {
+      field: 'five_hour_share',
+      headerName: t('col.fiveHourShare'),
+      description: t('col.fiveHourShareHint'),
+      width: NARROW,
+      valueFormatter: formatShare,
+    },
     limitColumn('seven_day_used', 'seven_day_resets_at', t('col.sevenDayLimit')),
     linesColumn(t('col.linesChanged')),
     numberColumn('commits', t('col.commits'), count),

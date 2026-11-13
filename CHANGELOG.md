@@ -4,6 +4,10 @@
 
 ### Added
 
+- Overview people table: a green dot marks members active in the last 10 minutes and a 5h share
+  column shows how many points of the account's current 5-hour window each member used.
+- Projects page: export a month as CSV with each member and project's tokens and estimated cost
+  (the monthly plan price split by weighted token share, `GET /usage/v1/costs`).
 - The weekly budget line compares with the same day last week ("last week by Fri 6: 45%").
 - The overview shows when it last updated and that it refreshes every minute.
 - The sidebar logo and favicon use the ring icon of the desktop app.

@@ -19,10 +19,10 @@ import { PlanReport, mainAccount } from './plan-report';
 const PIXEL_RATIO = 2;
 const OFFSCREEN = -10_000;
 
-function download(url: string) {
+export function download(url: string, fileName: string) {
   const link = document.createElement('a');
   link.href = url;
-  link.download = `claude-usage-${dayjs().format('YYYY-MM-DD-HHmm')}.png`;
+  link.download = fileName;
   link.click();
 }
 
@@ -59,7 +59,9 @@ function useImageExport(people: OverviewPerson[]) {
     if (!report || !node.current) return undefined;
     let active = true;
     toPng(node.current, { pixelRatio: PIXEL_RATIO })
-      .then((url) => active && download(url))
+      .then(
+        (url) => active && download(url, `claude-usage-${dayjs().format('YYYY-MM-DD-HHmm')}.png`)
+      )
       .finally(() => {
         if (!active) return;
         setReport(null);

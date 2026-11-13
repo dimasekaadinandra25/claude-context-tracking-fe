@@ -9,6 +9,7 @@ import type {
   Overview,
   AdminUser,
   IssuedKey,
+  CostUsage,
   ToolUsage,
   WeekUsage,
   CacheUsage,
@@ -96,6 +97,7 @@ export async function getOverview(range: ReportRange, userId?: string): Promise<
       ...NO_LIMITS,
       ...withOutput(p),
       app_version: p.app_version ?? null,
+      five_hour_share: p.five_hour_share ?? null,
     })),
   };
 }
@@ -174,6 +176,12 @@ export async function getProjects(range: ReportRange, userId?: string) {
     models: p.models ?? [],
     overhead: p.overhead ?? null,
   }));
+}
+
+export function getCosts(range: ReportRange, userId?: string) {
+  return unwrap<CostUsage[]>(
+    axios.get(endpoints.usage.costs, { params: rangeParams(range, userId) })
+  );
 }
 
 export function getPeople() {

@@ -59,11 +59,13 @@ export function mainAccount(people: OverviewPerson[]): OverviewPerson | null {
   );
 }
 
+const outputOf = (model: ModelUsage) => model.output_tokens + model.subagent_output_tokens;
+
 const modelWeight = (model: ModelUsage) =>
   model.input_tokens +
   model.cache_write_tokens +
   model.cache_read_tokens +
-  OUTPUT_WEIGHT * model.output_tokens;
+  OUTPUT_WEIGHT * outputOf(model);
 
 export function ModelRows({ models }: { models: ModelUsage[] }) {
   const { t } = useTranslate('usage');
@@ -104,11 +106,11 @@ export function ModelRows({ models }: { models: ModelUsage[] }) {
             </Typography>
             <Typography variant="caption" sx={{ gridColumn: '2 / 4', color: 'text.secondary' }}>
               {t('report.modelDetail', {
-                requests: model.requests.toLocaleString(),
+                requests: (model.requests + model.subagent_requests).toLocaleString(),
                 input: formatTokens(
                   model.input_tokens + model.cache_write_tokens + model.cache_read_tokens
                 ),
-                output: formatTokens(model.output_tokens),
+                output: formatTokens(outputOf(model)),
               })}
             </Typography>
           </Box>
@@ -140,7 +142,16 @@ export function PlanReport({ report }: { report: PlanReportData }) {
   const resetsAt = account?.seven_day_resets_at ?? null;
 
   return (
-    <Box sx={{ width: REPORT_WIDTH, p: 4, bgcolor: 'background.default', color: 'text.primary' }}>
+    <Box
+      sx={{
+        width: 'min-content',
+        minWidth: REPORT_WIDTH,
+        p: 4,
+        bgcolor: 'background.default',
+        color: 'text.primary',
+        '& .MuiTableContainer-root': { overflow: 'visible' },
+      }}
+    >
       <Typography variant="h4">{t('report.title')}</Typography>
       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
         {account ? t('report.window', { period }) : t('report.period', { period })}
@@ -235,7 +246,13 @@ export function ExportImageButton({ people }: { people: OverviewPerson[] }) {
 
   return (
     <>
-      <Button size="small" variant="outlined" onClick={start} disabled={busy}>
+      <Button
+        size="small"
+        variant="outlined"
+        onClick={start}
+        disabled={busy}
+        data-testid="export-image"
+      >
         {busy ? t('report.exporting') : t('report.export')}
       </Button>
       {report &&

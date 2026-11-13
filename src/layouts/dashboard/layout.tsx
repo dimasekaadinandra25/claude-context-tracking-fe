@@ -22,6 +22,7 @@ import { useNavData } from '../nav-config-dashboard';
 import { MenuButton } from '../components/menu-button';
 import { ModeButton } from '../components/mode-button';
 import { AccountDrawer } from '../components/account-drawer';
+import { LanguageButton } from '../components/language-button';
 import { HeaderBreadcrumbs } from '../components/header-breadcrumbs';
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 import { MainSection, layoutClasses, HeaderSection, LayoutSection } from '../core';
@@ -177,6 +178,7 @@ export function DashboardLayout({
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'inherit', gap: 1, flexShrink: 0 }}>
         <QuickSearchButton onClick={search.onTrue} />
+        <LanguageButton />
         <ModeButton />
       </Box>
     </Box>

@@ -13,6 +13,7 @@
     "profile": "Profile",
     "lightMode": "Switch to light mode",
     "darkMode": "Switch to dark mode",
+    "language": "Switch to {{language}}",
     "logout": "Logout",
     "logoutConfirm": {
       "title": "Logout Confirmation",

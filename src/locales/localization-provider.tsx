@@ -1,4 +1,5 @@
 import 'dayjs/locale/en';
+import 'dayjs/locale/id';
 
 import dayjs from 'dayjs';
 

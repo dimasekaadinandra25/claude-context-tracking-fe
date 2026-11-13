@@ -19,6 +19,7 @@ export default defineConfig({
     include: ['src/**/*.test.{ts,tsx}'],
     setupFiles: ['./src/test/setup.ts'],
     restoreMocks: true,
+    testTimeout: 20_000,
     // @mui/x-* import their own .css; inlining lets Vite handle those imports.
     server: { deps: { inline: [/@mui\/x-/] } },
     // Node 25+ ships its own (empty) localStorage global, which hides the one

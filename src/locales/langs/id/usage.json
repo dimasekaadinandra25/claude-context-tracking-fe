@@ -1,0 +1,292 @@
+{
+  "empty": {
+    "chart": "Belum ada penggunaan di rentang ini.",
+    "people": "Belum ada anggota.",
+    "sessions": "Tidak ada sesi di rentang ini.",
+    "models": "Tidak ada penggunaan model di rentang ini.",
+    "keys": "Belum ada kunci API.",
+    "projects": "Tidak ada penggunaan proyek di rentang ini."
+  },
+  "kpi": {
+    "newContext": "Konteks baru",
+    "requests": "Permintaan",
+    "activePeople": "Anggota aktif",
+    "sessions": "Sesi",
+    "outputTokens": "Token keluaran",
+    "subagentRequests": "Permintaan subagent",
+    "up": "▲ {{percent}}% vs {{days}}h sebelumnya",
+    "down": "▼ {{percent}}% vs {{days}}h sebelumnya",
+    "flat": "0% vs {{days}}h sebelumnya",
+    "noPrevious": "—",
+    "cacheHitRate": "Rasio cache hit"
+  },
+  "col": {
+    "name": "Nama",
+    "email": "Email",
+    "role": "Peran",
+    "status": "Status",
+    "title": "Judul",
+    "person": "Anggota",
+    "project": "Proyek",
+    "model": "Model",
+    "models": "Model",
+    "newContext": "Konteks baru",
+    "share": "Porsi konteks baru",
+    "shareScale": "Skala: 0 sampai {{max}}",
+    "latestPeak": "Terbaru / puncak (sepanjang waktu)",
+    "requests": "Permintaan",
+    "sessions": "Sesi",
+    "compactions": "Pemadatan (sepanjang waktu)",
+    "currentModel": "Model saat ini",
+    "lastRequest": "Permintaan terakhir",
+    "lastSynced": "Terakhir sinkron",
+    "budget": "Anggaran bulanan",
+    "prefix": "Prefiks",
+    "created": "Dibuat",
+    "lastUsed": "Terakhir dipakai",
+    "outputTokens": "Token keluaran",
+    "subagentRequests": "Permintaan subagent",
+    "subagentOutput": "Keluaran subagent",
+    "latestContext": "Konteks terbaru",
+    "peakContext": "Konteks puncak (sepanjang waktu)",
+    "trend": "7 hari terakhir",
+    "appVersion": "Versi aplikasi",
+    "fiveHourLimit": "Batas 5h",
+    "sevenDayLimit": "Batas 7d",
+    "linesChanged": "Baris diubah",
+    "commits": "Commit",
+    "newContextInRange": "Konteks baru (dalam rentang)",
+    "outputTokensInRange": "Token keluaran (dalam rentang)",
+    "subagentRequestsInRange": "Permintaan subagent (dalam rentang)",
+    "requestsAllTime": "Permintaan (sepanjang waktu)",
+    "cacheHitRate": "Rasio cache hit",
+    "cacheHitRateInRange": "Rasio cache hit (dalam rentang)",
+    "members": "Anggota",
+    "overhead": "Overhead per permintaan"
+  },
+  "fact": {
+    "person": "Anggota",
+    "project": "Proyek",
+    "model": "Model saat ini",
+    "models": "Model yang dipakai",
+    "machine": "Mesin",
+    "contextWindow": "Jendela konteks",
+    "startContext": "Konteks awal",
+    "latestPeak": "Konteks terbaru / puncak",
+    "newContext": "Konteks baru (sepanjang waktu)",
+    "requests": "Permintaan (sepanjang waktu)",
+    "compactions": "Pemadatan",
+    "firstRequest": "Permintaan pertama",
+    "lastRequest": "Permintaan terakhir",
+    "outputTokens": "Token keluaran (sepanjang waktu)",
+    "subagentRequests": "Permintaan subagent (sepanjang waktu)",
+    "subagentOutput": "Keluaran subagent (sepanjang waktu)"
+  },
+  "filter": {
+    "all": "Semua",
+    "person": "Anggota",
+    "project": "Proyek",
+    "model": "Model",
+    "search": "Cari judul atau proyek"
+  },
+  "role": {
+    "admin": "Admin",
+    "member": "Anggota"
+  },
+  "status": {
+    "active": "Aktif",
+    "inactive": "Nonaktif",
+    "revoked": "Dicabut"
+  },
+  "overview": {
+    "title": "Ringkasan tim",
+    "chart": "Konteks baru per hari per anggota",
+    "people": "Anggota",
+    "heatmap": "Konteks baru per hari dan jam"
+  },
+  "person": {
+    "title": "Detail anggota",
+    "myTitle": "Penggunaan saya",
+    "picker": "Anggota",
+    "chart": "Konteks baru per hari per model",
+    "recent": "Sesi terbaru",
+    "viewAll": "Semua sesi"
+  },
+  "sessions": {
+    "title": "Sesi",
+    "hourFilter": "Menampilkan sesi yang aktif antara {{from}} dan {{to}}",
+    "clearHourFilter": "Tampilkan seluruh rentang"
+  },
+  "session": {
+    "title": "Sesi",
+    "private": "Sesi privat",
+    "lineChart": "Tren konteks baru per jam per model"
+  },
+  "models": {
+    "title": "Model",
+    "share": "Porsi konteks baru",
+    "chart": "Konteks baru per hari per model",
+    "byMember": "Model per anggota",
+    "byMemberNote": "Porsi tiap anggota dari token miliknya sendiri per model (masuk termasuk cache, keluaran dihitung 5×) beserta permintaan."
+  },
+  "adminPeople": {
+    "title": "Anggota"
+  },
+  "admin": {
+    "create": "Buat anggota",
+    "createSubmit": "Buat",
+    "created": "Anggota dibuat",
+    "username": "Username",
+    "password": "Kata sandi",
+    "newPassword": "Kata sandi baru",
+    "keys": "Kunci API",
+    "resetPassword": "Atur ulang kata sandi",
+    "resetTitle": "Atur ulang kata sandi untuk {{name}}",
+    "passwordReset": "Kata sandi diatur ulang",
+    "activate": "Aktifkan",
+    "deactivate": "Nonaktifkan",
+    "activateConfirm": "Aktifkan {{name}}? Kunci yang dicabut saat dinonaktifkan tetap dicabut; terbitkan kunci baru.",
+    "deactivateConfirm": "Nonaktifkan {{name}}? Anggota ini tidak bisa masuk lagi, dan semua kunci API-nya dicabut.",
+    "updated": "Anggota diperbarui",
+    "budget": "Anggaran"
+  },
+  "budget": {
+    "title": "Anggaran bulanan",
+    "usage": "{{used}} dari {{budget}} · {{percent}}%",
+    "warning": "Hampir habis",
+    "error": "Melebihi anggaran",
+    "empty": "Belum ada anggaran. Atur anggaran di Admin → Anggota.",
+    "dialogTitle": "Anggaran bulanan untuk {{name}}",
+    "tokens": "Token konteks baru per bulan",
+    "tokensHint": "= {{tokens}}",
+    "save": "Simpan",
+    "clear": "Hapus",
+    "saved": "Anggaran disimpan",
+    "cleared": "Anggaran dihapus",
+    "invalid": "Masukkan bilangan bulat lebih dari 0."
+  },
+  "keys": {
+    "title": "Kunci API milik {{name}}",
+    "issue": "Terbitkan kunci",
+    "issueSubmit": "Terbitkan",
+    "issued": "Kunci API diterbitkan",
+    "issuedTitle": "Kunci API baru",
+    "name": "Nama kunci",
+    "once": "Kunci ini tidak akan ditampilkan lagi.",
+    "copy": "Salin",
+    "copied": "Disalin ke clipboard",
+    "copyKey": "Salin kunci API",
+    "keyCopied": "Kunci API disalin",
+    "done": "Selesai",
+    "revoke": "Cabut",
+    "revoked": "Kunci API dicabut",
+    "revokeTitle": "Cabut kunci API",
+    "revokeConfirm": "Cabut {{prefix}}? Aplikasi desktop yang memakainya berhenti sinkron."
+  },
+  "grid": {
+    "columns": "Kolom",
+    "exportCsv": "Ekspor CSV"
+  },
+  "range": {
+    "today": "Hari ini",
+    "last7": "7d",
+    "last30": "30d"
+  },
+  "heatmap": {
+    "cell": "{{day}} {{hour}}:00 · {{tokens}}",
+    "mon": "Sen",
+    "tue": "Sel",
+    "wed": "Rab",
+    "thu": "Kam",
+    "fri": "Jum",
+    "sat": "Sab",
+    "sun": "Min"
+  },
+  "version": {
+    "outdated": "Usang",
+    "latest": "Terbaru adalah {{version}}"
+  },
+  "sync": {
+    "stale": "Belum sinkron selama {{ago}}",
+    "never": "Belum pernah sinkron"
+  },
+  "search": {
+    "open": "Cari (Ctrl+K)",
+    "placeholder": "Cari anggota dan sesi (30 hari terakhir)",
+    "members": "Anggota",
+    "sessions": "Sesi",
+    "empty": "Tidak ada hasil"
+  },
+  "cache": {
+    "hint": "Porsi input yang dilayani dari cache prompt. Makin tinggi, makin sedikit konteks baru per permintaan."
+  },
+  "activity": {
+    "title": "Aktivitas kode",
+    "linesAdded": "Baris ditambah",
+    "linesRemoved": "Baris dihapus",
+    "commits": "Commit",
+    "tokensPerCommit": "Token keluaran per commit",
+    "tools": "Panggilan tool",
+    "empty": "Tidak ada aktivitas kode di rentang ini. Hitungan muncul setelah anggota memperbarui aplikasi."
+  },
+  "limits": {
+    "title": "Batas paket",
+    "fiveHour": "Jendela 5 jam",
+    "sevenDay": "Jendela 7 hari",
+    "used": "{{percent}}% terpakai",
+    "resets": "Reset {{when}}",
+    "reported": "Dilaporkan {{ago}} lalu",
+    "elapsed": "Minggu berjalan {{percent}}%",
+    "allowance": "Jatah mingguan {{weekly}} dari paket {{monthly}}/bulan",
+    "spent": "terpakai {{percent}}% ≈ {{amount}}",
+    "left": "sisa {{percent}}% ≈ {{amount}}",
+    "daily": "Batas 7 hari terpakai per hari",
+    "pace": "Laju {{percent}}%/hari",
+    "dayLeft": "sisa {{percent}}%"
+  },
+  "report": {
+    "export": "Ekspor gambar",
+    "exporting": "Mengekspor…",
+    "title": "Claude Usage",
+    "window": "Jendela batas 7 hari Claude · {{period}}",
+    "period": "7 hari terakhir · {{period}}",
+    "account": "Batas akun Claude",
+    "daily": "Batas Claude terpakai per hari",
+    "members": "Per anggota",
+    "models": "Per model",
+    "modelDetail": "{{requests}} permintaan · {{input}} masuk · {{output}} keluar",
+    "modelNote": "Per model adalah porsi token tiap model di jendela ini (keluaran dihitung 5×), bukan batas tiap model. Claude Code tidak melaporkan batas per model ke aplikasi.",
+    "generated": "Dibuat {{when}} · sumber: Claude Usage Monitor"
+  },
+  "planUsage": {
+    "title": "Penggunaan paket, 7 hari terakhir",
+    "member": "Anggota",
+    "total": "Total",
+    "share": "Porsi",
+    "cost": "Biaya",
+    "in": "masuk",
+    "out": "keluar",
+    "unused": "Tidak dipakai: {{names}}",
+    "requests": "{{count}} req",
+    "empty": "Tidak ada penggunaan dalam 7 hari terakhir.",
+    "footnote": "Masuk mencakup baca dan tulis cache. Porsi menghitung keluaran 5×. Biaya adalah batas 7 hari terpakai dikali jatah mingguan paket, diperkirakan dari tingkat paket. Anggota di akun Claude yang sama membagi biayanya menurut porsi setiap hari."
+  },
+  "pressure": {
+    "title": "Tekanan konteks",
+    "nearFull": "Sesi hampir penuh",
+    "compactions": "Pemadatan",
+    "empty": "Tidak ada sesi yang mendekati batas konteks di rentang ini."
+  },
+  "projects": {
+    "title": "Proyek",
+    "private": "Sesi privat"
+  },
+  "overhead": {
+    "title": "Overhead per permintaan",
+    "system": "Prompt sistem & tool",
+    "memory": "File memori",
+    "agents": "Agent",
+    "skills": "Skill",
+    "total": "Total"
+  }
+}

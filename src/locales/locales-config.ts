@@ -4,7 +4,7 @@ import resourcesToBackend from 'i18next-resources-to-backend';
 
 // ----------------------------------------------------------------------
 
-export const supportedLngs = ['en'] as const;
+export const supportedLngs = ['en', 'id'] as const;
 export type LangCode = (typeof supportedLngs)[number];
 
 export const fallbackLng: LangCode = 'en';
@@ -31,6 +31,13 @@ export const allLangs: LangOption[] = [
     countryCode: 'GB',
     adapterLocale: 'en',
     numberFormat: { code: 'en-US', currency: 'USD' },
+  },
+  {
+    value: 'id',
+    label: 'Bahasa Indonesia',
+    countryCode: 'ID',
+    adapterLocale: 'id',
+    numberFormat: { code: 'id-ID', currency: 'USD' },
   },
 ];
 

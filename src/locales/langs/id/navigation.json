@@ -1,0 +1,25 @@
+{
+  "overview": "Ringkasan tim",
+  "person": "Detail anggota",
+  "myUsage": "Penggunaan saya",
+  "sessions": "Sesi",
+  "projects": "Proyek",
+  "models": "Model",
+  "admin": {
+    "root": "Admin",
+    "people": "Anggota"
+  },
+  "account": {
+    "profile": "Profil",
+    "lightMode": "Beralih ke mode terang",
+    "darkMode": "Beralih ke mode gelap",
+    "language": "Ganti ke {{language}}",
+    "logout": "Keluar",
+    "logoutConfirm": {
+      "title": "Konfirmasi Keluar",
+      "description": "Yakin ingin keluar?",
+      "confirm": "Keluar"
+    },
+    "changePassword": "Ubah kata sandi"
+  }
+}

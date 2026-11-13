@@ -17,6 +17,14 @@
 - Shares are rounded together so they always add up to 100%.
 - Request count under each member's name in the plan usage grid and the report image.
 - Models by member card on the Models page: each member's share and requests per model (`GET /usage/v1/member-models`).
+- Bahasa Indonesia: a language button next to the theme toggle switches every label between English and Indonesian.
+- Inactive members show an Inactive tag in the plan usage grid and the report image.
+
+### Fixed
+
+- Models only used by subagents (such as Fable) showed 0 requests and 0 output in the report image.
+- The report image widens to fit the member table instead of showing scrollbars when labels are longer.
+- Slow component tests no longer time out when the whole suite runs at once.
 - Code activity card on the overview, member detail and session detail: lines added and removed,
   commits, output tokens per commit and tool calls (`GET /usage/v1/tools`). Lines changed and
   commits columns in Members.
@@ -40,7 +48,7 @@
 - Quick search (Ctrl+K / Cmd+K, or the search button in the nav footer): members (admin) and
   sessions, with arrow keys and Enter to open one.
 
-- Change password page (`/dashboard/account/password`, account menu › Change password) with
+- Change password page (`/dashboard/account/password`, account menu â€º Change password) with
   current / new / confirm fields (`POST /core/v1/auth/change-password`). While
   `must_change_password` is set, every dashboard route redirects there until the change succeeds.
 - Output tokens and subagent usage: overview and person KPI tiles (Output tokens, Subagent

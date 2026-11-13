@@ -34,6 +34,7 @@ const shared = {
   seven_day_resets_at: resets,
 };
 const owner = person({ user_id: 'a', full_name: 'Owner', ...shared });
+const former = person({ user_id: 'd', full_name: 'Former', is_active: false, ...shared });
 const guest = person({ user_id: 'b', full_name: 'Guest', ...shared });
 const solo = person({
   user_id: 'c',
@@ -85,15 +86,36 @@ describe('PlanReport', () => {
         account_weight: 2_000_000,
         account_members: 2,
       },
+      {
+        user_id: 'd',
+        day: today,
+        input_tokens: 1_000,
+        cache_write_tokens: 0,
+        cache_read_tokens: 0,
+        output_tokens: 0,
+        requests: 0,
+        seven_day_used: 31,
+        limit_used: 12,
+        account_weight: 2_000_000,
+        account_members: 2,
+      },
     ];
     renderWithAppProviders(
       <PlanReport
         report={{
-          people: [owner, guest],
+          people: [owner, guest, former],
           account: owner,
           days: [today],
           daily,
-          models: [model('claude-haiku-5-5', 2, 1_000), model('claude-opus-5-5', 40, 3_000)],
+          models: [
+            model('claude-haiku-5-5', 2, 1_000),
+            model('claude-opus-5-5', 40, 3_000),
+            {
+              ...model('claude-fable-5-2', 0, 0),
+              subagent_requests: 7,
+              subagent_output_tokens: 200,
+            },
+          ],
         }}
       />
     );
@@ -107,8 +129,11 @@ describe('PlanReport', () => {
     expect(screen.queryByText('By model')).not.toBeInTheDocument();
     expect(screen.getByText('└ Opus 5.5')).toBeInTheDocument();
     expect(screen.getByText('└ Haiku 5.5')).toBeInTheDocument();
+    expect(screen.getByText('└ Fable 5.2')).toBeInTheDocument();
+    expect(screen.getByText('Inactive')).toBeInTheDocument();
+    expect(screen.getByText(/^7 requests/)).toBeInTheDocument();
     expect(
-      screen.getByText(`${(75).toLocaleString(undefined, { minimumFractionDigits: 1 })}%`)
+      screen.getByText(`${(60).toLocaleString(undefined, { minimumFractionDigits: 1 })}%`)
     ).toBeInTheDocument();
   });
 });

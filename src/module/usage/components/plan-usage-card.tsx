@@ -16,6 +16,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import TableContainer from '@mui/material/TableContainer';
 
 import { useTranslate } from 'src/locales';
+import { Label } from 'src/shared/ui/label';
 import { getDaily } from 'src/module/usage/api/usage';
 import { useFetch } from 'src/module/usage/hooks/use-fetch';
 import { formatTokens } from 'src/module/usage/utils/format';
@@ -189,6 +190,9 @@ export function UsageGrid({
                         {person.full_name || person.email}
                       </Typography>
                       <PlanBadge person={person} />
+                      {person.is_active === false && (
+                        <Label color="default">{t('status.inactive')}</Label>
+                      )}
                     </Box>
                     <Typography
                       variant="caption"

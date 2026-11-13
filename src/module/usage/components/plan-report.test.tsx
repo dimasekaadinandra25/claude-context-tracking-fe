@@ -28,6 +28,7 @@ const person = (fields: Partial<OverviewPerson>) =>
 
 const resets = dayjs().add(2, 'day').toISOString();
 const shared = {
+  model_limits: [{ name: 'Fable', used: 4, resets_at: resets }],
   claude_email: 'team@claude.test',
   claude_tier: 'default_claude_max_20x',
   seven_day_used: 31,
@@ -131,6 +132,8 @@ describe('PlanReport', () => {
     expect(screen.getByText('└ Haiku 5.5')).toBeInTheDocument();
     expect(screen.getByText('└ Fable 5.2')).toBeInTheDocument();
     expect(screen.getByText('Inactive')).toBeInTheDocument();
+    expect(screen.getByText('Fable weekly limit')).toBeInTheDocument();
+    expect(screen.getByText('4% used')).toBeInTheDocument();
     expect(screen.getByText(/^7 requests/)).toBeInTheDocument();
     expect(
       screen.getByText(`${(60).toLocaleString(undefined, { minimumFractionDigits: 1 })}%`)

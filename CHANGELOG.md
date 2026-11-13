@@ -19,6 +19,7 @@
 - Models by member card on the Models page: each member's share and requests per model (`GET /usage/v1/member-models`).
 - Bahasa Indonesia: a language button next to the theme toggle switches every label between English and Indonesian.
 - Inactive members show an Inactive tag in the plan usage grid and the report image.
+- Per-model weekly limits Claude reports (such as Fable) show as their own bar under the 7-day window in the report image and the plan limits card.
 
 ### Fixed
 

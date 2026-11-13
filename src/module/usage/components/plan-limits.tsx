@@ -293,6 +293,19 @@ export function PlanBadge({ person }: { person: OverviewPerson }) {
   return <Chip size="small" label={label} />;
 }
 
+export function ModelLimitRows({ person }: { person: OverviewPerson }) {
+  const { t } = useTranslate('usage');
+  return (person.model_limits ?? []).map((limit) => (
+    <LimitRow
+      key={limit.name}
+      label={t('limits.model', { name: limit.name })}
+      used={limit.used}
+      resetsAt={limit.resets_at}
+      capturedAt={person.limits_captured_at}
+    />
+  ));
+}
+
 export function PlanLimitsCard({ person }: { person: OverviewPerson }) {
   const { t } = useTranslate('usage');
   const { five_hour_used: five, seven_day_used: seven, limits_captured_at: capturedAt } = person;
@@ -327,6 +340,7 @@ export function PlanLimitsCard({ person }: { person: OverviewPerson }) {
             elapsed={sevenResets ? weekElapsed(sevenResets) : undefined}
           />
         )}
+        {seven !== null && <ModelLimitRows person={person} />}
         {seven !== null && <Allowance used={seven} tier={person.claude_tier ?? null} />}
         {seven !== null && sevenResets && (
           <DailyLimitChart userId={person.user_id} resetsAt={sevenResets} />

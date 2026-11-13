@@ -48,6 +48,7 @@ const NO_PRESSURE = { sessions_near_full: 0, compactions: 0 };
 const NO_ACTIVITY = { lines_added: 0, lines_removed: 0, commits: 0 };
 
 const NO_LIMITS = {
+  model_limits: [],
   five_hour_used: null,
   five_hour_resets_at: null,
   seven_day_used: null,

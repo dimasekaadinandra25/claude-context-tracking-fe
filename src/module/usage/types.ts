@@ -21,7 +21,14 @@ export type CodeActivity = {
   commits: number;
 };
 
+export type ModelLimit = {
+  name: string;
+  used: number;
+  resets_at: string;
+};
+
 export type PlanLimitUsage = {
+  model_limits?: ModelLimit[];
   five_hour_used: number | null;
   five_hour_resets_at: string | null;
   seven_day_used: number | null;

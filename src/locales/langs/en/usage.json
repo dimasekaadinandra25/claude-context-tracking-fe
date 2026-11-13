@@ -233,6 +233,7 @@
     "title": "Plan limits",
     "fiveHour": "5-hour window",
     "sevenDay": "7-day window",
+    "model": "{{name}} weekly limit",
     "used": "{{percent}}% used",
     "resets": "Resets {{when}}",
     "reported": "Reported {{ago}} ago",
@@ -255,7 +256,7 @@
     "members": "Per member",
     "models": "By model",
     "modelDetail": "{{requests}} requests · {{input}} in · {{output}} out",
-    "modelNote": "Per model is each model's share of tokens in this window (output counts 5×), not its own limit. Claude Code does not report per-model limits to apps.",
+    "modelNote": "Per model is each model's share of tokens in this window (output counts 5×). Limits Claude sets for a single model, such as Fable, are shown above as their own bars.",
     "generated": "Generated {{when}} · source: Claude Usage Monitor"
   },
   "planUsage": {

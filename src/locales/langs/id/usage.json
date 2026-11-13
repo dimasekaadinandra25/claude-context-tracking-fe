@@ -233,6 +233,7 @@
     "title": "Batas paket",
     "fiveHour": "Jendela 5 jam",
     "sevenDay": "Jendela 7 hari",
+    "model": "Batas mingguan {{name}}",
     "used": "{{percent}}% terpakai",
     "resets": "Reset {{when}}",
     "reported": "Dilaporkan {{ago}} lalu",
@@ -255,7 +256,7 @@
     "members": "Per anggota",
     "models": "Per model",
     "modelDetail": "{{requests}} permintaan · {{input}} masuk · {{output}} keluar",
-    "modelNote": "Per model adalah porsi token tiap model di jendela ini (keluaran dihitung 5×), bukan batas tiap model. Claude Code tidak melaporkan batas per model ke aplikasi.",
+    "modelNote": "Per model adalah porsi token tiap model di jendela ini (keluaran dihitung 5×). Batas yang Claude tetapkan untuk satu model, seperti Fable, ditampilkan di atas sebagai bar tersendiri.",
     "generated": "Dibuat {{when}} · sumber: Claude Usage Monitor"
   },
   "planUsage": {

@@ -122,9 +122,29 @@ export const isShared = (day: DailyUsage) => day.account_members > 1;
 
 export const hasTokens = (day: DailyUsage) => inputOf(day) + day.output_tokens > 0;
 
+function memberShare(day: DailyUsage): number {
+  if (!isShared(day)) return 1;
+  if (day.account_weight > 0) return weightOf(day) / day.account_weight;
+  return 1 / day.account_members;
+}
+
 export function memberCost(day: DailyUsage, tier: string | null): number | null {
   const accountCost = costOf(day.limit_used, tier);
-  if (accountCost === null || !isShared(day)) return accountCost;
-  if (day.account_weight > 0) return (accountCost * weightOf(day)) / day.account_weight;
-  return accountCost / day.account_members;
+  return accountCost === null ? null : accountCost * memberShare(day);
 }
+
+export function rangeCost(daily: DailyUsage[], people: OverviewPerson[]): number | null {
+  const tiers = new Map(people.map((person) => [person.user_id, person.claude_tier ?? null]));
+  const costs = daily
+    .map((day) => memberCost(day, tiers.get(day.user_id) ?? null))
+    .filter((cost): cost is number => cost !== null);
+  return costs.length > 0 ? costs.reduce((total, cost) => total + cost, 0) : null;
+}
+
+export function memberLimitUsed(day: DailyUsage): number | null {
+  return day.limit_used === null ? null : day.limit_used * memberShare(day);
+}
+
+export const fairDailyShare = (day: DailyUsage) => PACE_PERCENT / Math.max(day.account_members, 1);
+
+export const isHeavyDay = (day: DailyUsage) => (memberLimitUsed(day) ?? 0) > fairDailyShare(day);

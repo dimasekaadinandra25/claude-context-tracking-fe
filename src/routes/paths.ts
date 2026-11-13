@@ -17,6 +17,7 @@ export const paths = {
     sessions: `${ROOTS.DASHBOARD}/sessions`,
     session: (id: string) => `${ROOTS.DASHBOARD}/sessions/${id}`,
     models: `${ROOTS.DASHBOARD}/models`,
+    weeks: `${ROOTS.DASHBOARD}/weeks`,
     projects: `${ROOTS.DASHBOARD}/projects`,
     adminPeople: `${ROOTS.DASHBOARD}/admin/people`,
     changePassword: `${ROOTS.DASHBOARD}/account/password`,

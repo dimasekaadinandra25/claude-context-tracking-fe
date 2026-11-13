@@ -7,10 +7,12 @@ import {
   budgetOf,
   planLabel,
   planPrice,
+  isHeavyDay,
   memberCost,
   windowDays,
   weekElapsed,
   roundToTotal,
+  memberLimitUsed,
   weeklyAllowance,
 } from './plan';
 
@@ -112,5 +114,32 @@ describe('budgetOf', () => {
     expect(budgetOf(10, resets(6.5), now)?.projected).toBeNull();
     expect(budgetOf(10, resets(0.5), now)?.perDay).toBe(90);
     expect(budgetOf(10, resets(-1), now)).toBeNull();
+  });
+});
+
+describe('isHeavyDay', () => {
+  const day = (fields: Partial<DailyUsage>): DailyUsage => ({
+    user_id: 'a',
+    day: '2026-11-13',
+    input_tokens: 0,
+    cache_write_tokens: 0,
+    cache_read_tokens: 0,
+    output_tokens: 0,
+    requests: 0,
+    seven_day_used: null,
+    limit_used: null,
+    account_weight: 0,
+    account_members: 1,
+    ...fields,
+  });
+
+  it('comparesAMembersShareOfTheDayWithTheirShareOfThePace', () => {
+    expect(isHeavyDay(day({ limit_used: 20 }))).toBe(true);
+    expect(isHeavyDay(day({ limit_used: 10 }))).toBe(false);
+    const shared = { limit_used: 20, account_weight: 1_000, account_members: 2 };
+    expect(memberLimitUsed(day({ ...shared, input_tokens: 400 }))).toBeCloseTo(8);
+    expect(isHeavyDay(day({ ...shared, input_tokens: 400 }))).toBe(true);
+    expect(isHeavyDay(day({ ...shared, input_tokens: 300 }))).toBe(false);
+    expect(isHeavyDay(day({}))).toBe(false);
   });
 });

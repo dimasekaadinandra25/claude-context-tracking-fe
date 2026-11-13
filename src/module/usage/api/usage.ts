@@ -10,10 +10,11 @@ import type {
   AdminUser,
   IssuedKey,
   ToolUsage,
+  WeekUsage,
   CacheUsage,
   DailyUsage,
-  MemberModel,
   ModelUsage,
+  MemberModel,
   OutputUsage,
   ProjectUsage,
   UsageSession,
@@ -129,6 +130,10 @@ export function getMemberModels(range: ReportRange, userId?: string) {
   return unwrap<MemberModel[]>(
     axios.get(endpoints.usage.memberModels, { params: rangeParams(range, userId) })
   );
+}
+
+export function getWeeks(range: ReportRange) {
+  return unwrap<WeekUsage[]>(axios.get(endpoints.usage.weeks, { params: rangeParams(range) }));
 }
 
 export function getDaily(range: ReportRange, userId?: string) {

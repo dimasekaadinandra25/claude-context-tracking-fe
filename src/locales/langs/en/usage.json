@@ -273,7 +273,8 @@
     "unused": "Not used: {{names}}",
     "requests": "{{count}} req",
     "empty": "No usage in the last 7 days.",
-    "footnote": "In includes cache read and write. Share weighs output 5×. Cost is the 7-day limit used times the weekly plan allowance, estimated from the plan tier. Members on the same Claude account split its cost by share each day."
+    "footnote": "In includes cache read and write. Share weighs output 5×. Cost is the 7-day limit used times the weekly plan allowance, estimated from the plan tier. Members on the same Claude account split its cost by share each day. An amber outline marks a day above the member's fair share of the 14.3%/day pace (split between members of the account).",
+    "heavy": "Used {{used}}% of the limit this day, more than the {{fair}}%/day fair share"
   },
   "pressure": {
     "title": "Context pressure",
@@ -283,7 +284,9 @@
   },
   "projects": {
     "title": "Projects",
-    "private": "Private sessions"
+    "private": "Private sessions",
+    "share": "Share",
+    "cost": "Est. cost"
   },
   "overhead": {
     "title": "Overhead per request",
@@ -292,5 +295,17 @@
     "agents": "Agents",
     "skills": "Skills",
     "total": "Total"
+  },
+  "weeks": {
+    "title": "Weekly history",
+    "window": "7-day window",
+    "account": "Claude account",
+    "used": "Limit used",
+    "cost": "Est. cost",
+    "topModel": "Top model",
+    "members": "Members (share · cost)",
+    "current": "Current",
+    "empty": "No 7-day windows with limit readings in the last 12 weeks.",
+    "note": "Each row is one Claude 7-day limit window with the last reading of that window. Cost is the limit used times the weekly plan allowance; members split it by token share (input including cache, output counts 5×)."
   }
 }

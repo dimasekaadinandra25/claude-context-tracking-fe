@@ -18,6 +18,7 @@ const ICONS = {
   person: icon('ic-user'),
   sessions: icon('ic-kanban'),
   models: icon('ic-analytics'),
+  weeks: icon('ic-calendar'),
   projects: icon('ic-folder'),
   people: icon('ic-lock'),
 };
@@ -43,6 +44,7 @@ export function useNavData(): NavSectionProps['data'] {
       },
       { title: t('projects'), path: paths.dashboard.projects, icon: ICONS.projects },
       { title: t('models'), path: paths.dashboard.models, icon: ICONS.models },
+      { title: t('weeks'), path: paths.dashboard.weeks, icon: ICONS.weeks },
     ];
 
     if (!isAdmin) {

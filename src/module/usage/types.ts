@@ -53,6 +53,21 @@ export type DailyUsage = {
   account_members: number;
 };
 
+export type WeekUsage = {
+  account: string;
+  claude_email: string | null;
+  claude_tier: string | null;
+  resets_at: string;
+  used: number;
+  top_model: string | null;
+  user_id: string | null;
+  full_name: string;
+  input_tokens: number;
+  output_tokens: number;
+  requests: number;
+  weight: number;
+};
+
 export type MemberModel = {
   user_id: string;
   full_name: string;

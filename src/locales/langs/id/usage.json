@@ -273,7 +273,8 @@
     "unused": "Tidak dipakai: {{names}}",
     "requests": "{{count}} req",
     "empty": "Tidak ada penggunaan dalam 7 hari terakhir.",
-    "footnote": "Masuk mencakup baca dan tulis cache. Porsi menghitung keluaran 5×. Biaya adalah batas 7 hari terpakai dikali jatah mingguan paket, diperkirakan dari tingkat paket. Anggota di akun Claude yang sama membagi biayanya menurut porsi setiap hari."
+    "footnote": "Masuk mencakup baca dan tulis cache. Porsi menghitung keluaran 5×. Biaya adalah batas 7 hari terpakai dikali jatah mingguan paket, diperkirakan dari tingkat paket. Anggota di akun Claude yang sama membagi biayanya menurut porsi setiap hari. Garis kuning menandai hari di atas porsi wajar anggota dari laju 14,3%/hari (dibagi antar anggota akun).",
+    "heavy": "Memakai {{used}}% batas hari ini, lebih dari porsi wajar {{fair}}%/hari"
   },
   "pressure": {
     "title": "Tekanan konteks",
@@ -283,7 +284,9 @@
   },
   "projects": {
     "title": "Proyek",
-    "private": "Sesi privat"
+    "private": "Sesi privat",
+    "share": "Porsi",
+    "cost": "Perkiraan biaya"
   },
   "overhead": {
     "title": "Overhead per permintaan",
@@ -292,5 +295,17 @@
     "agents": "Agent",
     "skills": "Skill",
     "total": "Total"
+  },
+  "weeks": {
+    "title": "Riwayat mingguan",
+    "window": "Jendela 7 hari",
+    "account": "Akun Claude",
+    "used": "Batas terpakai",
+    "cost": "Perkiraan biaya",
+    "topModel": "Model teratas",
+    "members": "Anggota (porsi · biaya)",
+    "current": "Berjalan",
+    "empty": "Tidak ada jendela 7 hari dengan data batas dalam 12 minggu terakhir.",
+    "note": "Setiap baris adalah satu jendela batas 7 hari Claude dengan data terakhir di jendela itu. Biaya adalah batas terpakai dikali jatah mingguan paket; anggota membaginya menurut porsi token (masukan termasuk cache, keluaran dihitung 5×)."
   }
 }

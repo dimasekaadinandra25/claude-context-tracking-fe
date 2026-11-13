@@ -42,6 +42,28 @@ function renderProjects(isAdmin = false) {
   const backend = installFakeBackend({
     'GET /usage/v1/projects': { status: 200, data: envelope([billing, privateSessions]) },
     'GET /usage/v1/people': { status: 200, data: envelope([]) },
+    'GET /usage/v1/daily': {
+      status: 200,
+      data: envelope([
+        {
+          user_id: 'u1',
+          day: '2026-11-13',
+          input_tokens: 0,
+          cache_write_tokens: 0,
+          cache_read_tokens: 0,
+          output_tokens: 0,
+          requests: 0,
+          seven_day_used: 10,
+          limit_used: 10,
+          account_weight: 0,
+          account_members: 1,
+        },
+      ]),
+    },
+    'GET /usage/v1/overview': {
+      status: 200,
+      data: envelope({ people: [{ user_id: 'u1', claude_tier: 'default_claude_max_20x' }] }),
+    },
   });
   const view = (
     <ReportRangeProvider>
@@ -75,6 +97,11 @@ describe('ProjectsView', () => {
     const privateRow = rowOf('Private sessions');
     expect(within(privateRow).queryByRole('link')).not.toBeInTheDocument();
     expect(within(privateRow).getAllByRole('gridcell', { name: '—' })).toHaveLength(2);
+    expect(within(rowOf('billing')).getByRole('gridcell', { name: '55.0%' })).toBeInTheDocument();
+    expect(
+      await within(rowOf('billing')).findByRole('gridcell', { name: '$2.54' })
+    ).toBeInTheDocument();
+    expect(within(privateRow).getByRole('gridcell', { name: '$2.08' })).toBeInTheDocument();
 
     expect(screen.queryByRole('columnheader', { name: 'Members' })).not.toBeInTheDocument();
     expect(backend.requests).toContainEqual(

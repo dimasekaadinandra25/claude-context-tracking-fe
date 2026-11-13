@@ -8,12 +8,13 @@ import { Toolbar, DataGrid } from '@mui/x-data-grid';
 import { useTranslate } from 'src/locales';
 import { useAuthContext } from 'src/module/core/features/auth/hooks';
 
-import { getProjects } from '../../../api/usage';
+import { rangeCost } from '../../../utils/plan';
 import { useFetch } from '../../../hooks/use-fetch';
 import { PageShell } from '../../../components/page-shell';
 import { RangePicker } from '../../../components/range-picker';
 import { GridActions } from '../../../components/grid-actions';
 import { useReportRange } from '../../../hooks/use-report-range';
+import { getDaily, getProjects, getOverview } from '../../../api/usage';
 import { PersonFilter } from '../../sessions/components/session-filters';
 import { useColumnVisibility } from '../../../hooks/use-column-visibility';
 import { PROJECT_FIELD, projectColumns } from '../components/project-columns';
@@ -39,7 +40,16 @@ export function ProjectsView() {
   const [userId, setUserId] = useState('');
   const load = useCallback(() => getProjects(range, userId || undefined), [range, userId]);
   const { data, error, loading } = useFetch(load);
-  const columns = useMemo(() => projectColumns(t, isAdmin), [t, isAdmin]);
+  const loadSpent = useCallback(
+    () => Promise.all([getDaily(range, userId || undefined), getOverview(range)]),
+    [range, userId]
+  );
+  const { data: spentData } = useFetch(loadSpent);
+  const spent = spentData ? rangeCost(spentData[0], spentData[1].people) : null;
+  const columns = useMemo(
+    () => projectColumns(t, isAdmin, data ?? [], spent),
+    [t, isAdmin, data, spent]
+  );
   const [visibility, setVisibility] = useColumnVisibility(
     VISIBILITY_KEY,
     ALL_COLUMNS,

@@ -9,6 +9,7 @@ import { RowLink } from '../../../components/row-link';
 import { ModelChips } from '../../../components/model-chips';
 import { cacheRateColumn } from '../../../components/cache-rate-column';
 import { OverheadBar, overheadTotal } from '../../../components/overhead';
+import { PERCENT, formatUsd, oneDecimal, OUTPUT_WEIGHT } from '../../../utils/plan';
 
 export const PROJECT_FIELD = 'project';
 
@@ -29,10 +30,23 @@ const numberColumn = (
   valueFormatter: (value: number) => format(value),
 });
 
+export const projectWeight = (row: ProjectUsage) =>
+  row.input_tokens +
+  row.cache_write_tokens +
+  row.cache_read_tokens +
+  OUTPUT_WEIGHT * row.output_tokens;
+
 const projectHref = (project: string) =>
   `${paths.dashboard.sessions}?${new URLSearchParams({ project })}`;
 
-export function projectColumns(t: TFunction, isAdmin: boolean): GridColDef<ProjectUsage>[] {
+export function projectColumns(
+  t: TFunction,
+  isAdmin: boolean,
+  rows: ProjectUsage[] = [],
+  spent: number | null = null
+): GridColDef<ProjectUsage>[] {
+  const total = rows.reduce((sum, row) => sum + projectWeight(row), 0);
+  const share = (row: ProjectUsage) => (total > 0 ? projectWeight(row) / total : 0);
   return [
     {
       field: PROJECT_FIELD,
@@ -51,6 +65,20 @@ export function projectColumns(t: TFunction, isAdmin: boolean): GridColDef<Proje
         ),
     },
     numberColumn('new_context', t('col.newContext'), formatTokens),
+    {
+      field: 'share',
+      headerName: t('projects.share'),
+      width: WIDTH.number,
+      valueGetter: (_v, row) => share(row) * PERCENT,
+      valueFormatter: (value: number) => `${oneDecimal(value)}%`,
+    },
+    {
+      field: 'cost',
+      headerName: t('projects.cost'),
+      width: WIDTH.number,
+      valueGetter: (_v, row) => (spent === null ? null : spent * share(row)),
+      valueFormatter: (value: number | null) => (value === null ? '—' : formatUsd(value)),
+    },
     numberColumn('requests', t('col.requests')),
     numberColumn('sessions', t('col.sessions')),
     ...(isAdmin ? [numberColumn('members', t('col.members'))] : []),

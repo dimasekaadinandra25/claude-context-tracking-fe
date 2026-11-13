@@ -35,7 +35,10 @@ import {
   formatUsd,
   memberCost,
   oneDecimal,
+  isHeavyDay,
   roundToTotal,
+  fairDailyShare,
+  memberLimitUsed,
 } from 'src/module/usage/utils/plan';
 
 const CELL_WIDTH = 76;
@@ -85,6 +88,7 @@ function memberRows(people: OverviewPerson[], daily: DailyUsage[]): MemberRow[] 
 }
 
 function DayCell({ row, tier, max }: { row?: DailyUsage; tier: string | null; max: number }) {
+  const { t } = useTranslate('usage');
   if (!row || (isShared(row) && !hasTokens(row))) {
     return (
       <TableCell align="center" sx={{ color: 'text.disabled' }}>
@@ -94,17 +98,26 @@ function DayCell({ row, tier, max }: { row?: DailyUsage; tier: string | null; ma
   }
   const cost = memberCost(row, tier);
   const shade = MIN_SHADE + (MAX_SHADE - MIN_SHADE) * (max > 0 ? inputOf(row) / max : 0);
+  const heavy = isHeavyDay(row);
 
   return (
     <TableCell
       align="center"
+      title={
+        heavy
+          ? t('planUsage.heavy', {
+              used: oneDecimal(memberLimitUsed(row) ?? 0),
+              fair: oneDecimal(fairDailyShare(row)),
+            })
+          : undefined
+      }
       sx={(theme: Theme) => ({
         px: 0.5,
         width: CELL_WIDTH,
         minWidth: CELL_WIDTH,
         bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, shade),
         borderRadius: 1,
-        border: `3px solid ${theme.vars.palette.background.paper}`,
+        border: `3px solid ${heavy ? theme.vars.palette.warning.main : theme.vars.palette.background.paper}`,
       })}
     >
       <Typography variant="subtitle2">{formatTokens(inputOf(row))}</Typography>

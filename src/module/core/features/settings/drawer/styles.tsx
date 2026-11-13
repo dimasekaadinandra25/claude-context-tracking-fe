@@ -8,6 +8,15 @@ import ButtonBase from '@mui/material/ButtonBase';
 
 import { Iconify } from 'src/shared/ui/iconify';
 
+const LARGE_PADDING_TOP = 4;
+const LARGE_LABEL_PADDING_X = 1.25;
+const ROW_GAP = 1.5;
+const SMALL_LABEL_GAP = 0.25;
+const FONT_SIZE_LARGE = 13;
+const FONT_SIZE_SMALL = 11;
+const ALPHA_STRONG = 0.12;
+const ALPHA_SOFT = 0.08;
+
 // ----------------------------------------------------------------------
 
 type LargeBlockProps = React.ComponentProps<typeof LargeBlockRoot> & {
@@ -21,9 +30,9 @@ const LargeBlockRoot = styled('div')(({ theme }) => ({
   display: 'flex',
   position: 'relative',
   flexDirection: 'column',
-  padding: theme.spacing(4, 2, 2, 2),
+  padding: theme.spacing(LARGE_PADDING_TOP, 2, 2, 2),
   borderRadius: Number(theme.shape.borderRadius) * 2,
-  border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
+  border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], ALPHA_STRONG)}`,
 }));
 
 const LargeLabel = styled('span')(({ theme }) => ({
@@ -33,8 +42,8 @@ const LargeLabel = styled('span')(({ theme }) => ({
   position: 'absolute',
   alignItems: 'center',
   display: 'inline-flex',
-  padding: theme.spacing(0, 1.25),
-  fontSize: theme.typography.pxToRem(13),
+  padding: theme.spacing(0, LARGE_LABEL_PADDING_X),
+  fontSize: theme.typography.pxToRem(FONT_SIZE_LARGE),
   color: theme.vars.palette.common.white,
   fontWeight: theme.typography.fontWeightSemiBold,
   backgroundColor: theme.vars.palette.text.primary,
@@ -88,7 +97,7 @@ type SmallBlockProps = React.ComponentProps<typeof SmallBlockRoot> & {
 const SmallBlockRoot = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(1.5),
+  gap: theme.spacing(ROW_GAP),
 }));
 
 const SmallLabel = styled(ButtonBase, {
@@ -98,8 +107,8 @@ const SmallLabel = styled(ButtonBase, {
   lineHeight: '16px',
   pointerEvent: 'none',
   alignSelf: 'flex-start',
-  gap: theme.spacing(0.25),
-  fontSize: theme.typography.pxToRem(11),
+  gap: theme.spacing(SMALL_LABEL_GAP),
+  fontSize: theme.typography.pxToRem(FONT_SIZE_SMALL),
   color: theme.vars.palette.text.secondary,
   fontWeight: theme.typography.fontWeightSemiBold,
   transition: theme.transitions.create(['color']),
@@ -149,14 +158,14 @@ export function OptionButton({ selected, sx, children, ...other }: OptionButtonP
           color: 'text.disabled',
           border: `solid 1px transparent`,
           fontWeight: 'fontWeightSemiBold',
-          fontSize: theme.typography.pxToRem(13),
+          fontSize: theme.typography.pxToRem(FONT_SIZE_LARGE),
           ...(selected && {
             color: 'text.primary',
             bgcolor: 'background.paper',
-            borderColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
-            boxShadow: `-8px 8px 20px -4px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
+            borderColor: varAlpha(theme.vars.palette.grey['500Channel'], ALPHA_SOFT),
+            boxShadow: `-8px 8px 20px -4px ${varAlpha(theme.vars.palette.grey['500Channel'], ALPHA_STRONG)}`,
             ...theme.applyStyles('dark', {
-              boxShadow: `-8px 8px 20px -4px ${varAlpha(theme.vars.palette.common.blackChannel, 0.12)}`,
+              boxShadow: `-8px 8px 20px -4px ${varAlpha(theme.vars.palette.common.blackChannel, ALPHA_STRONG)}`,
             }),
             '& svg': {
               color: 'primary.main',

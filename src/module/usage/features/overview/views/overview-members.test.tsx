@@ -68,7 +68,9 @@ describe('OverviewView app version and sync', () => {
     expect(screen.getAllByText('Outdated')).toHaveLength(1);
     expect(screen.getByLabelText('Latest is 1.10.0')).toHaveTextContent('Outdated');
     expect(
-      screen.getAllByRole('gridcell', { name: '—' }).filter((c) => c.dataset.field === 'app_version')
+      screen
+        .getAllByRole('gridcell', { name: '—' })
+        .filter((c) => c.dataset.field === 'app_version')
     ).toHaveLength(1);
   });
 

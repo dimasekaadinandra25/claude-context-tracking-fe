@@ -9,6 +9,12 @@ import ButtonBase from '@mui/material/ButtonBase';
 
 import { Iconify } from 'src/shared/ui/iconify';
 
+const PADDING_LEFT = 2.5;
+const BORDER_ALPHA = 0.12;
+const HOVER_ALPHA = 0.08;
+const LABEL_GAP = 3;
+const LABEL_FONT_SIZE = 13;
+
 // ----------------------------------------------------------------------
 
 export type BaseOptionProps = Omit<ButtonBaseProps, 'action'> & {
@@ -68,14 +74,14 @@ const ItemRoot = styled(ButtonBase, {
   cursor: 'pointer',
   flexDirection: 'column',
   alignItems: 'flex-start',
-  padding: theme.spacing(2, 2, 2, 2.5),
+  padding: theme.spacing(2, 2, 2, PADDING_LEFT),
   borderRadius: Number(theme.shape.borderRadius) * 2,
-  border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
+  border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], BORDER_ALPHA)}`,
   '&:hover': {
-    backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+    backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], HOVER_ALPHA),
   },
   ...(selected && {
-    backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+    backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], HOVER_ALPHA),
   }),
 }));
 
@@ -83,7 +89,7 @@ const TopContainer = styled('div')(({ theme }) => ({
   width: '100%',
   display: 'flex',
   alignItems: 'center',
-  marginBottom: theme.spacing(3),
+  marginBottom: theme.spacing(LABEL_GAP),
   justifyContent: 'space-between',
 }));
 
@@ -96,6 +102,6 @@ const BottomContainer = styled('div')(({ theme }) => ({
 
 const ItemLabel = styled('span')(({ theme }) => ({
   lineHeight: '18px',
-  fontSize: theme.typography.pxToRem(13),
+  fontSize: theme.typography.pxToRem(LABEL_FONT_SIZE),
   fontWeight: theme.typography.fontWeightSemiBold,
 }));

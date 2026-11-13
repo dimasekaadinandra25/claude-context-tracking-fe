@@ -11,6 +11,8 @@ import Container from '@mui/material/Container';
 
 import { layoutClasses } from './classes';
 
+const BLUR_ALPHA = 0.8;
+
 // ----------------------------------------------------------------------
 
 export type HeaderSectionProps = AppBarProps & {
@@ -100,7 +102,7 @@ const HeaderRoot = styled(AppBar, {
 
   const bgStyles: CSSObject = {
     ...theme.mixins.bgBlur({
-      color: varAlpha(theme.vars.palette.background.defaultChannel, 0.8),
+      color: varAlpha(theme.vars.palette.background.defaultChannel, BLUR_ALPHA),
     }),
     ...pauseStyles,
     top: 0,

@@ -108,6 +108,7 @@ describe('PlanReport', () => {
           account: owner,
           days: [today],
           daily,
+          lastWeek: { day: dayjs().subtract(7, 'day').format('YYYY-MM-DD'), used: 45 },
           models: [
             model('claude-haiku-5-5', 2, 1_000),
             model('claude-opus-5-5', 40, 3_000),
@@ -132,6 +133,7 @@ describe('PlanReport', () => {
     expect(screen.getByText('└ Haiku 5.5')).toBeInTheDocument();
     expect(screen.getByText('└ Fable 5.2')).toBeInTheDocument();
     expect(screen.getByText('Inactive')).toBeInTheDocument();
+    expect(screen.getByText(/last week by .*: 45%/)).toBeInTheDocument();
     expect(screen.getByText('Fable weekly limit')).toBeInTheDocument();
     expect(screen.getByText('4% used')).toBeInTheDocument();
     expect(screen.getByText(/^7 requests/)).toBeInTheDocument();

@@ -39,6 +39,37 @@ export const projectWeight = (row: ProjectUsage) =>
 const projectHref = (project: string) =>
   `${paths.dashboard.sessions}?${new URLSearchParams({ project })}`;
 
+type Share = (row: ProjectUsage) => number;
+
+const shareColumn = (headerName: string, share: Share): GridColDef<ProjectUsage> => ({
+  field: 'share',
+  headerName,
+  width: WIDTH.number,
+  valueGetter: (_v, row) => share(row) * PERCENT,
+  valueFormatter: (value: number) => `${oneDecimal(value)}%`,
+});
+
+const costColumn = (
+  headerName: string,
+  share: Share,
+  spent: number | null
+): GridColDef<ProjectUsage> => ({
+  field: 'cost',
+  headerName,
+  width: WIDTH.number,
+  valueGetter: (_v, row) => (spent === null ? null : spent * share(row)),
+  valueFormatter: (value: number | null) => (value === null ? '—' : formatUsd(value)),
+});
+
+const overheadColumn = (headerName: string): GridColDef<ProjectUsage> => ({
+  field: 'overhead',
+  headerName,
+  width: WIDTH.overhead,
+  display: 'flex',
+  valueGetter: (_v, row) => (row.overhead ? overheadTotal(row.overhead) : null),
+  renderCell: ({ row }) => (row.overhead ? <OverheadBar overhead={row.overhead} /> : '—'),
+});
+
 export function projectColumns(
   t: TFunction,
   isAdmin: boolean,
@@ -65,20 +96,8 @@ export function projectColumns(
         ),
     },
     numberColumn('new_context', t('col.newContext'), formatTokens),
-    {
-      field: 'share',
-      headerName: t('projects.share'),
-      width: WIDTH.number,
-      valueGetter: (_v, row) => share(row) * PERCENT,
-      valueFormatter: (value: number) => `${oneDecimal(value)}%`,
-    },
-    {
-      field: 'cost',
-      headerName: t('projects.cost'),
-      width: WIDTH.number,
-      valueGetter: (_v, row) => (spent === null ? null : spent * share(row)),
-      valueFormatter: (value: number | null) => (value === null ? '—' : formatUsd(value)),
-    },
+    shareColumn(t('projects.share'), share),
+    costColumn(t('projects.cost'), share, spent),
     numberColumn('requests', t('col.requests')),
     numberColumn('sessions', t('col.sessions')),
     ...(isAdmin ? [numberColumn('members', t('col.members'))] : []),
@@ -92,13 +111,6 @@ export function projectColumns(
     cacheRateColumn<ProjectUsage>(t),
     numberColumn('compactions', t('pressure.compactions')),
     numberColumn('sessions_near_full', t('pressure.nearFull')),
-    {
-      field: 'overhead',
-      headerName: t('col.overhead'),
-      width: WIDTH.overhead,
-      display: 'flex',
-      valueGetter: (_v, row) => (row.overhead ? overheadTotal(row.overhead) : null),
-      renderCell: ({ row }) => (row.overhead ? <OverheadBar overhead={row.overhead} /> : '—'),
-    },
+    overheadColumn(t('col.overhead')),
   ];
 }

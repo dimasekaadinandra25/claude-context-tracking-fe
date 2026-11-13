@@ -24,6 +24,8 @@ import { AnimateBorder } from 'src/shared/ui/animate';
 import { ConfirmDialog } from 'src/shared/ui/confirm-dialog';
 import { useAuthContext } from 'src/module/core/features/auth/hooks';
 
+const COMPACT_PADDING_Y = 0.75;
+
 // ----------------------------------------------------------------------
 
 export type AccountDrawerProps = IconButtonProps & {
@@ -104,7 +106,7 @@ export function AccountDrawer({ compact, sx, ...other }: AccountDrawerProps) {
               alignItems: 'center',
               gap: 1.25,
               px: compact ? 0 : 1,
-              py: compact ? 0 : 0.75,
+              py: compact ? 0 : COMPACT_PADDING_Y,
               borderRadius: 1,
               justifyContent: compact ? 'center' : 'flex-start',
               minWidth: 0,

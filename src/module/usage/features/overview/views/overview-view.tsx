@@ -1,4 +1,8 @@
+import dayjs from 'dayjs';
+
 import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 import { useTranslate } from 'src/locales';
 
@@ -11,19 +15,29 @@ import { ChartCard } from '../../../components/chart-card';
 import { RangePicker } from '../../../components/range-picker';
 import { ActivityHeatmap } from '../components/activity-heatmap';
 import { PlanUsageCard } from '../../../components/plan-usage-card';
-import { ExportImageButton } from '../../../components/plan-report';
 import { StackedBarChart } from '../../../components/stacked-bar-chart';
 import { ContextPressureCard } from '../components/context-pressure-card';
+import { ExportImageButton } from '../../../components/export-image-button';
 import { RangeActivityCard } from '../../../components/range-activity-card';
 
 export function OverviewView() {
   const { t } = useTranslate('usage');
-  const { overview, points, previous, hourly, trends, nameOf, error, loading } = useOverview();
+  const { overview, points, previous, hourly, trends, nameOf, error, loading, updatedAt } =
+    useOverview();
 
   return (
     <PageShell
       title={t('overview.title')}
-      action={<RangePicker quick />}
+      action={
+        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+          {updatedAt && (
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              {t('overview.updated', { time: dayjs(updatedAt).format('HH:mm') })}
+            </Typography>
+          )}
+          <RangePicker quick />
+        </Stack>
+      }
       loading={loading}
       error={error}
     >

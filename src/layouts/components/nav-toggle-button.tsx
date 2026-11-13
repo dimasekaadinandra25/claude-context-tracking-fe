@@ -6,6 +6,10 @@ import IconButton from '@mui/material/IconButton';
 
 import { Iconify } from 'src/shared/ui/iconify';
 
+const BOTTOM_MINI = 36;
+const BOTTOM_FULL = 42;
+const BORDER_ALPHA = 0.12;
+
 // ----------------------------------------------------------------------
 
 export type NavToggleButtonProps = IconButtonProps & {
@@ -27,9 +31,9 @@ export function NavToggleButton({ isNavMini, sx, ...other }: NavToggleButtonProp
           // Anchored to the account footer instead of the header: the offset is
           // the footer's bottom padding (16px) + half the profile row height
           // (52px expanded / 40px mini), so the button sits level with the avatar.
-          bottom: isNavMini ? 36 : 42,
+          bottom: isNavMini ? BOTTOM_MINI : BOTTOM_FULL,
           left: isNavMini ? 'var(--layout-nav-mini-width)' : 'var(--layout-nav-vertical-width)',
-          border: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
+          border: `1px solid ${varAlpha(theme.vars.palette.grey['500Channel'], BORDER_ALPHA)}`,
           transition: theme.transitions.create(['left', 'bottom'], {
             easing: 'var(--layout-transition-easing)',
             duration: 'var(--layout-transition-duration)',

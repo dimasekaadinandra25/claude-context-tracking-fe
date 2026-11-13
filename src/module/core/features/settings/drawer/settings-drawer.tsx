@@ -28,6 +28,11 @@ import { FontSizeOptions, FontFamilyOptions } from './font-options';
 import { useSettingsContext } from '../context/use-settings-context';
 import { NavColorOptions, NavLayoutOptions } from './nav-layout-option';
 
+const FONT_SIZE_MIN = 12;
+const FONT_SIZE_MAX = 20;
+const FONT_SIZE_RANGE: [number, number] = [FONT_SIZE_MIN, FONT_SIZE_MAX];
+const PAPER_ALPHA = 0.9;
+
 // ----------------------------------------------------------------------
 
 export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
@@ -254,7 +259,7 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
           sx={{ gap: 5 }}
         >
           <FontSizeOptions
-            options={[12, 20]}
+            options={FONT_SIZE_RANGE}
             value={settings.state.fontSize}
             onChangeOption={(newOption) => {
               settings.setState({ fontSize: newOption });
@@ -276,7 +281,7 @@ export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
           sx: [
             (theme) => ({
               ...theme.mixins.paperStyles(theme, {
-                color: varAlpha(theme.vars.palette.background.defaultChannel, 0.9),
+                color: varAlpha(theme.vars.palette.background.defaultChannel, PAPER_ALPHA),
               }),
               width: 360,
             }),

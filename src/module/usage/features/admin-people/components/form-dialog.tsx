@@ -34,6 +34,55 @@ type Props = {
   onSubmit: (values: Record<string, string>) => void;
 };
 
+function FieldInput({
+  field,
+  value,
+  onChange,
+}: {
+  field: FormField;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <TextField
+      label={field.label}
+      type={field.type ?? 'text'}
+      required={field.required}
+      value={value}
+      helperText={field.hint?.(value)}
+      onChange={(event) => onChange(event.target.value)}
+      slotProps={{
+        htmlInput: {
+          minLength: field.minLength,
+          maxLength: field.maxLength,
+          min: field.min,
+          step: field.step,
+        },
+      }}
+    />
+  );
+}
+
+function FormActions({
+  secondaryAction,
+  busy,
+  submitLabel,
+  onClose,
+}: Pick<Props, 'secondaryAction' | 'busy' | 'submitLabel' | 'onClose'>) {
+  const { t } = useTranslate('common');
+  return (
+    <DialogActions>
+      {secondaryAction}
+      <Button color="inherit" onClick={onClose}>
+        {t('actions.cancel')}
+      </Button>
+      <Button type="submit" variant="contained" loading={busy}>
+        {submitLabel}
+      </Button>
+    </DialogActions>
+  );
+}
+
 export function FormDialog({
   open,
   title,
@@ -44,7 +93,6 @@ export function FormDialog({
   onClose,
   onSubmit,
 }: Props) {
-  const { t } = useTranslate('common');
   const [values, setValues] = useState<Record<string, string>>({});
   const valueOf = (field: FormField) => values[field.name] ?? field.initial ?? '';
 
@@ -66,35 +114,21 @@ export function FormDialog({
         <DialogContent>
           <Stack spacing={2} sx={{ pt: 1 }}>
             {fields.map((field) => (
-              <TextField
+              <FieldInput
                 key={field.name}
-                label={field.label}
-                type={field.type ?? 'text'}
-                required={field.required}
+                field={field}
                 value={valueOf(field)}
-                helperText={field.hint?.(valueOf(field))}
-                onChange={(event) => setValues({ ...values, [field.name]: event.target.value })}
-                slotProps={{
-                  htmlInput: {
-                    minLength: field.minLength,
-                    maxLength: field.maxLength,
-                    min: field.min,
-                    step: field.step,
-                  },
-                }}
+                onChange={(next) => setValues({ ...values, [field.name]: next })}
               />
             ))}
           </Stack>
         </DialogContent>
-        <DialogActions>
-          {secondaryAction}
-          <Button color="inherit" onClick={onClose}>
-            {t('actions.cancel')}
-          </Button>
-          <Button type="submit" variant="contained" loading={busy}>
-            {submitLabel}
-          </Button>
-        </DialogActions>
+        <FormActions
+          secondaryAction={secondaryAction}
+          busy={busy}
+          submitLabel={submitLabel}
+          onClose={onClose}
+        />
       </form>
     </Dialog>
   );

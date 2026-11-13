@@ -102,7 +102,8 @@
     "title": "Ringkasan tim",
     "chart": "Konteks baru per hari per anggota",
     "people": "Anggota",
-    "heatmap": "Konteks baru per hari dan jam"
+    "heatmap": "Konteks baru per hari dan jam",
+    "updated": "Diperbarui {{time}} · menyegarkan tiap menit"
   },
   "person": {
     "title": "Detail anggota",
@@ -244,6 +245,7 @@
     "budget": "Jatah {{percent}}%/hari untuk {{days}} hari tersisa",
     "projected": "dengan laju ini {{percent}}% saat reset",
     "runsOut": "dengan laju ini habis {{when}}",
+    "lastWeek": "minggu lalu sampai {{day}}: {{percent}}%",
     "daily": "Batas 7 hari terpakai per hari",
     "pace": "Laju {{percent}}%/hari",
     "dayLeft": "sisa {{percent}}%"

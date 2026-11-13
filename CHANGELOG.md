@@ -4,6 +4,12 @@
 
 ### Added
 
+- The weekly budget line compares with the same day last week ("last week by Fri 6: 45%").
+- The overview shows when it last updated and that it refreshes every minute.
+- The sidebar logo and favicon use the ring icon of the desktop app.
+- Lint runs clean: vendored template folders have their own rule overrides and our code uses named
+  constants and smaller components.
+
 - Plan usage report: a member x day grid for the last 7 days on the overview with input (including
   cache), output, 7-day limit used and estimated cost per day, plus totals, share and members with no
   usage (`GET /usage/v1/daily`).

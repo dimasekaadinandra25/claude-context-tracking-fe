@@ -6,6 +6,8 @@ import { alpha as hexAlpha } from '@mui/material/styles';
 
 import { OptionButton } from './styles';
 
+const SELECTED_ALPHA = 0.08;
+
 // ----------------------------------------------------------------------
 
 export type PresetsOptionsProps = BoxProps & {
@@ -46,7 +48,7 @@ export function PresetsOptions({
               height: 64,
               color: option.value,
               ...(selected && {
-                bgcolor: hexAlpha(option.value, 0.08),
+                bgcolor: hexAlpha(option.value, SELECTED_ALPHA),
               }),
             }}
           >

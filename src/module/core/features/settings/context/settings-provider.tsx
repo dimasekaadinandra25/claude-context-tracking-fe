@@ -10,6 +10,20 @@ import { SETTINGS_STORAGE_KEY } from '../settings-config';
 
 // ----------------------------------------------------------------------
 
+function useDrawerState() {
+  const [openDrawer, setOpenDrawer] = useState(false);
+
+  const onToggleDrawer = useCallback(() => {
+    setOpenDrawer((prev) => !prev);
+  }, []);
+
+  const onCloseDrawer = useCallback(() => {
+    setOpenDrawer(false);
+  }, []);
+
+  return { openDrawer, onToggleDrawer, onCloseDrawer };
+}
+
 export function SettingsProvider({
   children,
   defaultSettings,
@@ -20,15 +34,7 @@ export function SettingsProvider({
     defaultSettings
   );
 
-  const [openDrawer, setOpenDrawer] = useState(false);
-
-  const onToggleDrawer = useCallback(() => {
-    setOpenDrawer((prev) => !prev);
-  }, []);
-
-  const onCloseDrawer = useCallback(() => {
-    setOpenDrawer(false);
-  }, []);
+  const { openDrawer, onToggleDrawer, onCloseDrawer } = useDrawerState();
 
   const canReset = !isEqual(state, defaultSettings);
 

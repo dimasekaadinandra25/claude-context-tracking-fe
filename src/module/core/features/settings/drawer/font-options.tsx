@@ -11,6 +11,8 @@ import { useTranslate } from 'src/locales';
 
 import { OptionButton } from './styles';
 
+const FONT_SIZE = 12;
+
 // ----------------------------------------------------------------------
 
 export type FontFamilyOptionsProps = BoxProps & {
@@ -53,7 +55,7 @@ export function FontFamilyOptions({
               gap: 0.75,
               flexDirection: 'column',
               fontFamily: setFont(option),
-              fontSize: theme.typography.pxToRem(12),
+              fontSize: theme.typography.pxToRem(FONT_SIZE),
             })}
           >
             {icon}

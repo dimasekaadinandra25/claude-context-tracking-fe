@@ -22,49 +22,29 @@ import { useAuthContext } from '../../hooks';
 import { getErrorMessage } from '../../utils';
 import { FormHead } from '../../components/form-head';
 
+const PASSWORD_MIN_LENGTH = 8;
+
 function makeSchema(t: TFunction) {
   return z.object({
     email: z.string().min(1, { message: t('validation.loginRequired') }),
     password: z
       .string()
       .min(1, { message: t('validation.passwordRequired') })
-      .min(8, { message: t('validation.passwordMin') }),
+      .min(PASSWORD_MIN_LENGTH, { message: t('validation.passwordMin') }),
   });
 }
 
 export type SignInSchemaType = z.infer<ReturnType<typeof makeSchema>>;
 
-export function JwtSignInView() {
-  const router = useRouter();
-  const showPassword = useBoolean();
-  const { signIn } = useAuthContext();
+function SignInFields({
+  showPassword,
+  isSubmitting,
+}: {
+  showPassword: ReturnType<typeof useBoolean>;
+  isSubmitting: boolean;
+}) {
   const { t } = useTranslate('auth');
-
-  const schema = useMemo(() => makeSchema(t), [t]);
-
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const methods = useForm<SignInSchemaType>({
-    resolver: zodResolver(schema),
-    defaultValues: { email: '', password: '' },
-  });
-
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
-
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      setErrorMessage(null);
-      await signIn({ email: data.email, password: data.password });
-      router.refresh();
-    } catch (error) {
-      setErrorMessage(getErrorMessage(error));
-    }
-  });
-
-  const renderForm = () => (
+  return (
     <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
       <Field.Text
         name="email"
@@ -104,6 +84,37 @@ export function JwtSignInView() {
       </Button>
     </Box>
   );
+}
+
+export function JwtSignInView() {
+  const router = useRouter();
+  const showPassword = useBoolean();
+  const { signIn } = useAuthContext();
+  const { t } = useTranslate('auth');
+
+  const schema = useMemo(() => makeSchema(t), [t]);
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const methods = useForm<SignInSchemaType>({
+    resolver: zodResolver(schema),
+    defaultValues: { email: '', password: '' },
+  });
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setErrorMessage(null);
+      await signIn({ email: data.email, password: data.password });
+      router.refresh();
+    } catch (error) {
+      setErrorMessage(getErrorMessage(error));
+    }
+  });
 
   return (
     <>
@@ -120,7 +131,7 @@ export function JwtSignInView() {
       )}
 
       <Form methods={methods} onSubmit={onSubmit}>
-        {renderForm()}
+        <SignInFields showPassword={showPassword} isSubmitting={isSubmitting} />
       </Form>
     </>
   );

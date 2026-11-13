@@ -32,12 +32,8 @@ function ProjectsToolbar() {
   );
 }
 
-export function ProjectsView() {
-  const { t } = useTranslate('usage');
-  const { user } = useAuthContext();
-  const isAdmin = !!user?.is_super_admin;
+function useProjectsData(userId: string) {
   const { range } = useReportRange();
-  const [userId, setUserId] = useState('');
   const load = useCallback(() => getProjects(range, userId || undefined), [range, userId]);
   const { data, error, loading } = useFetch(load);
   const loadSpent = useCallback(
@@ -46,6 +42,15 @@ export function ProjectsView() {
   );
   const { data: spentData } = useFetch(loadSpent);
   const spent = spentData ? rangeCost(spentData[0], spentData[1].people) : null;
+  return { data, error, loading, spent };
+}
+
+export function ProjectsView() {
+  const { t } = useTranslate('usage');
+  const { user } = useAuthContext();
+  const isAdmin = !!user?.is_super_admin;
+  const [userId, setUserId] = useState('');
+  const { data, error, loading, spent } = useProjectsData(userId);
   const columns = useMemo(
     () => projectColumns(t, isAdmin, data ?? [], spent),
     [t, isAdmin, data, spent]

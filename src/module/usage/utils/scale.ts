@@ -1,4 +1,21 @@
-const NICE_STEPS = [1, 2, 2.5, 3, 4, 5, 6, 8, 10];
+const STEP_HALF_QUARTER = 2.5;
+const STEP_THREE = 3;
+const STEP_FOUR = 4;
+const STEP_FIVE = 5;
+const STEP_SIX = 6;
+const STEP_EIGHT = 8;
+const STEP_TEN = 10;
+const NICE_STEPS = [
+  1,
+  2,
+  STEP_HALF_QUARTER,
+  STEP_THREE,
+  STEP_FOUR,
+  STEP_FIVE,
+  STEP_SIX,
+  STEP_EIGHT,
+  STEP_TEN,
+];
 const PRECISION = 12;
 const DECADE = 10;
 

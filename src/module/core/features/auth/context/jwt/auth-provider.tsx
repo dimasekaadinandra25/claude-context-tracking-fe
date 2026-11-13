@@ -24,20 +24,12 @@ function hasHttpStatus(error: unknown): boolean {
   return typeof (error as { status?: unknown } | null)?.status === 'number';
 }
 
-export function AuthProvider({ children }: Props) {
-  const [state, setState] = useState<AuthState>({ loading: true, user: null });
-
-  const applySignOut = useCallback(() => {
-    clearTokens();
-    setState(SIGNED_OUT);
-  }, []);
-
-  const loadUser = useCallback(async () => {
-    const me = await authApi.getMe();
-    setState({ loading: false, user: { ...me.user, is_super_admin: me.is_super_admin } });
-  }, []);
-
-  const checkUserSession = useCallback(async () => {
+function useSessionCheck(
+  applySignOut: () => void,
+  loadUser: () => Promise<void>,
+  setState: (state: AuthState) => void
+) {
+  return useCallback(async () => {
     const accessToken = getAccessToken();
     const refreshToken = getRefreshToken();
 
@@ -60,23 +52,10 @@ export function AuthProvider({ children }: Props) {
         setState(SIGNED_OUT);
       }
     }
-  }, [applySignOut, loadUser]);
+  }, [applySignOut, loadUser, setState]);
+}
 
-  useEffect(() => {
-    configureAxiosAuth({
-      getAccessToken,
-      getRefreshToken,
-      onRefresh: async (refreshToken) => {
-        const tokens = await authApi.refreshTokens(refreshToken);
-        setTokens(tokens.access_token, tokens.refresh_token);
-        return tokens;
-      },
-      onUnauthorized: applySignOut,
-    });
-
-    checkUserSession();
-  }, [applySignOut, checkUserSession]);
-
+function useSignInOut(loadUser: () => Promise<void>, applySignOut: () => void) {
   const signIn = useCallback(
     async (params: SignInParams) => {
       const res = await authApi.signIn(params);
@@ -98,6 +77,41 @@ export function AuthProvider({ children }: Props) {
       applySignOut();
     }
   }, [applySignOut]);
+
+  return { signIn, signOut };
+}
+
+export function AuthProvider({ children }: Props) {
+  const [state, setState] = useState<AuthState>({ loading: true, user: null });
+
+  const applySignOut = useCallback(() => {
+    clearTokens();
+    setState(SIGNED_OUT);
+  }, []);
+
+  const loadUser = useCallback(async () => {
+    const me = await authApi.getMe();
+    setState({ loading: false, user: { ...me.user, is_super_admin: me.is_super_admin } });
+  }, []);
+
+  const checkUserSession = useSessionCheck(applySignOut, loadUser, setState);
+
+  useEffect(() => {
+    configureAxiosAuth({
+      getAccessToken,
+      getRefreshToken,
+      onRefresh: async (refreshToken) => {
+        const tokens = await authApi.refreshTokens(refreshToken);
+        setTokens(tokens.access_token, tokens.refresh_token);
+        return tokens;
+      },
+      onUnauthorized: applySignOut,
+    });
+
+    checkUserSession();
+  }, [applySignOut, checkUserSession]);
+
+  const { signIn, signOut } = useSignInOut(loadUser, applySignOut);
 
   const value = useMemo<AuthContextValue>(
     () => ({

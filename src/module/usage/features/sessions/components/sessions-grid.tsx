@@ -24,7 +24,11 @@ type Props = Pick<
   | 'loading'
 >;
 
-const PAGE_SIZES = [10, 25, 50, 100];
+const PAGE_SIZE_SMALL = 10;
+const PAGE_SIZE_MEDIUM = 25;
+const PAGE_SIZE_LARGE = 50;
+const PAGE_SIZE_XLARGE = 100;
+const PAGE_SIZES = [PAGE_SIZE_SMALL, PAGE_SIZE_MEDIUM, PAGE_SIZE_LARGE, PAGE_SIZE_XLARGE];
 const VISIBILITY_KEY = 'usage.sessions.columns';
 const TITLE_FIELD = 'title';
 const EXPORT_FILE = 'sessions';

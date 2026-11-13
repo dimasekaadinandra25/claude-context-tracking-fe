@@ -6,6 +6,7 @@ type FetchState<T> = {
   data: T | null;
   error: string | null;
   loading: boolean;
+  updatedAt?: number;
 };
 
 export function useFetch<T>(load: () => Promise<T>, refresh = true) {
@@ -25,7 +26,9 @@ export function useFetch<T>(load: () => Promise<T>, refresh = true) {
   useEffect(() => {
     let active = true;
     load()
-      .then((data) => active && setState({ data, error: null, loading: false }))
+      .then(
+        (data) => active && setState({ data, error: null, loading: false, updatedAt: Date.now() })
+      )
       .catch(
         (err: Error) =>
           active && setState((prev) => ({ data: prev.data, error: err.message, loading: false }))

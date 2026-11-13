@@ -2,6 +2,8 @@ import axios from 'src/shared/lib/axios';
 
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from './constant';
 
+const MS_PER_SECOND = 1000;
+
 export function jwtDecode<T = Record<string, unknown>>(token: string): T | null {
   try {
     if (!token) return null;
@@ -18,7 +20,7 @@ export function isAccessTokenExpired(token: string | null): boolean {
   if (!token) return true;
   const decoded = jwtDecode<{ exp?: number }>(token);
   if (!decoded?.exp) return true;
-  return decoded.exp * 1000 <= Date.now();
+  return decoded.exp * MS_PER_SECOND <= Date.now();
 }
 
 export function getAccessToken(): string | null {

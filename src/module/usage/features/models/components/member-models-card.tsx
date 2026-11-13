@@ -55,6 +55,49 @@ function modelOrder(rows: MemberModel[]): string[] {
   return [...totals.entries()].sort((a, b) => b[1] - a[1]).map(([model]) => model);
 }
 
+function ModelCell({ member, model }: { member: Member; model: string }) {
+  const { t } = useTranslate('usage');
+  const row = member.byModel.get(model);
+  return (
+    <TableCell align="right">
+      {row ? (
+        <>
+          <Typography variant="subtitle2">{oneDecimal(member.shares.get(model) ?? 0)}%</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            {t('planUsage.requests', { count: row.requests.toLocaleString() })}
+          </Typography>
+        </>
+      ) : (
+        <Typography variant="body2" sx={{ color: 'text.disabled' }}>
+          –
+        </Typography>
+      )}
+    </TableCell>
+  );
+}
+
+function MemberModelsRow({ member, models }: { member: Member; models: string[] }) {
+  const { t } = useTranslate('usage');
+  return (
+    <TableRow>
+      <TableCell>
+        <Typography variant="subtitle2">{member.name}</Typography>
+      </TableCell>
+      {models.map((model) => (
+        <ModelCell key={model} member={member} model={model} />
+      ))}
+      <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
+        <Typography variant="subtitle2">
+          {formatTokens(member.input)} {t('planUsage.in')}
+        </Typography>
+        <Typography variant="caption" sx={{ color: 'success.main' }}>
+          {formatTokens(member.output)} {t('planUsage.out')}
+        </Typography>
+      </TableCell>
+    </TableRow>
+  );
+}
+
 export function MemberModelsCard({ rows }: { rows: MemberModel[] }) {
   const { t } = useTranslate('usage');
   const members = groupMembers(rows);
@@ -80,40 +123,7 @@ export function MemberModelsCard({ rows }: { rows: MemberModel[] }) {
             </TableHead>
             <TableBody>
               {members.map((member) => (
-                <TableRow key={member.userId}>
-                  <TableCell>
-                    <Typography variant="subtitle2">{member.name}</Typography>
-                  </TableCell>
-                  {models.map((model) => {
-                    const row = member.byModel.get(model);
-                    return (
-                      <TableCell key={model} align="right">
-                        {row ? (
-                          <>
-                            <Typography variant="subtitle2">
-                              {oneDecimal(member.shares.get(model) ?? 0)}%
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                              {t('planUsage.requests', { count: row.requests.toLocaleString() })}
-                            </Typography>
-                          </>
-                        ) : (
-                          <Typography variant="body2" sx={{ color: 'text.disabled' }}>
-                            –
-                          </Typography>
-                        )}
-                      </TableCell>
-                    );
-                  })}
-                  <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-                    <Typography variant="subtitle2">
-                      {formatTokens(member.input)} {t('planUsage.in')}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: 'success.main' }}>
-                      {formatTokens(member.output)} {t('planUsage.out')}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
+                <MemberModelsRow key={member.userId} member={member} models={models} />
               ))}
             </TableBody>
           </Table>

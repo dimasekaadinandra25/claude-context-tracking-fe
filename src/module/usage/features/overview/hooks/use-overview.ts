@@ -28,7 +28,7 @@ export function useOverview() {
       ]),
     [range]
   );
-  const { data, error, loading } = useFetch(load);
+  const { data, error, loading, updatedAt } = useFetch(load);
   const [overview, points, previous, hourly, trends] = data ?? [null, [], null, [], NO_TRENDS];
 
   const nameOf = useMemo(() => {
@@ -36,5 +36,5 @@ export function useOverview() {
     return (id: string) => names.get(id) ?? id;
   }, [overview]);
 
-  return { overview, points, previous, hourly, trends, nameOf, error, loading };
+  return { overview, points, previous, hourly, trends, nameOf, error, loading, updatedAt };
 }

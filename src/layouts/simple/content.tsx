@@ -7,6 +7,9 @@ import Box from '@mui/material/Box';
 
 import { layoutClasses } from '../core';
 
+const PADDING_TOP = 3;
+const PADDING_BOTTOM = 10;
+
 // ----------------------------------------------------------------------
 
 export type SimpleCompactContentProps = BoxProps & { layoutQuery?: Breakpoint };
@@ -29,11 +32,11 @@ export function SimpleCompactContent({
           flex: '1 1 auto',
           textAlign: 'center',
           flexDirection: 'column',
-          p: theme.spacing(3, 2, 10, 2),
+          p: theme.spacing(PADDING_TOP, 2, PADDING_BOTTOM, 2),
           maxWidth: 'var(--layout-simple-content-compact-width)',
           [theme.breakpoints.up(layoutQuery)]: {
             justifyContent: 'center',
-            p: theme.spacing(10, 0, 10, 0),
+            p: theme.spacing(PADDING_BOTTOM, 0, PADDING_BOTTOM, 0),
           },
         }),
         ...(Array.isArray(sx) ? sx : [sx]),

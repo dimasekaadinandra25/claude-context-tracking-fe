@@ -14,6 +14,8 @@ import { useTranslate } from 'src/locales';
 import { CONFIG } from 'src/shared/config';
 import { LogoMark } from 'src/shared/ui/logo';
 
+const OVERLAY_ALPHA = 0.92;
+
 // ----------------------------------------------------------------------
 
 const HERO_MARK_SIZE = 160;
@@ -48,7 +50,7 @@ export function AuthSplitSection({
         (theme) => ({
           ...theme.mixins.bgGradient({
             images: [
-              `linear-gradient(0deg, ${varAlpha(theme.vars.palette.background.defaultChannel, 0.92)}, ${varAlpha(theme.vars.palette.background.defaultChannel, 0.92)})`,
+              `linear-gradient(0deg, ${varAlpha(theme.vars.palette.background.defaultChannel, OVERLAY_ALPHA)}, ${varAlpha(theme.vars.palette.background.defaultChannel, OVERLAY_ALPHA)})`,
               `url(${CONFIG.assetsDir}/assets/background/background-3-blur.webp)`,
             ],
           }),

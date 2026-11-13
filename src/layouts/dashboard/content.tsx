@@ -10,6 +10,8 @@ import { useSettingsContext } from 'src/module/core/features/settings';
 
 import { layoutClasses } from '../core';
 
+const CONTENT_MARGIN_X = 2.5;
+
 // ----------------------------------------------------------------------
 
 export type DashboardContentProps = ContainerProps & {
@@ -74,8 +76,8 @@ export const VerticalDivider = styled('span')(({ theme }) => ({
   position: 'relative',
   alignItems: 'center',
   flexDirection: 'column',
-  marginLeft: theme.spacing(2.5),
-  marginRight: theme.spacing(2.5),
+  marginLeft: theme.spacing(CONTENT_MARGIN_X),
+  marginRight: theme.spacing(CONTENT_MARGIN_X),
   backgroundColor: 'currentColor',
   color: theme.vars.palette.divider,
   '&::before, &::after': {

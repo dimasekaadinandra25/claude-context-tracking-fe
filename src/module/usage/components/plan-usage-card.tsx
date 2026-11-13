@@ -1,35 +1,33 @@
 import type { Theme } from '@mui/material/styles';
+import type { MemberUsage } from 'src/module/usage/utils/member-rows';
 import type { DailyUsage, OverviewPerson } from 'src/module/usage/types';
 
 import dayjs from 'dayjs';
 import { useMemo, useCallback } from 'react';
 import { varAlpha } from 'minimal-shared/utils';
 
-import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
-import LinearProgress from '@mui/material/LinearProgress';
 import TableContainer from '@mui/material/TableContainer';
 
 import { useTranslate } from 'src/locales';
-import { Label } from 'src/shared/ui/label';
 import { getDaily } from 'src/module/usage/api/usage';
 import { useFetch } from 'src/module/usage/hooks/use-fetch';
 import { formatTokens } from 'src/module/usage/utils/format';
+import { memberRows } from 'src/module/usage/utils/member-rows';
 import { ChartCard } from 'src/module/usage/components/chart-card';
 import { lastDays, rangeDates } from 'src/module/usage/utils/range';
-import { PlanBadge } from 'src/module/usage/components/plan-limits';
 import { EmptyState } from 'src/module/usage/components/empty-state';
 import { useReportRange } from 'src/module/usage/hooks/use-report-range';
+import { NameCell, ShareCell } from 'src/module/usage/components/member-cells';
 import {
   inputOf,
   PERCENT,
   isShared,
-  weightOf,
   hasTokens,
   WEEK_DAYS,
   formatUsd,
@@ -41,52 +39,14 @@ import {
   memberLimitUsed,
 } from 'src/module/usage/utils/plan';
 
+const FONT_WEIGHT_TODAY = 700;
+const FONT_WEIGHT_DEFAULT = 400;
+
+const BLOCK = 'block';
+const TEXT_SECONDARY = 'text.secondary';
 const CELL_WIDTH = 76;
 const MIN_SHADE = 0.08;
 const MAX_SHADE = 0.55;
-const SMALLEST_SHARE = 0.1;
-
-const formatShare = (rounded: number, exact: number) =>
-  exact > 0 && rounded < SMALLEST_SHARE
-    ? `<${oneDecimal(SMALLEST_SHARE)}%`
-    : `${oneDecimal(rounded)}%`;
-
-type MemberRow = {
-  person: OverviewPerson;
-  days: Map<string, DailyUsage>;
-  input: number;
-  output: number;
-  weight: number;
-  requests: number;
-  cost: number | null;
-};
-
-function memberRows(people: OverviewPerson[], daily: DailyUsage[]): MemberRow[] {
-  const byUser = new Map<string, DailyUsage[]>();
-  daily.forEach((row) => byUser.set(row.user_id, [...(byUser.get(row.user_id) ?? []), row]));
-
-  return people
-    .filter((person) =>
-      (byUser.get(person.user_id) ?? []).some((row) => hasTokens(row) || !isShared(row))
-    )
-    .map((person) => {
-      const rows = byUser.get(person.user_id) ?? [];
-      const costs = rows
-        .map((row) => memberCost(row, person.claude_tier ?? null))
-        .filter((cost): cost is number => cost !== null);
-      return {
-        person,
-        days: new Map(rows.map((row) => [row.day, row])),
-        input: rows.reduce((total, row) => total + inputOf(row), 0),
-        output: rows.reduce((total, row) => total + row.output_tokens, 0),
-        weight: rows.reduce((total, row) => total + weightOf(row), 0),
-        requests: rows.reduce((total, row) => total + row.requests, 0),
-        cost: costs.length > 0 ? costs.reduce((total, cost) => total + cost, 0) : null,
-      };
-    })
-    .sort((a, b) => b.weight - a.weight);
-}
-
 function DayCell({ row, tier, max }: { row?: DailyUsage; tier: string | null; max: number }) {
   const { t } = useTranslate('usage');
   if (!row || (isShared(row) && !hasTokens(row))) {
@@ -121,21 +81,105 @@ function DayCell({ row, tier, max }: { row?: DailyUsage; tier: string | null; ma
       })}
     >
       <Typography variant="subtitle2">{formatTokens(inputOf(row))}</Typography>
-      <Typography variant="caption" sx={{ display: 'block', color: 'success.main' }}>
+      <Typography variant="caption" sx={{ display: BLOCK, color: 'success.main' }}>
         {formatTokens(row.output_tokens)}
       </Typography>
       {row.limit_used !== null && !isShared(row) && (
-        <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary' }}>
+        <Typography variant="caption" sx={{ display: BLOCK, color: TEXT_SECONDARY }}>
           +{Math.round(row.limit_used)}%
         </Typography>
       )}
       {cost !== null && (
-        <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary' }}>
+        <Typography variant="caption" sx={{ display: BLOCK, color: TEXT_SECONDARY }}>
           {formatUsd(cost)}
         </Typography>
       )}
     </TableCell>
   );
+}
+
+function GridHead({ days }: { days: string[] }) {
+  const { t } = useTranslate('usage');
+  const today = dayjs().format('YYYY-MM-DD');
+  return (
+    <TableHead>
+      <TableRow>
+        <TableCell>{t('planUsage.member')}</TableCell>
+        {days.map((day) => (
+          <TableCell
+            key={day}
+            align="center"
+            sx={{
+              width: CELL_WIDTH,
+              minWidth: CELL_WIDTH,
+              whiteSpace: 'nowrap',
+              fontWeight: day === today ? FONT_WEIGHT_TODAY : FONT_WEIGHT_DEFAULT,
+            }}
+          >
+            {dayjs(day).format('ddd D')}
+          </TableCell>
+        ))}
+        <TableCell align="right">{t('planUsage.total')}</TableCell>
+        <TableCell align="right">{t('planUsage.share')}</TableCell>
+        <TableCell align="right">{t('planUsage.cost')}</TableCell>
+      </TableRow>
+    </TableHead>
+  );
+}
+
+function MemberRow({
+  row,
+  days,
+  max,
+  share,
+  shown,
+}: {
+  row: MemberUsage;
+  days: string[];
+  max: number;
+  share: number;
+  shown: number;
+}) {
+  const { t } = useTranslate('usage');
+  const { person } = row;
+  return (
+    <TableRow>
+      <NameCell row={row} />
+      {days.map((day) => (
+        <DayCell key={day} row={row.days.get(day)} tier={person.claude_tier ?? null} max={max} />
+      ))}
+      <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
+        <Typography variant="subtitle2">
+          {formatTokens(row.input)} {t('planUsage.in')}
+        </Typography>
+        <Typography variant="caption" sx={{ display: BLOCK, color: 'success.main' }}>
+          {formatTokens(row.output)} {t('planUsage.out')}
+        </Typography>
+      </TableCell>
+      <ShareCell share={share} shown={shown} />
+      <TableCell align="right">
+        <Typography variant="subtitle1">{row.cost === null ? '—' : formatUsd(row.cost)}</Typography>
+      </TableCell>
+    </TableRow>
+  );
+}
+
+function weightShares(rows: MemberUsage[]) {
+  return {
+    teamWeight: rows.reduce((total, row) => total + row.weight, 0),
+    shares: roundToTotal(
+      rows.map((row) => row.weight),
+      PERCENT
+    ),
+  };
+}
+
+function unusedNames(people: OverviewPerson[], rows: MemberUsage[]) {
+  return people
+    .filter(
+      (person) => person.is_active && !rows.some((row) => row.person.user_id === person.user_id)
+    )
+    .map((person) => person.full_name || person.email);
 }
 
 export function UsageGrid({
@@ -148,19 +192,10 @@ export function UsageGrid({
   days: string[];
 }) {
   const { t } = useTranslate('usage');
-  const today = dayjs().format('YYYY-MM-DD');
   const rows = memberRows(people, daily);
-  const teamWeight = rows.reduce((total, row) => total + row.weight, 0);
-  const shares = roundToTotal(
-    rows.map((row) => row.weight),
-    PERCENT
-  );
+  const { teamWeight, shares } = weightShares(rows);
   const max = Math.max(0, ...daily.map(inputOf));
-  const unused = people
-    .filter(
-      (person) => person.is_active && !rows.some((row) => row.person.user_id === person.user_id)
-    )
-    .map((person) => person.full_name || person.email);
+  const unused = unusedNames(people, rows);
 
   if (rows.length === 0) return <EmptyState message={t('planUsage.empty')} />;
 
@@ -168,90 +203,23 @@ export function UsageGrid({
     <>
       <TableContainer>
         <Table size="small" sx={{ minWidth: 960, '& td, & th': { borderBottom: 'none' } }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>{t('planUsage.member')}</TableCell>
-              {days.map((day) => (
-                <TableCell
-                  key={day}
-                  align="center"
-                  sx={{
-                    width: CELL_WIDTH,
-                    minWidth: CELL_WIDTH,
-                    whiteSpace: 'nowrap',
-                    fontWeight: day === today ? 700 : 400,
-                  }}
-                >
-                  {dayjs(day).format('ddd D')}
-                </TableCell>
-              ))}
-              <TableCell align="right">{t('planUsage.total')}</TableCell>
-              <TableCell align="right">{t('planUsage.share')}</TableCell>
-              <TableCell align="right">{t('planUsage.cost')}</TableCell>
-            </TableRow>
-          </TableHead>
+          <GridHead days={days} />
           <TableBody>
-            {rows.map((row, index) => {
-              const share = teamWeight > 0 ? (row.weight / teamWeight) * PERCENT : 0;
-              const shown = shares[index];
-              const { person } = row;
-              return (
-                <TableRow key={person.user_id}>
-                  <TableCell sx={{ minWidth: 160, maxWidth: 220 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.5 }}>
-                      <Typography variant="subtitle2">
-                        {person.full_name || person.email}
-                      </Typography>
-                      <PlanBadge person={person} />
-                      {person.is_active === false && (
-                        <Label color="default">{t('status.inactive')}</Label>
-                      )}
-                    </Box>
-                    <Typography
-                      variant="caption"
-                      sx={{ display: 'block', color: 'text.secondary' }}
-                    >
-                      {t('planUsage.requests', { count: row.requests.toLocaleString() })}
-                    </Typography>
-                  </TableCell>
-                  {days.map((day) => (
-                    <DayCell
-                      key={day}
-                      row={row.days.get(day)}
-                      tier={person.claude_tier ?? null}
-                      max={max}
-                    />
-                  ))}
-                  <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-                    <Typography variant="subtitle2">
-                      {formatTokens(row.input)} {t('planUsage.in')}
-                    </Typography>
-                    <Typography variant="caption" sx={{ display: 'block', color: 'success.main' }}>
-                      {formatTokens(row.output)} {t('planUsage.out')}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right" sx={{ minWidth: 90 }}>
-                    <Typography variant="subtitle2">{formatShare(shown, share)}</Typography>
-                    <LinearProgress
-                      variant="determinate"
-                      value={share}
-                      aria-label={t('planUsage.share')}
-                      sx={{ height: 4, mt: 0.5 }}
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography variant="subtitle1">
-                      {row.cost === null ? '—' : formatUsd(row.cost)}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {rows.map((row, index) => (
+              <MemberRow
+                key={row.person.user_id}
+                row={row}
+                days={days}
+                max={max}
+                share={teamWeight > 0 ? (row.weight / teamWeight) * PERCENT : 0}
+                shown={shares[index]}
+              />
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
       {unused.length > 0 && (
-        <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
+        <Typography variant="body2" sx={{ mt: 2, color: TEXT_SECONDARY }}>
           {t('planUsage.unused', { names: unused.join(', ') })}
         </Typography>
       )}

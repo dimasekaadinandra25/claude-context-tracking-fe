@@ -4,6 +4,8 @@ import axios from 'axios';
 
 import { CONFIG } from 'src/shared/config';
 
+const HTTP_UNAUTHORIZED = 401;
+
 declare module 'axios' {
   export interface AxiosRequestConfig {
     _retry?: boolean;
@@ -56,39 +58,51 @@ axiosInstance.interceptors.response.use(
     const original = error.config as RetriableConfig | undefined;
     const status = error.response?.status;
 
-    if (status === 401 && original && !original._retry && !original._skipAuthRefresh) {
-      const refreshToken = getRefreshTokenFn();
-      if (!refreshToken || !refreshHandler) {
-        onUnauthorized?.();
-        return Promise.reject(normalizeError(error));
-      }
-
-      original._retry = true;
-
-      try {
-        if (!refreshPromise) {
-          refreshPromise = refreshHandler(refreshToken)
-            .then((tokens) => tokens.access_token)
-            .finally(() => {
-              refreshPromise = null;
-            });
-        }
-
-        const newAccessToken = await refreshPromise;
-        if (!original.headers) {
-          original.headers = {} as InternalAxiosRequestConfig['headers'];
-        }
-        original.headers.Authorization = `Bearer ${newAccessToken}`;
-        return axiosInstance(original);
-      } catch (refreshError) {
-        onUnauthorized?.();
-        return Promise.reject(normalizeError(refreshError));
-      }
+    if (
+      status === HTTP_UNAUTHORIZED &&
+      original &&
+      !original._retry &&
+      !original._skipAuthRefresh
+    ) {
+      return retryWithRefresh(error, original);
     }
 
     return Promise.reject(normalizeError(error));
   }
 );
+
+function sharedRefresh(refreshHandlerFn: RefreshHandler, refreshToken: string) {
+  if (!refreshPromise) {
+    refreshPromise = refreshHandlerFn(refreshToken)
+      .then((tokens) => tokens.access_token)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
+async function retryWithRefresh(error: AxiosError, original: RetriableConfig) {
+  const refreshToken = getRefreshTokenFn();
+  if (!refreshToken || !refreshHandler) {
+    onUnauthorized?.();
+    return Promise.reject(normalizeError(error));
+  }
+
+  original._retry = true;
+
+  try {
+    const newAccessToken = await sharedRefresh(refreshHandler, refreshToken);
+    if (!original.headers) {
+      original.headers = {} as InternalAxiosRequestConfig['headers'];
+    }
+    original.headers.Authorization = `Bearer ${newAccessToken}`;
+    return axiosInstance(original);
+  } catch (refreshError) {
+    onUnauthorized?.();
+    return Promise.reject(normalizeError(refreshError));
+  }
+}
 
 function errorDetail(errors: unknown): string | undefined {
   if (typeof errors === 'string') return errors;

@@ -92,7 +92,9 @@ export function BudgetDialog({ open, user, busy, onClose, onRun }: UserDialogPro
           step: 1,
           initial: user?.monthly_new_context ? String(user.monthly_new_context) : '',
           hint: (value) =>
-            Number(value) > 0 ? t('budget.tokensHint', { tokens: formatTokens(Number(value)) }) : '',
+            Number(value) > 0
+              ? t('budget.tokensHint', { tokens: formatTokens(Number(value)) })
+              : '',
         },
       ]}
       busy={busy}

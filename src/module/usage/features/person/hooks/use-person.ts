@@ -11,12 +11,16 @@ import { getOverview, getSessions, getTimeseries } from '../../../api/usage';
 
 const RECENT_SESSIONS = '10';
 
+function resolveUserId(isAdmin: boolean, routeId?: string, ownId?: string) {
+  return (isAdmin && routeId) || ownId || '';
+}
+
 export function usePerson() {
   const { user } = useAuthContext();
   const { id } = useParams();
   const { range } = useReportRange();
   const isAdmin = !!user?.is_super_admin;
-  const userId = (isAdmin && id) || user?.id || '';
+  const userId = resolveUserId(isAdmin, id, user?.id);
 
   const load = useCallback(
     () =>

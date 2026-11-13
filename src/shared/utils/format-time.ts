@@ -48,6 +48,15 @@ export const FORMAT_PATTERNS = {
 
 const INVALID_DATE = 'Invalid';
 
+function formatInput(input: DateInput, template: string): string {
+  if (!input) return '';
+
+  const date = dayjs(input);
+  if (!date.isValid()) return INVALID_DATE;
+
+  return date.format(template);
+}
+
 // ----------------------------------------------------------------------
 
 export function today(template?: string): string {
@@ -63,12 +72,7 @@ export function today(template?: string): string {
  * fDateTime('17-04-2022') // '17 Apr 2022 12:00 am'
  */
 export function fDateTime(input: DateInput, template = FORMAT_PATTERNS.dateTime): string {
-  if (!input) return '';
-
-  const date = dayjs(input);
-  if (!date.isValid()) return INVALID_DATE;
-
-  return date.format(template);
+  return formatInput(input, template);
 }
 
 // ----------------------------------------------------------------------
@@ -80,12 +84,7 @@ export function fDateTime(input: DateInput, template = FORMAT_PATTERNS.dateTime)
  * fDate('17-04-2022') // '17 Apr 2022'
  */
 export function fDate(input: DateInput, template = FORMAT_PATTERNS.date): string {
-  if (!input) return '';
-
-  const date = dayjs(input);
-  if (!date.isValid()) return INVALID_DATE;
-
-  return date.format(template);
+  return formatInput(input, template);
 }
 
 // ----------------------------------------------------------------------
@@ -97,12 +96,7 @@ export function fDate(input: DateInput, template = FORMAT_PATTERNS.date): string
  * fTime('2022-04-17T00:00:00') // '12:00 am'
  */
 export function fTime(input: DateInput, template = FORMAT_PATTERNS.time): string {
-  if (!input) return '';
-
-  const date = dayjs(input);
-  if (!date.isValid()) return INVALID_DATE;
-
-  return date.format(template);
+  return formatInput(input, template);
 }
 
 // ----------------------------------------------------------------------

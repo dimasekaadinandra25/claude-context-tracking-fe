@@ -32,20 +32,10 @@ function filterPatch(draft: SessionFilters, params: URLSearchParams): Patch | nu
   };
 }
 
-export function useSessionsList() {
-  const { range } = useReportRange();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const from = searchParams.get('from');
-  const to = searchParams.get('to');
-  const page = searchParams.get('page');
-  const perPage = searchParams.get('per_page');
-  const sort = searchParams.get('sort');
-  const userId = searchParams.get('user_id') ?? '';
-  const project = searchParams.get('project') ?? '';
-  const model = searchParams.get('model') ?? '';
-  const q = searchParams.get('q') ?? '';
+type SetSearchParams = ReturnType<typeof useSearchParams>[1];
 
-  const setParams = useCallback(
+function useParamSetter(setSearchParams: SetSearchParams) {
+  return useCallback(
     (patch: Patch) =>
       setSearchParams(
         (prev) => {
@@ -59,42 +49,76 @@ export function useSessionsList() {
       ),
     [setSearchParams]
   );
+}
 
-  const reportRange = useMemo(
-    () => (from && to ? { from: new Date(from), to: new Date(to), tz: range.tz } : range),
-    [from, to, range]
-  );
+function useRangeReset(range: unknown, setParams: (patch: Patch) => void) {
   const rangeRef = useRef(range);
   useEffect(() => {
     if (rangeRef.current === range) return;
     rangeRef.current = range;
     setParams({ from: undefined, to: undefined });
   }, [range, setParams]);
+}
 
-  const paginationModel = useMemo(
-    () => ({ page: (Number(page) || 1) - 1, pageSize: Number(perPage) || DEFAULT_PAGE_SIZE }),
-    [page, perPage]
-  );
-  const sortModel = useMemo(() => sortModelFromParam(sort), [sort]);
-  const filters = useMemo(() => ({ userId, project, model, q }), [userId, project, model, q]);
-
+function useFilterDraft(
+  filters: SessionFilters,
+  searchParams: URLSearchParams,
+  setParams: (patch: Patch) => void
+) {
   const [draft, setDraft] = useState<SessionFilters>(filters);
   const debounced = useDebounced(draft);
   useEffect(() => {
     const patch = filterPatch(debounced, searchParams);
     if (patch) setParams(patch);
   }, [debounced, searchParams, setParams]);
+  return [draft, setDraft] as const;
+}
 
-  const query = useMemo(
-    () => sessionsQueryFromGrid({ ...paginationModel, sortModel, filters }),
-    [paginationModel, sortModel, filters]
-  );
+function readParams(searchParams: URLSearchParams) {
+  return {
+    from: searchParams.get('from'),
+    to: searchParams.get('to'),
+    page: searchParams.get('page'),
+    perPage: searchParams.get('per_page'),
+    sort: searchParams.get('sort'),
+    userId: searchParams.get('user_id') ?? '',
+    project: searchParams.get('project') ?? '',
+    model: searchParams.get('model') ?? '',
+    q: searchParams.get('q') ?? '',
+  };
+}
+
+function useSessionsData(
+  reportRange: Parameters<typeof getSessions>[0],
+  query: Parameters<typeof getSessions>[1]
+) {
   const load = useCallback(() => getSessions(reportRange, query), [reportRange, query]);
   const { data, error, loading } = useFetch(load);
 
   const loadModels = useCallback(() => getModels(reportRange), [reportRange]);
   const models = useFetch(loadModels).data ?? [];
+  return { data, error, loading, models };
+}
 
+function useHourFilter(from: string | null, to: string | null, setParams: (patch: Patch) => void) {
+  const hourFilter = useMemo(() => (from && to ? { from, to } : null), [from, to]);
+  const clearHourFilter = useCallback(
+    () => setParams({ from: undefined, to: undefined }),
+    [setParams]
+  );
+  return { hourFilter, clearHourFilter };
+}
+
+function useGridModels(page: string | null, perPage: string | null, sort: string | null) {
+  const paginationModel = useMemo(
+    () => ({ page: (Number(page) || 1) - 1, pageSize: Number(perPage) || DEFAULT_PAGE_SIZE }),
+    [page, perPage]
+  );
+  const sortModel = useMemo(() => sortModelFromParam(sort), [sort]);
+  return { paginationModel, sortModel };
+}
+
+function useGridSetters(setParams: (patch: Patch) => void) {
   const setPaginationModel = useCallback(
     (next: GridPaginationModel) =>
       setParams({
@@ -107,16 +131,40 @@ export function useSessionsList() {
     (next: GridSortModel) => setParams({ sort: sortParam(next) }),
     [setParams]
   );
+  return { setPaginationModel, setSortModel };
+}
+
+export function useSessionsList() {
+  const { range } = useReportRange();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { from, to, page, perPage, sort, userId, project, model, q } = readParams(searchParams);
+
+  const setParams = useParamSetter(setSearchParams);
+
+  const reportRange = useMemo(
+    () => (from && to ? { from: new Date(from), to: new Date(to), tz: range.tz } : range),
+    [from, to, range]
+  );
+  useRangeReset(range, setParams);
+
+  const { paginationModel, sortModel } = useGridModels(page, perPage, sort);
+  const filters = useMemo(() => ({ userId, project, model, q }), [userId, project, model, q]);
+
+  const [draft, setDraft] = useFilterDraft(filters, searchParams, setParams);
+
+  const query = useMemo(
+    () => sessionsQueryFromGrid({ ...paginationModel, sortModel, filters }),
+    [paginationModel, sortModel, filters]
+  );
+  const { data, error, loading, models } = useSessionsData(reportRange, query);
+
+  const { setPaginationModel, setSortModel } = useGridSetters(setParams);
   const setFilter = useCallback(
     (patch: SessionFilters) => setDraft((prev) => ({ ...prev, ...patch })),
-    []
+    [setDraft]
   );
 
-  const hourFilter = useMemo(() => (from && to ? { from, to } : null), [from, to]);
-  const clearHourFilter = useCallback(
-    () => setParams({ from: undefined, to: undefined }),
-    [setParams]
-  );
+  const { hourFilter, clearHourFilter } = useHourFilter(from, to, setParams);
 
   return {
     hourFilter,

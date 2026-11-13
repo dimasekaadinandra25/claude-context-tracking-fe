@@ -98,6 +98,34 @@ function MemberChips({ week }: { week: Week }) {
   );
 }
 
+function WeekRow({ week, showAccount }: { week: Week; showAccount: boolean }) {
+  const { t } = useTranslate('usage');
+  const end = dayjs(week.resetsAt);
+  const cost = weekCost(week);
+  return (
+    <TableRow>
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>
+        {`${end.subtract(WEEK_DAYS, 'day').format('D MMM')} – ${end.format('D MMM HH:mm')}`}
+        {end.isAfter(dayjs()) && <Chip size="small" label={t('weeks.current')} sx={{ ml: 1 }} />}
+      </TableCell>
+      {showAccount && <TableCell>{week.email ?? '—'}</TableCell>}
+      <TableCell>
+        <Typography variant="subtitle2">{Math.round(week.used)}%</Typography>
+        <LinearProgress
+          variant="determinate"
+          value={Math.min(week.used, PERCENT)}
+          sx={{ height: 6 }}
+        />
+      </TableCell>
+      <TableCell align="right">{cost !== null ? formatUsd(cost) : '—'}</TableCell>
+      <TableCell>{week.topModel ? modelLabel(week.topModel) : '—'}</TableCell>
+      <TableCell>
+        <MemberChips week={week} />
+      </TableCell>
+    </TableRow>
+  );
+}
+
 export function WeeksView() {
   const { t } = useTranslate('usage');
   const load = useCallback(() => getWeeks(lastDays(WEEKS * WEEK_DAYS)), []);
@@ -124,34 +152,9 @@ export function WeeksView() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {weeks.map((week) => {
-                  const end = dayjs(week.resetsAt);
-                  const cost = weekCost(week);
-                  return (
-                    <TableRow key={week.key}>
-                      <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                        {`${end.subtract(WEEK_DAYS, 'day').format('D MMM')} – ${end.format('D MMM HH:mm')}`}
-                        {end.isAfter(dayjs()) && (
-                          <Chip size="small" label={t('weeks.current')} sx={{ ml: 1 }} />
-                        )}
-                      </TableCell>
-                      {accounts > 1 && <TableCell>{week.email ?? '—'}</TableCell>}
-                      <TableCell>
-                        <Typography variant="subtitle2">{Math.round(week.used)}%</Typography>
-                        <LinearProgress
-                          variant="determinate"
-                          value={Math.min(week.used, PERCENT)}
-                          sx={{ height: 6 }}
-                        />
-                      </TableCell>
-                      <TableCell align="right">{cost !== null ? formatUsd(cost) : '—'}</TableCell>
-                      <TableCell>{week.topModel ? modelLabel(week.topModel) : '—'}</TableCell>
-                      <TableCell>
-                        <MemberChips week={week} />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                {weeks.map((week) => (
+                  <WeekRow key={week.key} week={week} showAccount={accounts > 1} />
+                ))}
               </TableBody>
             </Table>
           </TableContainer>

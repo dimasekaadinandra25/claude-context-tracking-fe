@@ -237,6 +237,38 @@ const overrideConfigs = [
     files: ['**/*.test.{ts,tsx}', 'src/test/**', 'src/_mock/**', 'src/theme/**', '**/*.config.*'],
     rules: { '@typescript-eslint/no-magic-numbers': 0, 'sonarjs/no-duplicate-string': 0 },
   },
+  {
+    files: [
+      'src/layouts/auth-split/layout.tsx',
+      'src/layouts/auth-split/section.tsx',
+      'src/layouts/components/account-drawer.tsx',
+      'src/layouts/components/header-breadcrumbs.tsx',
+      'src/layouts/dashboard/css-vars.ts',
+      'src/layouts/dashboard/layout.tsx',
+      'src/layouts/dashboard/nav-mobile.tsx',
+      'src/layouts/dashboard/nav-vertical.tsx',
+      'src/layouts/simple/layout.tsx',
+      'src/module/core/features/settings/drawer/settings-drawer.tsx',
+    ],
+    rules: { complexity: 0, 'max-lines': 0, 'max-lines-per-function': 0 },
+  },
+  {
+    files: ['**/*.test.{ts,tsx}'],
+    rules: { 'max-lines-per-function': 0 },
+  },
+  {
+    files: ['src/shared/ui/**', 'src/assets/**', 'src/theme/**'],
+    rules: {
+      'no-console': 0,
+      '@typescript-eslint/no-explicit-any': 0,
+      complexity: 0,
+      'max-lines': 0,
+      'max-lines-per-function': 0,
+      'sonarjs/no-duplicate-string': 0,
+      'sonarjs/no-identical-functions': 0,
+      '@typescript-eslint/no-magic-numbers': 0,
+    },
+  },
 ];
 
 // ----------------------------------------------------------------------

@@ -5,6 +5,15 @@ import { varAlpha } from 'minimal-shared/utils';
 
 import { bulletColor } from 'src/shared/ui/nav-section';
 
+const CONTENT_PT = 2.5;
+const CONTENT_PB = 8;
+const CONTENT_PX = 5;
+const ALPHA_NAV_BG = 0.4;
+const ALPHA_HORIZONTAL_BG = 0.8;
+const ALPHA_HORIZONTAL_BG_DARK = 0.96;
+const ALPHA_BORDER = 0.12;
+const ALPHA_BORDER_DARK = 0.08;
+
 // ----------------------------------------------------------------------
 
 export function dashboardLayoutVars(theme: Theme) {
@@ -14,9 +23,9 @@ export function dashboardLayoutVars(theme: Theme) {
     '--layout-nav-mini-width': '88px',
     '--layout-nav-vertical-width': '300px',
     '--layout-nav-horizontal-height': '64px',
-    '--layout-dashboard-content-pt': theme.spacing(2.5),
-    '--layout-dashboard-content-pb': theme.spacing(8),
-    '--layout-dashboard-content-px': theme.spacing(5),
+    '--layout-dashboard-content-pt': theme.spacing(CONTENT_PT),
+    '--layout-dashboard-content-pb': theme.spacing(CONTENT_PB),
+    '--layout-dashboard-content-px': theme.spacing(CONTENT_PX),
   };
 }
 
@@ -35,15 +44,21 @@ export function dashboardNavColorVars(
     case 'integrate':
       return {
         layout: {
-          '--layout-nav-bg': varAlpha(palette.background.defaultChannel, 0.4),
-          '--layout-nav-horizontal-bg': varAlpha(palette.background.defaultChannel, 0.8),
-          '--layout-nav-border-color': varAlpha(palette.grey['500Channel'], 0.12),
+          '--layout-nav-bg': varAlpha(palette.background.defaultChannel, ALPHA_NAV_BG),
+          '--layout-nav-horizontal-bg': varAlpha(
+            palette.background.defaultChannel,
+            ALPHA_HORIZONTAL_BG
+          ),
+          '--layout-nav-border-color': varAlpha(palette.grey['500Channel'], ALPHA_BORDER),
           '--layout-nav-text-primary-color': palette.text.primary,
           '--layout-nav-text-secondary-color': palette.text.secondary,
           '--layout-nav-text-disabled-color': palette.text.disabled,
           ...theme.applyStyles('dark', {
-            '--layout-nav-border-color': varAlpha(palette.grey['500Channel'], 0.08),
-            '--layout-nav-horizontal-bg': varAlpha(palette.background.defaultChannel, 0.96),
+            '--layout-nav-border-color': varAlpha(palette.grey['500Channel'], ALPHA_BORDER_DARK),
+            '--layout-nav-horizontal-bg': varAlpha(
+              palette.background.defaultChannel,
+              ALPHA_HORIZONTAL_BG_DARK
+            ),
           }),
         },
         section: undefined,
@@ -52,14 +67,17 @@ export function dashboardNavColorVars(
       return {
         layout: {
           '--layout-nav-bg': palette.grey[900],
-          '--layout-nav-horizontal-bg': varAlpha(palette.grey['900Channel'], 0.96),
+          '--layout-nav-horizontal-bg': varAlpha(
+            palette.grey['900Channel'],
+            ALPHA_HORIZONTAL_BG_DARK
+          ),
           '--layout-nav-border-color': 'transparent',
           '--layout-nav-text-primary-color': palette.common.white,
           '--layout-nav-text-secondary-color': palette.grey[500],
           '--layout-nav-text-disabled-color': palette.grey[600],
           ...theme.applyStyles('dark', {
             '--layout-nav-bg': palette.grey[800],
-            '--layout-nav-horizontal-bg': varAlpha(palette.grey['800Channel'], 0.8),
+            '--layout-nav-horizontal-bg': varAlpha(palette.grey['800Channel'], ALPHA_HORIZONTAL_BG),
           }),
         },
         section: {

@@ -22,10 +22,9 @@ type Props = {
   onAction: (action: UserAction, user: UserRow) => void;
 };
 
-export function UsersTable({ users, onAction }: Props) {
+function RowActions({ user: u, onAction }: { user: UserRow; onAction: Props['onAction'] }) {
   const { t } = useTranslate('usage');
-
-  const actions = (u: UserRow) => (
+  return (
     <Box sx={{ display: 'flex', gap: 1, whiteSpace: 'nowrap' }}>
       <Button size="small" onClick={() => onAction('keys', u)}>
         {t('admin.keys')}
@@ -45,6 +44,12 @@ export function UsersTable({ users, onAction }: Props) {
       </Button>
     </Box>
   );
+}
+
+export function UsersTable({ users, onAction }: Props) {
+  const { t } = useTranslate('usage');
+
+  const actions = (u: UserRow) => <RowActions user={u} onAction={onAction} />;
 
   const columns: Column<UserRow>[] = [
     { id: 'name', label: t('col.name'), render: (u) => u.full_name || u.username },

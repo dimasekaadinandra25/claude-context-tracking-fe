@@ -12,6 +12,9 @@ import { RouterLink } from 'src/routes/components';
 
 import { Iconify } from 'src/shared/ui/iconify';
 
+const FONT_WEIGHT_LAST = 600;
+const FONT_WEIGHT_DEFAULT = 400;
+
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -103,7 +106,7 @@ export function HeaderBreadcrumbs({ data, sx }: Props) {
               noWrap
               sx={{
                 color: isLast ? 'text.primary' : 'text.secondary',
-                fontWeight: isLast ? 600 : 400,
+                fontWeight: isLast ? FONT_WEIGHT_LAST : FONT_WEIGHT_DEFAULT,
               }}
             >
               {crumb.label}

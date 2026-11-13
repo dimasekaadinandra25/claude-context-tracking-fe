@@ -10,6 +10,8 @@ import { NavSectionHorizontal } from 'src/shared/ui/nav-section';
 
 import { layoutClasses } from '../core';
 
+const BORDER_ALPHA = 0.08;
+
 // ----------------------------------------------------------------------
 
 export type NavHorizontalProps = NavSectionProps & {
@@ -33,7 +35,7 @@ export function NavHorizontal({
           position: 'relative',
           flexDirection: 'column',
           display: { xs: 'none', [layoutQuery]: 'flex' },
-          borderBottom: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
+          borderBottom: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], BORDER_ALPHA)}`,
         }),
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}

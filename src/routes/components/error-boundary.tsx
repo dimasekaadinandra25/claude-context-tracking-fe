@@ -4,6 +4,9 @@ import { useRouteError, isRouteErrorResponse } from 'react-router';
 
 import GlobalStyles from '@mui/material/GlobalStyles';
 
+const TITLE_FONT_SIZE = 20;
+const MESSAGE_FONT_SIZE = 14;
+
 // ----------------------------------------------------------------------
 
 export function ErrorBoundary() {
@@ -34,7 +37,7 @@ function parseStackTrace(stack?: string) {
   };
 }
 
-function renderErrorMessage(error: any) {
+function renderErrorMessage(error: unknown) {
   if (isRouteErrorResponse(error)) {
     return (
       <>
@@ -116,7 +119,7 @@ const contentStyles = (): CSSObject => ({
 const titleStyles = (theme: Theme): CSSObject => ({
   margin: 0,
   lineHeight: 1.2,
-  fontSize: theme.typography.pxToRem(20),
+  fontSize: theme.typography.pxToRem(TITLE_FONT_SIZE),
   fontWeight: theme.typography.fontWeightBold,
 });
 
@@ -126,7 +129,7 @@ const messageStyles = (theme: Theme): CSSObject => ({
   padding: '12px 16px',
   whiteSpace: 'pre-wrap',
   color: 'var(--error-color)',
-  fontSize: theme.typography.pxToRem(14),
+  fontSize: theme.typography.pxToRem(MESSAGE_FONT_SIZE),
   fontFamily: 'var(--font-stack-monospace)',
   backgroundColor: 'var(--error-background)',
   borderLeft: '2px solid var(--error-color)',

@@ -20,6 +20,8 @@ export const paths = {
     weeks: `${ROOTS.DASHBOARD}/weeks`,
     projects: `${ROOTS.DASHBOARD}/projects`,
     adminPeople: `${ROOTS.DASHBOARD}/admin/people`,
+    adminAlerts: `${ROOTS.DASHBOARD}/admin/alerts`,
+    adminActivity: `${ROOTS.DASHBOARD}/admin/activity`,
     changePassword: `${ROOTS.DASHBOARD}/account/password`,
   },
 };

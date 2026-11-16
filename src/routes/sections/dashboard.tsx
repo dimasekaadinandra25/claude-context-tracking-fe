@@ -27,6 +27,8 @@ const ModelsPage = lazy(() => import('src/module/usage/features/models/pages'));
 const WeeksPage = lazy(() => import('src/module/usage/features/weeks/pages'));
 const ProjectsPage = lazy(() => import('src/module/usage/features/projects/pages'));
 const AdminPeoplePage = lazy(() => import('src/module/usage/features/admin-people/pages'));
+const AdminAlertsPage = lazy(() => import('src/module/usage/features/admin-alerts/pages'));
+const AdminActivityPage = lazy(() => import('src/module/usage/features/admin-activity/pages'));
 const ChangePasswordPage = lazy(
   () => import('src/module/core/features/auth/pages/change-password')
 );
@@ -80,6 +82,8 @@ export const dashboardRoutes: RouteObject[] = [
       { path: 'weeks', element: <WeeksPage /> },
       { path: 'projects', element: <ProjectsPage /> },
       { path: 'admin/people', element: admin(<AdminPeoplePage />) },
+      { path: 'admin/alerts', element: admin(<AdminAlertsPage />) },
+      { path: 'admin/activity', element: admin(<AdminActivityPage />) },
       { path: 'account/password', element: <ChangePasswordPage /> },
     ],
   },

@@ -4,6 +4,14 @@
 
 ### Added
 
+- Admin › Alert settings: turn each reporter alert on or off, edit the weekly limit percent
+  thresholds and the runaway and project shares, save them for the reporter (picked up within 5
+  minutes) or reset the form to the defaults.
+- Admin › Activity log: who created, deactivated or activated a member, reset or changed a
+  password, issued, copied or revoked an API key, or changed the alert settings, with an action
+  filter and paging.
+- Admin › People: a Role menu on each member sets Member, Viewer (read-only) or Admin
+  (`PUT /core/v1/admin/users/:id/role`); your own row is locked. The change is in the activity log.
 - Every data page shows when it was last updated, and a warning when the latest refresh failed and
   older data is shown.
 - The Projects member filter is kept in the URL (`?user=`), so a filtered view can be shared.

@@ -93,7 +93,11 @@
   },
   "role": {
     "admin": "Admin",
-    "member": "Member"
+    "member": "Member",
+    "super_admin": "Admin",
+    "usage_viewer": "Viewer (read-only)",
+    "changed": "{{name}} is now {{role}}. It applies within an hour, at their next token refresh.",
+    "own": "You cannot change your own role"
   },
   "status": {
     "active": "Active",
@@ -145,6 +149,83 @@
   },
   "adminPeople": {
     "title": "Members"
+  },
+  "alertSettings": {
+    "title": "Alert settings",
+    "notSaved": "Nothing saved yet, so the reporter uses its REPORT_ALERTS environment settings. The form shows the built-in defaults until you save.",
+    "thresholds": "Weekly limit thresholds",
+    "thresholdsHint": "Alert once per week when a Claude account's weekly limit passes each percent (default 80 and 90).",
+    "noThresholds": "No thresholds: weekly limit alerts are off.",
+    "addPercent": "Percent",
+    "add": "Add",
+    "alerts": "Alerts",
+    "word": {
+      "pace": {
+        "label": "Pace",
+        "desc": "Warn when an account is on pace to run out before the weekly reset."
+      },
+      "summary": {
+        "label": "Weekly summary",
+        "desc": "Post the report image with a recap in the last hour before the weekly reset."
+      },
+      "stale": {
+        "label": "Stale app",
+        "desc": "Warn when an active member's app has not synced for 24 hours."
+      },
+      "runaway": {
+        "label": "Runaway session",
+        "desc": "Warn when one session uses the runaway share of its weekly limit within an hour."
+      },
+      "project": {
+        "label": "Project share",
+        "desc": "Warn when one project passes the project share of the team's weekly tokens."
+      },
+      "budget": {
+        "label": "Fair share",
+        "desc": "Warn when a member of a shared account uses more than their fair share of the day."
+      },
+      "version": {
+        "label": "App version",
+        "desc": "Warn when a member runs an older app than the newest one on the team."
+      }
+    },
+    "shares": "Shares",
+    "runawayShare": "Runaway share (%)",
+    "runawayShareHint": "Percent of the weekly limit one session may use within an hour (default 5).",
+    "projectShare": "Project share (%)",
+    "projectShareHint": "Percent of the team's weekly tokens one project may use (default 40).",
+    "invalidShare": "Enter a whole number from 1 to 100.",
+    "reset": "Reset to defaults",
+    "save": "Save",
+    "saved": "Alert settings saved"
+  },
+  "auditLog": {
+    "title": "Activity log",
+    "time": "Time",
+    "actor": "Actor",
+    "action": "Action",
+    "target": "Target",
+    "summary": "Summary",
+    "allActions": "All actions",
+    "empty": "No activity yet.",
+    "rows": "{{from}}–{{to}} of {{count}}",
+    "actions": {
+      "user": {
+        "create": "Member created",
+        "deactivate": "Member deactivated",
+        "activate": "Member activated",
+        "reset_password": "Password reset",
+        "change_password": "Own password changed"
+      },
+      "api_key": {
+        "issue": "API key issued",
+        "reveal": "API key copied",
+        "revoke": "API key revoked"
+      },
+      "alert_settings": {
+        "update": "Alert settings changed"
+      }
+    }
   },
   "admin": {
     "create": "Create member",

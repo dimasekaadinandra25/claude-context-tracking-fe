@@ -1,12 +1,14 @@
-import type { Paged } from 'src/shared/api';
 import type { ReportRange } from '../utils/range';
+import type { Paged, ApiEnvelope } from 'src/shared/api';
 import type {
   ApiKey,
   Budget,
   Person,
   GroupBy,
+  AuditLog,
   Interval,
   Overview,
+  AdminRole,
   AdminUser,
   IssuedKey,
   CostUsage,
@@ -19,6 +21,8 @@ import type {
   OutputUsage,
   ProjectUsage,
   UsageSession,
+  AlertSettings,
+  AuditLogQuery,
   SessionDetail,
   SessionsQuery,
   CreateUserBody,
@@ -234,6 +238,10 @@ export async function adminResetPassword(id: string, password: string) {
   await axios.post(endpoints.admin.resetPassword(id), { password });
 }
 
+export async function adminSetRole(id: string, role: AdminRole) {
+  await axios.put(endpoints.admin.role(id), { role });
+}
+
 export function adminIssueKey(userId: string, name: string) {
   return unwrap<IssuedKey>(axios.post(endpoints.admin.apiKeys(userId), { name }));
 }
@@ -252,4 +260,18 @@ export async function adminRevokeKey(keyId: string) {
 export async function adminRevealKey(keyId: string) {
   const res = await unwrap<{ key: string }>(axios.get(endpoints.admin.revealKey(keyId)));
   return res.key;
+}
+
+export async function getAlertSettings() {
+  const res = await axios.get<ApiEnvelope<AlertSettings>>(endpoints.usage.alertSettings);
+  return res.data.data ?? null;
+}
+
+export function adminSaveAlertSettings(settings: AlertSettings) {
+  return unwrap<AlertSettings>(axios.put(endpoints.usage.alertSettings, settings));
+}
+
+export function adminListAuditLogs(query: AuditLogQuery): Promise<Paged<AuditLog>> {
+  const params = query.action ? query : { page: query.page, limit: query.limit };
+  return unwrapList<AuditLog>(axios.get(endpoints.admin.auditLogs, { params }));
 }

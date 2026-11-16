@@ -1,3 +1,4 @@
+import 'src/module/usage/features/person/pages';
 import 'src/module/usage/features/overview/pages';
 
 import { Suspense } from 'react';
@@ -87,5 +88,38 @@ describe('read-only viewer', () => {
     renderAsViewer('/dashboard/admin/people');
 
     await waitFor(() => expect(screen.getByText('at /dashboard/person')).toBeInTheDocument());
+  });
+
+  it.each(['/dashboard/admin/alerts', '/dashboard/admin/activity'])(
+    'viewerCannotOpen %s',
+    async (route) => {
+      renderAsViewer(route);
+
+      await waitFor(() => expect(screen.getByText('at /dashboard/person')).toBeInTheDocument());
+      expect(nav().queryByText('Alert settings')).not.toBeInTheDocument();
+      expect(nav().queryByText('Activity log')).not.toBeInTheDocument();
+    }
+  );
+});
+
+describe('admin', () => {
+  it('adminSeesAlertSettingsAndActivityLogInTheNav', async () => {
+    installFakeBackend({
+      'GET /core/v1/admin/audit-logs': { status: 200, data: envelope([]) },
+    });
+    renderWithAppProviders(
+      <AuthContext value={authContextValue({ user: { ...viewer, is_super_admin: true } })}>
+        <ReportRangeProvider>
+          <Dashboard />
+        </ReportRangeProvider>
+      </AuthContext>,
+      '/dashboard/admin/activity'
+    );
+
+    expect(await screen.findByText('No activity yet.')).toBeInTheDocument();
+    expect(screen.getByText('at /dashboard/admin/activity')).toBeInTheDocument();
+    expect(nav().getByText('Members')).toBeInTheDocument();
+    expect(nav().getByText('Alert settings')).toBeInTheDocument();
+    expect(nav().getByText('Activity log')).toBeInTheDocument();
   });
 });

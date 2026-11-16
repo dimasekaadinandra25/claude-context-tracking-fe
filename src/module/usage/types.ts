@@ -242,6 +242,10 @@ export type AdminUser = {
   updated_at: string;
 };
 
+export const ADMIN_ROLES = ['member', 'usage_viewer', 'super_admin'] as const;
+
+export type AdminRole = (typeof ADMIN_ROLES)[number];
+
 export type CreateUserBody = {
   email: string;
   username: string;
@@ -264,4 +268,29 @@ export type IssuedKey = {
   key: string;
   key_prefix: string;
   name: string;
+};
+
+export type AlertSettings = {
+  alerts: string;
+  runaway_share: number;
+  project_share: number;
+};
+
+export type AuditLog = {
+  id: string;
+  actor_id: string | null;
+  actor_email: string;
+  action: string;
+  target_type: string;
+  target_id: string;
+  target_label: string;
+  summary: string;
+  ip: string;
+  created_at: string;
+};
+
+export type AuditLogQuery = {
+  page: number;
+  limit: number;
+  action?: string;
 };

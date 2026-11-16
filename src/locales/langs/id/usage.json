@@ -93,7 +93,11 @@
   },
   "role": {
     "admin": "Admin",
-    "member": "Anggota"
+    "member": "Anggota",
+    "super_admin": "Admin",
+    "usage_viewer": "Peninjau (hanya baca)",
+    "changed": "{{name}} sekarang {{role}}. Berlaku dalam satu jam, saat token mereka diperbarui.",
+    "own": "Anda tidak dapat mengubah peran Anda sendiri"
   },
   "status": {
     "active": "Aktif",
@@ -145,6 +149,83 @@
   },
   "adminPeople": {
     "title": "Anggota"
+  },
+  "alertSettings": {
+    "title": "Pengaturan peringatan",
+    "notSaved": "Belum ada yang disimpan, jadi reporter memakai pengaturan lingkungan REPORT_ALERTS. Formulir menampilkan nilai bawaan sampai Anda menyimpan.",
+    "thresholds": "Ambang batas mingguan",
+    "thresholdsHint": "Kirim peringatan sekali seminggu saat batas mingguan akun Claude melewati tiap persen (bawaan 80 dan 90).",
+    "noThresholds": "Tidak ada ambang: peringatan batas mingguan mati.",
+    "addPercent": "Persen",
+    "add": "Tambah",
+    "alerts": "Peringatan",
+    "word": {
+      "pace": {
+        "label": "Laju",
+        "desc": "Peringatkan saat akun diperkirakan habis sebelum reset mingguan."
+      },
+      "summary": {
+        "label": "Ringkasan mingguan",
+        "desc": "Kirim gambar laporan beserta rekap dalam satu jam terakhir sebelum reset mingguan."
+      },
+      "stale": {
+        "label": "Aplikasi tidak sinkron",
+        "desc": "Peringatkan saat aplikasi anggota aktif belum sinkron selama 24 jam."
+      },
+      "runaway": {
+        "label": "Sesi berlebihan",
+        "desc": "Peringatkan saat satu sesi memakai porsi sesi berlebihan dari batas mingguannya dalam satu jam."
+      },
+      "project": {
+        "label": "Porsi proyek",
+        "desc": "Peringatkan saat satu proyek melewati porsi proyek dari token mingguan tim."
+      },
+      "budget": {
+        "label": "Porsi adil",
+        "desc": "Peringatkan saat anggota akun bersama memakai lebih dari porsi adilnya hari itu."
+      },
+      "version": {
+        "label": "Versi aplikasi",
+        "desc": "Peringatkan saat anggota memakai aplikasi yang lebih lama dari versi terbaru di tim."
+      }
+    },
+    "shares": "Porsi",
+    "runawayShare": "Porsi sesi berlebihan (%)",
+    "runawayShareHint": "Persen batas mingguan yang boleh dipakai satu sesi dalam satu jam (bawaan 5).",
+    "projectShare": "Porsi proyek (%)",
+    "projectShareHint": "Persen token mingguan tim yang boleh dipakai satu proyek (bawaan 40).",
+    "invalidShare": "Masukkan bilangan bulat dari 1 sampai 100.",
+    "reset": "Kembalikan ke bawaan",
+    "save": "Simpan",
+    "saved": "Pengaturan peringatan disimpan"
+  },
+  "auditLog": {
+    "title": "Log aktivitas",
+    "time": "Waktu",
+    "actor": "Pelaku",
+    "action": "Tindakan",
+    "target": "Sasaran",
+    "summary": "Ringkasan",
+    "allActions": "Semua tindakan",
+    "empty": "Belum ada aktivitas.",
+    "rows": "{{from}}–{{to}} dari {{count}}",
+    "actions": {
+      "user": {
+        "create": "Anggota dibuat",
+        "deactivate": "Anggota dinonaktifkan",
+        "activate": "Anggota diaktifkan",
+        "reset_password": "Kata sandi direset",
+        "change_password": "Kata sandi sendiri diubah"
+      },
+      "api_key": {
+        "issue": "API key diterbitkan",
+        "reveal": "API key disalin",
+        "revoke": "API key dicabut"
+      },
+      "alert_settings": {
+        "update": "Pengaturan peringatan diubah"
+      }
+    }
   },
   "admin": {
     "create": "Buat anggota",

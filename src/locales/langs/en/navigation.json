@@ -7,7 +7,9 @@
   "models": "Models",
   "admin": {
     "root": "Admin",
-    "people": "Members"
+    "people": "Members",
+    "alerts": "Alert settings",
+    "activity": "Activity log"
   },
   "account": {
     "profile": "Profile",

@@ -1,10 +1,15 @@
+import type { AdminRole } from '../../../types';
+import type { UserRow } from '../components/users-table';
+
 import { useMemo, useState, useCallback } from 'react';
 
+import { useTranslate } from 'src/locales';
 import { toast } from 'src/shared/ui/snackbar';
+import { useAuthContext } from 'src/module/core/features/auth/hooks';
 
 import { useFetch } from '../../../hooks/use-fetch';
 import { useReportRange } from '../../../hooks/use-report-range';
-import { getBudgets, getOverview, adminListUsers } from '../../../api/usage';
+import { getBudgets, getOverview, adminSetRole, adminListUsers } from '../../../api/usage';
 
 const valueOf = <T>(result: PromiseSettledResult<T> | undefined) =>
   result?.status === 'fulfilled' ? result.value : null;
@@ -60,4 +65,20 @@ export function useAdminAction() {
   const clearError = useCallback(() => setError(null), []);
 
   return { run, busy, error, clearError };
+}
+
+type Run = (action: () => Promise<unknown>, success: string) => Promise<boolean>;
+
+export function useChangeRole(run: Run, reload: () => void) {
+  const { t } = useTranslate('usage');
+  const { user } = useAuthContext();
+  const changeRole = useCallback(
+    async (target: UserRow, role: AdminRole) => {
+      const name = target.full_name || target.username;
+      const changed = t('role.changed', { name, role: t(`role.${role}`) });
+      if (await run(() => adminSetRole(target.id, role), changed)) reload();
+    },
+    [run, reload, t]
+  );
+  return { selfId: user?.id, changeRole };
 }

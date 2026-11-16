@@ -21,6 +21,8 @@ const ICONS = {
   weeks: icon('ic-calendar'),
   projects: icon('ic-folder'),
   people: icon('ic-lock'),
+  alerts: icon('ic-params'),
+  activity: icon('ic-file'),
 };
 
 export function useNavData(): NavSectionProps['data'] {
@@ -58,7 +60,11 @@ export function useNavData(): NavSectionProps['data'] {
     };
     const admin = {
       subheader: t('admin.root'),
-      items: [{ title: t('admin.people'), path: paths.dashboard.adminPeople, icon: ICONS.people }],
+      items: [
+        { title: t('admin.people'), path: paths.dashboard.adminPeople, icon: ICONS.people },
+        { title: t('admin.alerts'), path: paths.dashboard.adminAlerts, icon: ICONS.alerts },
+        { title: t('admin.activity'), path: paths.dashboard.adminActivity, icon: ICONS.activity },
+      ],
     };
 
     return isAdmin ? [team, admin] : [team];

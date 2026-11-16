@@ -7,7 +7,9 @@
   "models": "Model",
   "admin": {
     "root": "Admin",
-    "people": "Anggota"
+    "people": "Anggota",
+    "alerts": "Pengaturan peringatan",
+    "activity": "Log aktivitas"
   },
   "account": {
     "profile": "Profil",

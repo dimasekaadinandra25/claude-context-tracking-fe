@@ -2,7 +2,7 @@
 
 **Module:** usage
 **Kode FE:** `src/module/usage/api/usage.ts`
-**Last Updated:** 2026-11-16 (getAllSessions pages through sessions; path ids are URL-encoded)
+**Last Updated:** 2026-11-16 (alert settings and audit log calls)
 
 Server contract: `claude-usage-server/docs/api-contract/usage/README.md`. All calls send
 `Authorization: Bearer <access_token>`. Report calls send `from`/`to` as UTC `Z` strings and `tz`
@@ -22,10 +22,19 @@ as the browser time zone (`buildRangeParams`). Ids in paths (`:id`) go through `
 | POST | `/core/v1/admin/users` | `adminCreateUser(body)` |
 | POST | `/core/v1/admin/users/:id/activate`, `/deactivate` | `adminSetActive(id, active)` |
 | POST | `/core/v1/admin/users/:id/reset-password` | `adminResetPassword(id, password)` |
+| PUT | `/core/v1/admin/users/:id/role` | `adminSetRole(id, role)`: `member`, `usage_viewer` or `super_admin` |
 | POST | `/core/v1/admin/users/:id/api-keys` | `adminIssueKey(userId, name)` |
 | GET | `/core/v1/admin/users/:id/api-keys` | `adminListKeys(userId)` |
 | POST | `/core/v1/admin/api-keys/:id/revoke` | `adminRevokeKey(keyId)` |
 | GET | `/core/v1/admin/api-keys/:id/reveal` | `adminRevealKey(keyId)` |
+| GET | `/usage/v1/alert-settings` | `getAlertSettings()`: the stored settings, or `null` when none are saved |
+| PUT | `/usage/v1/alert-settings` | `adminSaveAlertSettings({ alerts, runaway_share, project_share })` |
+| GET | `/core/v1/admin/audit-logs` | `adminListAuditLogs({ page, limit, action? })`: newest first; `action` is sent only when set |
+
+The Alert settings page turns `alerts` into thresholds and words with `features/admin-alerts/utils/alerts.ts`
+and writes it back as thresholds (ascending) then words in a fixed order; unknown parts are dropped.
+`null` shows the built-in defaults (`80,90,pace,summary,stale,runaway,project,budget,version`, 5,
+40). The Activity log page shows `target_label`, falling back to `target_id`.
 
 `output_tokens`, `subagent_requests` and `subagent_output_tokens` are read from overview people,
 models rows, session rows (range sums) and session `hours`; overview totals are

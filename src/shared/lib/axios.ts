@@ -158,14 +158,17 @@ export const endpoints = {
     people: '/usage/v1/people',
     budgets: '/usage/v1/budgets',
     budget: (userId: string) => `/usage/v1/budgets/${encodeURIComponent(userId)}`,
+    alertSettings: '/usage/v1/alert-settings',
   },
   admin: {
     users: '/core/v1/admin/users',
     deactivate: (id: string) => `/core/v1/admin/users/${encodeURIComponent(id)}/deactivate`,
     activate: (id: string) => `/core/v1/admin/users/${encodeURIComponent(id)}/activate`,
     resetPassword: (id: string) => `/core/v1/admin/users/${encodeURIComponent(id)}/reset-password`,
+    role: (id: string) => `/core/v1/admin/users/${encodeURIComponent(id)}/role`,
     apiKeys: (userId: string) => `/core/v1/admin/users/${encodeURIComponent(userId)}/api-keys`,
     revokeKey: (keyId: string) => `/core/v1/admin/api-keys/${encodeURIComponent(keyId)}/revoke`,
     revealKey: (keyId: string) => `/core/v1/admin/api-keys/${encodeURIComponent(keyId)}/reveal`,
+    auditLogs: '/core/v1/admin/audit-logs',
   },
 } as const;

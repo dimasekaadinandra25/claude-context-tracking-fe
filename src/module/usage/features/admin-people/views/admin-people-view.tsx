@@ -12,7 +12,7 @@ import { KeysDrawer } from '../components/keys-drawer';
 import { UsersTable } from '../components/users-table';
 import { PageShell } from '../../../components/page-shell';
 import { CreateUserDialog } from '../components/create-user-dialog';
-import { useAdminAction, useAdminPeople } from '../hooks/use-admin-people';
+import { useChangeRole, useAdminAction, useAdminPeople } from '../hooks/use-admin-people';
 import { BudgetDialog, ToggleActiveDialog, ResetPasswordDialog } from '../components/user-dialogs';
 
 export type AdminDialog = { kind: UserAction | 'create'; user: UserRow | null } | null;
@@ -24,6 +24,7 @@ export function AdminPeopleView() {
   const [dialog, setDialog] = useState<AdminDialog>(null);
   const close = () => setDialog(null);
   const target = dialog?.user ?? null;
+  const { selfId, changeRole } = useChangeRole(action.run, reload);
 
   const finish = async (run: () => Promise<unknown>, success: string) => {
     if (await action.run(run, success)) {
@@ -46,7 +47,12 @@ export function AdminPeopleView() {
       error={error}
     >
       <Card>
-        <UsersTable users={users} onAction={(kind, user) => setDialog({ kind, user })} />
+        <UsersTable
+          users={users}
+          selfId={selfId}
+          onAction={(kind, user) => setDialog({ kind, user })}
+          onRoleChange={changeRole}
+        />
       </Card>
       <CreateUserDialog open={dialog?.kind === 'create'} {...dialogProps} />
       <BudgetDialog open={dialog?.kind === 'budget'} {...dialogProps} />

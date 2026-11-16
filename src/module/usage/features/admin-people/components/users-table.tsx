@@ -1,12 +1,16 @@
-import type { AdminUser } from '../../../types';
+import type { AdminRole, AdminUser } from '../../../types';
 import type { Column } from '../../../components/data-table';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 
 import { useTranslate } from 'src/locales';
 import { Label } from 'src/shared/ui/label';
 
+import { ADMIN_ROLES } from '../../../types';
 import { DataTable } from '../../../components/data-table';
 import { formatTokens, formatDateTime } from '../../../utils/format';
 
@@ -17,10 +21,52 @@ export type UserRow = AdminUser & {
 
 export type UserAction = 'keys' | 'budget' | 'reset' | 'toggle';
 
+const ROLE_WIDTH = 200;
+
 type Props = {
   users: UserRow[];
+  selfId?: string;
   onAction: (action: UserAction, user: UserRow) => void;
+  onRoleChange: (user: UserRow, role: AdminRole) => void;
 };
+
+export function roleOf(roles: string[]): AdminRole {
+  return [...ADMIN_ROLES].reverse().find((role) => roles.includes(role)) ?? 'member';
+}
+
+type RoleSelectProps = { user: UserRow; self: boolean; onChange: Props['onRoleChange'] };
+
+function RoleSelect({ user, self, onChange }: RoleSelectProps) {
+  const { t } = useTranslate('usage');
+  const current = roleOf(user.roles);
+  const select = (
+    <TextField
+      select
+      size="small"
+      value={current}
+      disabled={self}
+      onChange={(event) => {
+        const role = event.target.value as AdminRole;
+        if (role !== current) onChange(user, role);
+      }}
+      slotProps={{ htmlInput: { 'aria-label': `${t('col.role')} ${user.email}` } }}
+      sx={{ minWidth: ROLE_WIDTH }}
+    >
+      {ADMIN_ROLES.map((role) => (
+        <MenuItem key={role} value={role}>
+          {t(`role.${role}`)}
+        </MenuItem>
+      ))}
+    </TextField>
+  );
+  return self ? (
+    <Tooltip title={t('role.own')}>
+      <span>{select}</span>
+    </Tooltip>
+  ) : (
+    select
+  );
+}
 
 function RowActions({ user: u, onAction }: { user: UserRow; onAction: Props['onAction'] }) {
   const { t } = useTranslate('usage');
@@ -46,7 +92,7 @@ function RowActions({ user: u, onAction }: { user: UserRow; onAction: Props['onA
   );
 }
 
-export function UsersTable({ users, onAction }: Props) {
+export function UsersTable({ users, selfId, onAction, onRoleChange }: Props) {
   const { t } = useTranslate('usage');
 
   const actions = (u: UserRow) => <RowActions user={u} onAction={onAction} />;
@@ -57,7 +103,7 @@ export function UsersTable({ users, onAction }: Props) {
     {
       id: 'role',
       label: t('col.role'),
-      render: (u) => (u.roles.includes('super_admin') ? t('role.admin') : t('role.member')),
+      render: (u) => <RoleSelect user={u} self={u.id === selfId} onChange={onRoleChange} />,
     },
     {
       id: 'active',

@@ -12,6 +12,7 @@ import { Iconify } from 'src/shared/ui/iconify';
 import { getBudgets } from 'src/module/usage/api/usage';
 import { useFetch } from 'src/module/usage/hooks/use-fetch';
 import { formatTokens } from 'src/module/usage/utils/format';
+import { monthEndProjection } from 'src/module/usage/utils/plan';
 import { ChartCard } from 'src/module/usage/components/chart-card';
 import { EmptyState } from 'src/module/usage/components/empty-state';
 import { useReportRange } from 'src/module/usage/hooks/use-report-range';
@@ -37,6 +38,24 @@ function statusSx(color: ReturnType<typeof budgetColor>): SxProps<Theme> {
     color: theme.vars.palette[color].dark,
     ...theme.applyStyles('dark', { color: theme.vars.palette[color].main }),
   });
+}
+
+function MonthEndPace({ budget }: { budget: Budgeted }) {
+  const { t } = useTranslate('usage');
+  const projected = monthEndProjection(budget.used_new_context);
+
+  if (projected === null) return null;
+
+  return (
+    <Box sx={{ mt: 0.5 }}>
+      <Typography
+        variant="caption"
+        sx={statusSx(projected > budget.monthly_new_context ? 'warning' : 'primary')}
+      >
+        {t('budget.pace', { tokens: formatTokens(Math.round(projected)) })}
+      </Typography>
+    </Box>
+  );
 }
 
 function BudgetRow({ budget }: { budget: Budgeted }) {
@@ -69,6 +88,7 @@ function BudgetRow({ budget }: { budget: Budgeted }) {
         </Typography>
       </Box>
       <ShareBar value={budget.used_new_context} max={budget.monthly_new_context} color={color} />
+      <MonthEndPace budget={budget} />
     </Box>
   );
 }

@@ -1,4 +1,5 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
+import { useSearchParams } from 'react-router';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -16,6 +17,7 @@ import { RangePicker } from '../../../components/range-picker';
 import { GridActions } from '../../../components/grid-actions';
 import { useReportRange } from '../../../hooks/use-report-range';
 import { getDaily, getProjects, getOverview } from '../../../api/usage';
+import { useParamSetter } from '../../sessions/hooks/use-sessions-list';
 import { PersonFilter } from '../../sessions/components/session-filters';
 import { useColumnVisibility } from '../../../hooks/use-column-visibility';
 import { PROJECT_FIELD, projectColumns } from '../components/project-columns';
@@ -23,6 +25,7 @@ import { PROJECT_FIELD, projectColumns } from '../components/project-columns';
 const VISIBILITY_KEY = 'usage.projects.columns';
 const EXPORT_FILE = 'projects';
 const ALL_COLUMNS = {};
+const USER_PARAM = 'user';
 const PHONE_HIDDEN = ['members', 'models', 'compactions', 'sessions_near_full'];
 
 function ProjectsToolbar() {
@@ -36,22 +39,29 @@ function ProjectsToolbar() {
 function useProjectsData(userId: string) {
   const { range } = useReportRange();
   const load = useCallback(() => getProjects(range, userId || undefined), [range, userId]);
-  const { data, error, loading } = useFetch(load);
+  const { data, error, loading, updatedAt } = useFetch(load);
   const loadSpent = useCallback(
     () => Promise.all([getDaily(range, userId || undefined), getOverview(range)]),
     [range, userId]
   );
   const { data: spentData } = useFetch(loadSpent);
   const spent = spentData ? rangeCost(spentData[0], spentData[1].people) : null;
-  return { data, error, loading, spent };
+  return { data, error, loading, updatedAt, spent };
+}
+
+function useUserParam(canViewAll: boolean) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const setParams = useParamSetter(setSearchParams);
+  const userId = canViewAll ? (searchParams.get(USER_PARAM) ?? '') : '';
+  const setUserId = useCallback((id: string) => setParams({ [USER_PARAM]: id }), [setParams]);
+  return [userId, setUserId] as const;
 }
 
 export function ProjectsView() {
   const { t } = useTranslate('usage');
-  const { user } = useAuthContext();
-  const canViewAll = !!user?.can_view_all;
-  const [userId, setUserId] = useState('');
-  const { data, error, loading, spent } = useProjectsData(userId);
+  const canViewAll = !!useAuthContext().user?.can_view_all;
+  const [userId, setUserId] = useUserParam(canViewAll);
+  const { data, error, loading, updatedAt, spent } = useProjectsData(userId);
   const columns = useMemo(
     () => projectColumns(t, canViewAll, data ?? [], spent),
     [t, canViewAll, data, spent]
@@ -64,7 +74,12 @@ export function ProjectsView() {
   );
 
   return (
-    <PageShell title={t('projects.title')} action={<RangePicker quick />} error={error}>
+    <PageShell
+      title={t('projects.title')}
+      action={<RangePicker quick />}
+      error={error}
+      updatedAt={updatedAt}
+    >
       <Card>
         <Stack spacing={2} sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between' }}>

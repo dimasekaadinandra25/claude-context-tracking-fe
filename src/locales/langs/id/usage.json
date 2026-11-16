@@ -104,8 +104,11 @@
     "title": "Ringkasan tim",
     "chart": "Konteks baru per hari per anggota",
     "people": "Anggota",
-    "heatmap": "Konteks baru per hari dan jam",
-    "updated": "Diperbarui {{time}} · menyegarkan tiap menit"
+    "heatmap": "Konteks baru per hari dan jam"
+  },
+  "freshness": {
+    "updated": "Diperbarui {{time}} · menyegarkan tiap menit",
+    "stale": "Gagal menyegarkan — menampilkan data dari {{time}}"
   },
   "person": {
     "title": "Detail anggota",
@@ -164,6 +167,7 @@
   "budget": {
     "title": "Anggaran bulanan",
     "usage": "{{used}} dari {{budget}} · {{percent}}%",
+    "pace": "Dengan laju ini {{tokens}} di akhir bulan",
     "warning": "Hampir habis",
     "error": "Melebihi anggaran",
     "empty": "Belum ada anggaran. Atur anggaran di Admin → Anggota.",

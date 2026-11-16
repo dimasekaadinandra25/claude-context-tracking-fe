@@ -129,12 +129,12 @@ function WeekRow({ week, showAccount }: { week: Week; showAccount: boolean }) {
 export function WeeksView() {
   const { t } = useTranslate('usage');
   const load = useCallback(() => getWeeks(lastDays(WEEKS * WEEK_DAYS)), []);
-  const { data, error, loading } = useFetch(load);
+  const { data, error, loading, updatedAt } = useFetch(load);
   const weeks = groupWeeks(data ?? []);
   const accounts = new Set(weeks.map((week) => week.email)).size;
 
   return (
-    <PageShell title={t('weeks.title')} loading={loading} error={error}>
+    <PageShell title={t('weeks.title')} loading={loading} error={error} updatedAt={updatedAt}>
       <Card>
         {weeks.length === 0 && !loading ? (
           <EmptyState message={t('weeks.empty')} />

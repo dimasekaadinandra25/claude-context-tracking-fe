@@ -16,6 +16,7 @@ import {
   roundToTotal,
   memberLimitUsed,
   weeklyAllowance,
+  monthEndProjection,
 } from './plan';
 
 const baseDay: DailyUsage = {
@@ -177,5 +178,21 @@ describe('isHeavyDay', () => {
     expect(isHeavyDay(day({ ...shared, input_tokens: 400 }))).toBe(true);
     expect(isHeavyDay(day({ ...shared, input_tokens: 300 }))).toBe(false);
     expect(isHeavyDay(day({}))).toBe(false);
+  });
+});
+
+describe('monthEndProjection', () => {
+  const at = (month: number, day: number, hour = 0) => new Date(2026, month, day, hour).getTime();
+
+  it('waitsForTheFirstFullDay', () => {
+    expect(monthEndProjection(500, at(10, 1))).toBeNull();
+    expect(monthEndProjection(500, at(10, 1, 23))).toBeNull();
+    expect(monthEndProjection(500, at(10, 2))).toBe(15000);
+  });
+
+  it('scalesByTheLengthOfTheMonth', () => {
+    expect(monthEndProjection(1400, at(1, 15))).toBe(2800);
+    expect(monthEndProjection(1000, at(9, 11))).toBe(3100);
+    expect(monthEndProjection(1000, at(10, 11))).toBe(3000);
   });
 });

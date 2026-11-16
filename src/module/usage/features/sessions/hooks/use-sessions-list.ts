@@ -34,7 +34,7 @@ function filterPatch(draft: SessionFilters, params: URLSearchParams): Patch | nu
 
 type SetSearchParams = ReturnType<typeof useSearchParams>[1];
 
-function useParamSetter(setSearchParams: SetSearchParams) {
+export function useParamSetter(setSearchParams: SetSearchParams) {
   return useCallback(
     (patch: Patch) =>
       setSearchParams(
@@ -99,11 +99,11 @@ function useSessionsData(
   query: Parameters<typeof getSessions>[1]
 ) {
   const load = useCallback(() => getSessions(reportRange, query), [reportRange, query]);
-  const { data, error, loading } = useFetch(load);
+  const { data, error, loading, updatedAt } = useFetch(load);
 
   const loadModels = useCallback(() => getModels(reportRange), [reportRange]);
   const models = useFetch(loadModels).data ?? [];
-  return { data, error, loading, models };
+  return { data, error, loading, updatedAt, models };
 }
 
 function useHourFilter(from: string | null, to: string | null, setParams: (patch: Patch) => void) {
@@ -162,7 +162,7 @@ export function useSessionsList() {
     () => sessionsQueryFromGrid({ ...paginationModel, sortModel, filters }),
     [paginationModel, sortModel, filters]
   );
-  const { data, error, loading, models } = useSessionsData(reportRange, query);
+  const { data, error, loading, updatedAt, models } = useSessionsData(reportRange, query);
 
   const { setPaginationModel, setSortModel } = useGridSetters(setParams);
   const setFilter = useCallback(
@@ -186,5 +186,6 @@ export function useSessionsList() {
     setFilter,
     error,
     loading,
+    updatedAt,
   };
 }

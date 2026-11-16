@@ -1,8 +1,4 @@
-import dayjs from 'dayjs';
-
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 
 import { useTranslate } from 'src/locales';
 
@@ -28,18 +24,10 @@ export function OverviewView() {
   return (
     <PageShell
       title={t('overview.title')}
-      action={
-        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-          {updatedAt && (
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {t('overview.updated', { time: dayjs(updatedAt).format('HH:mm') })}
-            </Typography>
-          )}
-          <RangePicker quick />
-        </Stack>
-      }
+      action={<RangePicker quick />}
       loading={loading}
       error={error}
+      updatedAt={updatedAt}
     >
       {overview && (
         <>

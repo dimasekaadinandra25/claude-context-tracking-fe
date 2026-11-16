@@ -108,10 +108,16 @@ function ModelsTable({ models }: { models: ModelUsage[] }) {
 
 export function ModelsView() {
   const { t } = useTranslate('usage');
-  const { models, points, members, error, loading } = useModels();
+  const { models, points, members, error, loading, updatedAt } = useModels();
 
   return (
-    <PageShell title={t('models.title')} action={<RangePicker />} loading={loading} error={error}>
+    <PageShell
+      title={t('models.title')}
+      action={<RangePicker />}
+      loading={loading}
+      error={error}
+      updatedAt={updatedAt}
+    >
       {models && (
         <>
           <Grid container spacing={3}>

@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import { it, vi, expect, describe } from 'vitest';
+import { it, vi, expect, describe, afterEach } from 'vitest';
 
 import { renderWithAppProviders } from 'src/test/render';
 import { envelope, installFakeBackend } from 'src/test/fake-backend';
@@ -108,5 +108,32 @@ describe('BudgetCard', () => {
     expect(
       await screen.findByText('No budgets yet. Set budgets in Admin → Members.')
     ).toBeInTheDocument();
+  });
+});
+
+describe('BudgetCard month-end pace', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('budgetCardProjectsTheMonthEnd', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2026, 10, 11));
+    renderBudgets([
+      { ...budget, user_id: 'u-1', monthly_new_context: 10000000, used_new_context: 2000000 },
+    ]);
+
+    expect(await screen.findByText('On pace for 6M by month end')).toBeInTheDocument();
+  });
+
+  it('budgetCardWaitsADayBeforeProjecting', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2026, 10, 1, 12));
+    renderBudgets([
+      { ...budget, user_id: 'u-1', monthly_new_context: 10000000, used_new_context: 2000000 },
+    ]);
+
+    expect(await screen.findByText('2M of 10M · 20%')).toBeInTheDocument();
+    expect(screen.queryByText(/On pace for/)).not.toBeInTheDocument();
   });
 });

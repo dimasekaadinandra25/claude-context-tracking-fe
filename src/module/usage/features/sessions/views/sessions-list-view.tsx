@@ -19,7 +19,12 @@ export function SessionsListView() {
   const list = useSessionsList();
 
   return (
-    <PageShell title={t('sessions.title')} action={<RangePicker />} error={list.error}>
+    <PageShell
+      title={t('sessions.title')}
+      action={<RangePicker />}
+      error={list.error}
+      updatedAt={list.updatedAt}
+    >
       <Card>
         <Stack spacing={2} sx={{ p: 2 }}>
           {list.hourFilter && (

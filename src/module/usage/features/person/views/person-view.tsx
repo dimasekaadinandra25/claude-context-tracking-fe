@@ -23,7 +23,7 @@ import { PersonPressureCard } from '../../overview/components/context-pressure-c
 
 export function PersonView() {
   const { t } = useTranslate('usage');
-  const { canViewAll, userId, overview, previous, person, points, sessions, error, loading } =
+  const { canViewAll, userId, overview, previous, person, points, sessions, ...status } =
     usePerson();
 
   const action = (
@@ -40,12 +40,7 @@ export function PersonView() {
   );
 
   return (
-    <PageShell
-      title={person?.full_name || t('person.title')}
-      action={action}
-      loading={loading}
-      error={error}
-    >
+    <PageShell title={person?.full_name || t('person.title')} action={action} {...status}>
       {overview && (
         <>
           <KpiRow overview={overview} previous={previous} showPeople={false} />

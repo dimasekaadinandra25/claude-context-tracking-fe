@@ -32,7 +32,7 @@ export function usePerson() {
       ]),
     [range, userId]
   );
-  const { data, error, loading } = useFetch(load);
+  const { data, error, loading, updatedAt } = useFetch(load);
 
   const [overview, points, page, previous] = data ?? [null, [], null, null];
 
@@ -46,5 +46,6 @@ export function usePerson() {
     sessions: page?.items ?? [],
     error,
     loading,
+    updatedAt,
   };
 }

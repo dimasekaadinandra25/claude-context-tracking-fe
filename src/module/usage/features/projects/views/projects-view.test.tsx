@@ -1,4 +1,5 @@
 import { it, vi, expect, describe } from 'vitest';
+import { useLocation, useNavigate } from 'react-router';
 import { within, screen, waitFor, fireEvent } from '@testing-library/react';
 
 import { renderWithAppProviders } from 'src/test/render';
@@ -53,10 +54,28 @@ const monthCost = {
 
 const GRID_READY = { timeout: 5000 };
 
-function renderProjects(isAdmin = false) {
+const people = [
+  { id: 'u-1', full_name: 'Mia', email: 'mia@example.test', is_active: true },
+  { id: 'u-2', full_name: 'Raka', email: 'raka@example.test', is_active: true },
+];
+
+function SearchProbe() {
+  const { search } = useLocation();
+  const navigate = useNavigate();
+  return (
+    <>
+      <p>{`search ${search}`}</p>
+      <button type="button" onClick={() => navigate('/?user=u-1')}>
+        open mia
+      </button>
+    </>
+  );
+}
+
+function renderProjects(isAdmin = false, route?: string) {
   const backend = installFakeBackend({
     'GET /usage/v1/projects': { status: 200, data: envelope([billing, privateSessions]) },
-    'GET /usage/v1/people': { status: 200, data: envelope([]) },
+    'GET /usage/v1/people': { status: 200, data: envelope(people) },
     'GET /usage/v1/daily': {
       status: 200,
       data: envelope([
@@ -84,6 +103,7 @@ function renderProjects(isAdmin = false) {
   const view = (
     <ReportRangeProvider>
       <ProjectsView />
+      <SearchProbe />
     </ReportRangeProvider>
   );
   renderWithAppProviders(
@@ -97,7 +117,8 @@ function renderProjects(isAdmin = false) {
       </AuthContext>
     ) : (
       view
-    )
+    ),
+    route
   );
   return backend;
 }
@@ -197,5 +218,49 @@ describe('ProjectsView admin and export', () => {
     expect(csv).toContain(
       'Mia,team@example.test,Max 20x,billing,1000,2000,3000,4000,12,26000,199.50'
     );
+  });
+});
+
+describe('ProjectsView member filter in the URL', () => {
+  const projectRequestsFor = (backend: ReturnType<typeof renderProjects>, userId: string) =>
+    backend.requests.filter((r) => r.url === '/usage/v1/projects' && r.params?.user_id === userId);
+
+  it('readsTheMemberFromTheQueryString', async () => {
+    const backend = renderProjects(true, '/?user=u-2');
+
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Member' })).toHaveTextContent('Raka')
+    );
+    expect(projectRequestsFor(backend, 'u-2').length).toBeGreaterThan(0);
+  });
+
+  it('clearingTheFilterRemovesTheParam', async () => {
+    renderProjects(true, '/?user=u-2');
+
+    const filter = await screen.findByRole('combobox', { name: 'Member' });
+    await waitFor(() => expect(filter).toHaveTextContent('Raka'));
+    fireEvent.mouseDown(filter);
+    fireEvent.click(await screen.findByRole('option', { name: 'All' }));
+
+    expect(await screen.findByText('search')).toBeInTheDocument();
+  });
+
+  it('followsTheUrlWhenItChangesFromOutside', async () => {
+    const backend = renderProjects(true, '/?user=u-2');
+    await screen.findByText('search ?user=u-2');
+
+    fireEvent.click(screen.getByRole('button', { name: 'open mia' }));
+
+    await waitFor(() => expect(projectRequestsFor(backend, 'u-1').length).toBeGreaterThan(0));
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Member' })).toHaveTextContent('Mia')
+    );
+  });
+
+  it('ignoresTheParamForMembersWithoutViewAll', async () => {
+    const backend = renderProjects(false, '/?user=u-2');
+
+    await screen.findByRole('link', { name: 'billing' }, GRID_READY);
+    expect(projectRequestsFor(backend, 'u-2')).toHaveLength(0);
   });
 });

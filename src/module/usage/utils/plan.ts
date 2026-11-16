@@ -90,6 +90,12 @@ export function budgetOf(used: number, resetsAt: string, now: number = Date.now(
   };
 }
 
+export function monthEndProjection(used: number, now: number = Date.now()): number | null {
+  const today = dayjs(now);
+  const elapsed = today.diff(today.startOf('month'), 'day', true);
+  return elapsed >= 1 ? (used / elapsed) * today.daysInMonth() : null;
+}
+
 export function windowDays(resetsAt: string): string[] {
   const end = dayjs(resetsAt).startOf('day');
   const start = dayjs(resetsAt).subtract(WEEK_DAYS, 'day').startOf('day');

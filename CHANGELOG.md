@@ -4,6 +4,10 @@
 
 ### Added
 
+- Every data page shows when it was last updated, and a warning when the latest refresh failed and
+  older data is shown.
+- The Projects member filter is kept in the URL (`?user=`), so a filtered view can be shared.
+- Budget card: "On pace for X by month end" after the first day, amber when it would pass the budget.
 - Cache hit rate turns amber below 50% on large volumes, with a hint that uncached context costs more.
 
 ### Fixed

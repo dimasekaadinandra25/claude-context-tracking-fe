@@ -11,7 +11,7 @@ export function useModels() {
       Promise.all([getModels(range), getTimeseries(range, 'day', 'model'), getMemberModels(range)]),
     [range]
   );
-  const { data, error, loading } = useFetch(load);
+  const { data, error, loading, updatedAt } = useFetch(load);
 
   return {
     models: data?.[0] ?? null,
@@ -19,5 +19,6 @@ export function useModels() {
     members: data?.[2] ?? [],
     error,
     loading,
+    updatedAt,
   };
 }

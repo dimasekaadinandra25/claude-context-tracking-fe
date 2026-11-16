@@ -104,8 +104,11 @@
     "title": "Team overview",
     "chart": "New context per day by member",
     "people": "Members",
-    "heatmap": "New context by weekday and hour",
-    "updated": "Updated {{time}} · refreshes every minute"
+    "heatmap": "New context by weekday and hour"
+  },
+  "freshness": {
+    "updated": "Updated {{time}} · refreshes every minute",
+    "stale": "Couldn't refresh — showing data from {{time}}"
   },
   "person": {
     "title": "Member detail",
@@ -164,6 +167,7 @@
   "budget": {
     "title": "Monthly budget",
     "usage": "{{used}} of {{budget}} · {{percent}}%",
+    "pace": "On pace for {{tokens}} by month end",
     "warning": "Near budget",
     "error": "Over budget",
     "empty": "No budgets yet. Set budgets in Admin → Members.",

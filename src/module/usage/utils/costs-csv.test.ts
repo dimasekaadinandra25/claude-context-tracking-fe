@@ -43,4 +43,19 @@ describe('costsCsv', () => {
     ).split('\r\n');
     expect(line).toBe('Raka,,,projects.private,10,20,30,40,5,300,0.00');
   });
+
+  it.each([
+    ['=HYPERLINK("x")', `"'=HYPERLINK(""x"")"`],
+    ['+1', "'+1"],
+    ['-2', "'-2"],
+    ['@SUM(A1)', "'@SUM(A1)"],
+    ['\tcmd', "'\tcmd"],
+    ['\rcmd', `"'\rcmd"`],
+  ])('neutralisesFormulaPrefix %j', (text, cell) => {
+    const [, line] = costsCsv(
+      [{ ...row, full_name: text, claude_email: text, project: text, cost: 0 }],
+      t
+    ).split('\r\n');
+    expect(line).toBe(`${cell},${cell},Max 20x,${cell},10,20,30,40,5,300,0.00`);
+  });
 });

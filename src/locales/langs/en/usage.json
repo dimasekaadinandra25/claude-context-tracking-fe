@@ -229,7 +229,7 @@
     "empty": "No results"
   },
   "cache": {
-    "hint": "Share of input served from prompt cache. Higher means less fresh context per request."
+    "hint": "Share of input read from cache. Low values mean context is re-sent uncached, which costs more."
   },
   "activity": {
     "title": "Code activity",

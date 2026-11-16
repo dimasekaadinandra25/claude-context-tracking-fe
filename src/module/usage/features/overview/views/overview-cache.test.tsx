@@ -66,7 +66,7 @@ describe('OverviewView cache hit rate and context pressure', () => {
     expect(within(tile).getByRole('heading', { level: 3 })).toHaveTextContent('80%');
     expect(heading).toHaveAttribute(
       'aria-label',
-      'Share of input served from prompt cache. Higher means less fresh context per request.'
+      'Share of input read from cache. Low values mean context is re-sent uncached, which costs more.'
     );
     expect(await screen.findByRole('columnheader', { name: 'Cache hit rate' })).toBeInTheDocument();
     expect(screen.getByRole('gridcell', { name: '70%' })).toBeInTheDocument();

@@ -1,6 +1,6 @@
 import { it, expect, describe } from 'vitest';
 
-import { shortModel, cacheHitRate, formatTokens, formatPercent } from './format';
+import { shortModel, cacheHitRate, formatTokens, isLowCacheHit, formatPercent } from './format';
 
 describe('formatTokens', () => {
   it.each([
@@ -49,6 +49,21 @@ describe('cacheHitRate', () => {
   ])('input %d, write %d, read %d gives %s', (input, write, read, expected) => {
     expect(
       cacheHitRate({ input_tokens: input, cache_write_tokens: write, cache_read_tokens: read })
+    ).toBe(expected);
+  });
+});
+
+describe('isLowCacheHit', () => {
+  it.each([
+    [0, 0, 0, false],
+    [900_000, 0, 0, false],
+    [600_000, 0, 400_000, true],
+    [500_000, 0, 500_000, false],
+    [300_000, 300_000, 400_000, true],
+    [100_000, 100_000, 800_000, false],
+  ])('input %d, write %d, read %d gives %s', (input, write, read, expected) => {
+    expect(
+      isLowCacheHit({ input_tokens: input, cache_write_tokens: write, cache_read_tokens: read })
     ).toBe(expected);
   });
 });

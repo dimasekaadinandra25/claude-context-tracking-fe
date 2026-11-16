@@ -22,10 +22,19 @@ export function formatDateTime(iso: string | null | undefined): string {
 }
 
 const PERCENT = 100;
+const LOW_CACHE_HIT = 0.5;
+
+const cacheInput = (usage: CacheUsage) =>
+  usage.input_tokens + usage.cache_write_tokens + usage.cache_read_tokens;
 
 export function cacheHitRate(usage: CacheUsage): number | null {
-  const total = usage.input_tokens + usage.cache_write_tokens + usage.cache_read_tokens;
+  const total = cacheInput(usage);
   return total > 0 ? usage.cache_read_tokens / total : null;
+}
+
+export function isLowCacheHit(usage: CacheUsage): boolean {
+  const total = cacheInput(usage);
+  return total >= MILLION && usage.cache_read_tokens / total < LOW_CACHE_HIT;
 }
 
 export function formatPercent(ratio: number | null): string {

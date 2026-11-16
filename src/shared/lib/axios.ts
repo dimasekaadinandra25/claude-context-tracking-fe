@@ -4,7 +4,9 @@ import axios from 'axios';
 
 import { CONFIG } from 'src/shared/config';
 
+const HTTP_BAD_REQUEST = 400;
 const HTTP_UNAUTHORIZED = 401;
+const SIGN_OUT_STATUSES: (number | undefined)[] = [HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED];
 
 declare module 'axios' {
   export interface AxiosRequestConfig {
@@ -99,8 +101,12 @@ async function retryWithRefresh(error: AxiosError, original: RetriableConfig) {
     original.headers.Authorization = `Bearer ${newAccessToken}`;
     return axiosInstance(original);
   } catch (refreshError) {
+    const failure = normalizeError(refreshError);
+    if (!SIGN_OUT_STATUSES.includes((failure as Error & { status?: number }).status)) {
+      return Promise.reject(normalizeError(error));
+    }
     onUnauthorized?.();
-    return Promise.reject(normalizeError(refreshError));
+    return Promise.reject(failure);
   }
 }
 

@@ -4,6 +4,17 @@
 
 ### Added
 
+- Cache hit rate turns amber below 50% on large volumes, with a hint that uncached context costs more.
+
+### Fixed
+
+- Monthly CSV: names, emails and projects starting with `=`, `+`, `-`, `@` are neutralised so Excel
+  never runs them as formulas.
+- A failed token refresh only signs you out when the server rejects the token (400/401), not on a
+  brief 5xx or network error.
+
+### Added
+
 - Read-only accounts: users with `can_view_all` (the `usage_viewer` role) see the team overview,
   every member's usage and the member filters, but not the admin pages.
 - Models page: a model mix tip lists small sessions (up to 15 requests and 20K output) that used

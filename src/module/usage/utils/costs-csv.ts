@@ -24,15 +24,17 @@ const quote = (value: string | number) => {
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 };
 
+const neutralise = (text: string) => (/^[=+\-@\t\r]/.test(text) ? `'${text}` : text);
+
 const toLine = (values: (string | number)[]) => values.map(quote).join(',');
 
 export function costsCsv(rows: CostUsage[], t: TFunction): string {
   const lines = rows.map((row) =>
     toLine([
-      row.full_name,
-      row.claude_email ?? '',
+      neutralise(row.full_name),
+      neutralise(row.claude_email ?? ''),
       planLabel({ claude_plan: row.claude_tier, claude_tier: row.claude_tier }) ?? '',
-      row.project || t('projects.private'),
+      neutralise(row.project || t('projects.private')),
       row.input_tokens,
       row.cache_write_tokens,
       row.cache_read_tokens,

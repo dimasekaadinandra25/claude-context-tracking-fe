@@ -229,7 +229,7 @@
     "empty": "Tidak ada hasil"
   },
   "cache": {
-    "hint": "Porsi input yang dilayani dari cache prompt. Makin tinggi, makin sedikit konteks baru per permintaan."
+    "hint": "Porsi input yang dibaca dari cache. Nilai rendah berarti konteks dikirim ulang tanpa cache, sehingga biayanya lebih mahal."
   },
   "activity": {
     "title": "Aktivitas kode",

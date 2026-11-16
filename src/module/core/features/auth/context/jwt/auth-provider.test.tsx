@@ -90,4 +90,29 @@ describe('AuthProvider + shared axios on 401', () => {
     expect(calls(backend.requests, '/core/v1/auth/me')).toHaveLength(5);
     expect(sessionStorage.getItem(ACCESS_TOKEN_KEY)).toBe(freshAccess);
   });
+
+  it.each([
+    [401, 'session: signed out', null],
+    [502, 'session: Rina Kusuma', 'refresh-1'],
+  ])(
+    'when the refresh answers %d after a 401 it shows %s',
+    async (refreshStatus, session, refreshToken) => {
+      setTokens(makeJwtExpiringIn(600), 'refresh-1');
+      let meCalls = 0;
+      installFakeBackend({
+        [REFRESH]: { status: refreshStatus, data: envelope(null, 'refresh failed') },
+        [ME]: () => {
+          meCalls += 1;
+          return meCalls === 1 ? meOk : { status: 401, data: envelope(null, 'Unauthorized') };
+        },
+      });
+      renderWithAppProviders(<AuthStatusProbe />);
+      await screen.findByText('session: Rina Kusuma');
+
+      await expect(getMe()).rejects.toThrow();
+
+      expect(await screen.findByText(session)).toBeInTheDocument();
+      expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe(refreshToken);
+    }
+  );
 });

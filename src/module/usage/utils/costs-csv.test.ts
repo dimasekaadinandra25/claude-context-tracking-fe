@@ -45,6 +45,15 @@ describe('costsCsv', () => {
   });
 
   it.each([
+    ['default_claude_pro', 'Pro'],
+    ['default_claude_max_5x', 'Max 5x'],
+    ['default_claude_free', ''],
+  ])('labelsThePlanOfTier %s', (tier, plan) => {
+    const [, line] = costsCsv([{ ...row, full_name: 'Raka', claude_tier: tier }], t).split('\r\n');
+    expect(line.split(',')[2]).toBe(plan);
+  });
+
+  it.each([
     ['=HYPERLINK("x")', `"'=HYPERLINK(""x"")"`],
     ['+1', "'+1"],
     ['-2', "'-2"],

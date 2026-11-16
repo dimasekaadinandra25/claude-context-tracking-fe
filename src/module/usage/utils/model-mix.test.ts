@@ -2,7 +2,7 @@ import type { UsageSession } from '../types';
 
 import { it, expect, describe } from 'vitest';
 
-import { SONNET, opusPrice, sessionCost, modelMixTip } from './model-mix';
+import { SONNET, opusPrice, modelPrice, sessionCost, modelMixTip } from './model-mix';
 
 function session(overrides: Partial<UsageSession>): UsageSession {
   return {
@@ -35,13 +35,26 @@ function session(overrides: Partial<UsageSession>): UsageSession {
 
 describe('model mix', () => {
   it('pricesOpusModelsByVersion', () => {
-    expect(opusPrice('claude-opus-5-5')).toEqual({ input: 4, output: 20 });
-    expect(opusPrice('claude-opus-5')).toEqual({ input: 5, output: 25 });
-    expect(opusPrice('claude-opus-4-1-20250805')).toEqual({ input: 5, output: 25 });
+    expect(opusPrice('claude-opus-5-5')).toEqual({
+      input: 4,
+      output: 20,
+      cacheWrite: 5,
+      cacheRead: 0.2,
+    });
+    const older = { input: 5, output: 25, cacheWrite: 6.25, cacheRead: 0.5 };
+    expect(opusPrice('claude-opus-5')).toEqual(older);
+    expect(opusPrice('claude-opus-4-1-20250805')).toEqual(older);
     expect(opusPrice('claude-sonnet-5-5')).toBeNull();
   });
 
-  it('billsCacheWritesAndReadsAgainstTheInputPrice', () => {
+  it('pricesSonnetCacheReadsPerVersion', () => {
+    expect(modelPrice('claude-sonnet-5-5')).toBe(SONNET);
+    expect(SONNET.cacheRead).toBe(0.1);
+    expect(modelPrice('claude-sonnet-5')?.cacheRead).toBe(0.2);
+    expect(modelPrice('claude-haiku-5-5')).toBeNull();
+  });
+
+  it('billsCacheWritesAndReadsAtTheModelsOwnPrices', () => {
     const row = session({
       input_tokens: 1_000_000,
       cache_write_tokens: 1_000_000,
@@ -50,7 +63,9 @@ describe('model mix', () => {
       subagent_output_tokens: 500_000,
     });
 
-    expect(sessionCost(row, SONNET)).toBeCloseTo(2 + 2.5 + 0.2 + 10);
+    expect(sessionCost(row, SONNET)).toBeCloseTo(2 + 2.5 + 0.1 + 10);
+    expect(sessionCost(row, opusPrice('claude-opus-5-5')!)).toBeCloseTo(4 + 5 + 0.2 + 20);
+    expect(sessionCost(row, opusPrice('claude-opus-4-8')!)).toBeCloseTo(5 + 6.25 + 0.5 + 25);
   });
 
   it('findsSmallOpusSessionsAndTheirSonnetSaving', () => {

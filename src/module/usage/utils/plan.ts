@@ -34,7 +34,7 @@ export function planPrice(tier: string | null): number | null {
 export function planLabel({ claude_plan, claude_tier }: Account): string | null {
   const multiple = claude_tier?.match(/max_(\d+x)/)?.[1];
   if (multiple) return `Max ${multiple}`;
-  return claude_plan;
+  return claude_plan ?? (claude_tier && /pro/.test(claude_tier) ? 'Pro' : null);
 }
 
 export const weeklyAllowance = (monthly: number) => (monthly * MONTHS_PER_YEAR) / WEEKS_PER_YEAR;
@@ -118,7 +118,8 @@ export function costOf(limitUsed: number | null, tier: string | null): number | 
   return (limitUsed / PERCENT) * weeklyAllowance(price);
 }
 
-export const isShared = (day: DailyUsage) => day.account_members > 1;
+export const isShared = (day: DailyUsage) =>
+  day.account_members > 1 || weightOf(day) < day.account_weight;
 
 export const hasTokens = (day: DailyUsage) => inputOf(day) + day.output_tokens > 0;
 

@@ -2,11 +2,11 @@
 
 **Module:** usage
 **Kode FE:** `src/module/usage/api/usage.ts`
-**Last Updated:** 2026-11-03 (cache hit rate, context pressure, projects, overhead)
+**Last Updated:** 2026-11-16 (getAllSessions pages through sessions; path ids are URL-encoded)
 
 Server contract: `claude-usage-server/docs/api-contract/usage/README.md`. All calls send
 `Authorization: Bearer <access_token>`. Report calls send `from`/`to` as UTC `Z` strings and `tz`
-as the browser time zone (`buildRangeParams`).
+as the browser time zone (`buildRangeParams`). Ids in paths (`:id`) go through `encodeURIComponent`.
 
 | Method | Path | Function |
 |--------|------|----------|
@@ -15,6 +15,7 @@ as the browser time zone (`buildRangeParams`).
 | GET | `/usage/v1/models` | `getModels(range, userId?)` |
 | GET | `/usage/v1/projects` | `getProjects(range, userId?)` |
 | GET | `/usage/v1/sessions` | `getSessions(range, query)` |
+| GET | `/usage/v1/sessions` | `getAllSessions(range)`: `per_page=100`, `page=1..`, follows `meta.pagination.total_pages`, stops after `MAX_SESSION_PAGES` (20) and returns `capped: true` |
 | GET | `/usage/v1/sessions/:id` | `getSession(id)` |
 | GET | `/usage/v1/people` | `getPeople()` (admin) |
 | GET | `/core/v1/admin/users` | `adminListUsers()` |

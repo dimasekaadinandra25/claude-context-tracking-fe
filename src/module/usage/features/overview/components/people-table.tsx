@@ -1,6 +1,8 @@
 import type { GridColDef } from '@mui/x-data-grid';
 import type { OverviewPerson } from 'src/module/usage/types';
 
+import { useMemo } from 'react';
+
 import { DataGrid } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
@@ -172,44 +174,47 @@ function useColumns(
 ): GridColDef<OverviewPerson>[] {
   const { t } = useTranslate('usage');
   const theme = useTheme();
-  const scale = niceMax(Math.max(0, ...people.map((p) => p.new_context)));
+  const color = theme.vars.palette.primary.main;
 
-  return [
-    nameColumn(t('col.name')),
-    numberColumn('new_context', t('col.newContext'), formatTokens),
-    shareColumn(t('col.share'), t('col.shareScale', { max: formatTokens(scale) }), scale),
-    trendColumn(t('col.trend'), trends, theme.vars.palette.primary.main),
-    limitColumn('five_hour_used', 'five_hour_resets_at', t('col.fiveHourLimit')),
-    {
-      field: 'five_hour_share',
-      headerName: t('col.fiveHourShare'),
-      description: t('col.fiveHourShareHint'),
-      width: NARROW,
-      valueFormatter: formatShare,
-    },
-    limitColumn('seven_day_used', 'seven_day_resets_at', t('col.sevenDayLimit')),
-    linesColumn(t('col.linesChanged')),
-    numberColumn('commits', t('col.commits'), count),
-    numberColumn('requests', t('col.requests'), count),
-    numberColumn('output_tokens', t('col.outputTokens'), formatTokens),
-    cacheRateColumn<OverviewPerson>(t),
-    { ...numberColumn('subagent_requests', t('col.subagentRequests'), count), width: WIDE },
-    numberColumn('subagent_output_tokens', t('col.subagentOutput'), formatTokens),
-    { field: 'sessions', headerName: t('col.sessions'), width: NARROW },
-    {
-      field: 'current_model',
-      headerName: t('col.currentModel'),
-      width: WIDE,
-      valueFormatter: (value: string) => value || '-',
-    },
-    versionColumn(t('col.appVersion'), latestVersion(people)),
-    dateColumn('last_request_at', t('col.lastRequest')),
-    {
-      ...dateColumn('last_synced_at', t('col.lastSynced')),
-      display: 'flex',
-      renderCell: ({ row }) => <SyncedCell person={row} />,
-    },
-  ];
+  return useMemo(() => {
+    const scale = niceMax(Math.max(0, ...people.map((p) => p.new_context)));
+    return [
+      nameColumn(t('col.name')),
+      numberColumn('new_context', t('col.newContext'), formatTokens),
+      shareColumn(t('col.share'), t('col.shareScale', { max: formatTokens(scale) }), scale),
+      trendColumn(t('col.trend'), trends, color),
+      limitColumn('five_hour_used', 'five_hour_resets_at', t('col.fiveHourLimit')),
+      {
+        field: 'five_hour_share',
+        headerName: t('col.fiveHourShare'),
+        description: t('col.fiveHourShareHint'),
+        width: NARROW,
+        valueFormatter: formatShare,
+      },
+      limitColumn('seven_day_used', 'seven_day_resets_at', t('col.sevenDayLimit')),
+      linesColumn(t('col.linesChanged')),
+      numberColumn('commits', t('col.commits'), count),
+      numberColumn('requests', t('col.requests'), count),
+      numberColumn('output_tokens', t('col.outputTokens'), formatTokens),
+      cacheRateColumn<OverviewPerson>(t),
+      { ...numberColumn('subagent_requests', t('col.subagentRequests'), count), width: WIDE },
+      numberColumn('subagent_output_tokens', t('col.subagentOutput'), formatTokens),
+      { field: 'sessions', headerName: t('col.sessions'), width: NARROW },
+      {
+        field: 'current_model',
+        headerName: t('col.currentModel'),
+        width: WIDE,
+        valueFormatter: (value: string) => value || '-',
+      },
+      versionColumn(t('col.appVersion'), latestVersion(people)),
+      dateColumn('last_request_at', t('col.lastRequest')),
+      {
+        ...dateColumn('last_synced_at', t('col.lastSynced')),
+        display: 'flex',
+        renderCell: ({ row }) => <SyncedCell person={row} />,
+      },
+    ];
+  }, [t, people, trends, color]);
 }
 
 function PeopleHeader() {

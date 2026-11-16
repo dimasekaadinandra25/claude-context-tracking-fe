@@ -32,6 +32,8 @@ import { buildRangeParams } from '../utils/range';
 
 const ADMIN_USERS_LIMIT = 1000;
 const KEYS_LIMIT = 100;
+const ALL_SESSIONS_PER_PAGE = '100';
+export const MAX_SESSION_PAGES = 20;
 
 const NO_OUTPUT: OutputUsage = {
   output_tokens: 0,
@@ -152,6 +154,19 @@ export async function getSessions(
     axios.get(endpoints.usage.sessions, { params: { ...buildRangeParams(range), ...query } })
   );
   return { ...page, items: page.items.map(withSession) };
+}
+
+export async function getAllSessions(range: ReportRange) {
+  const items: UsageSession[] = [];
+  for (let page = 1; page <= MAX_SESSION_PAGES; page += 1) {
+    const result = await getSessions(range, {
+      page: String(page),
+      per_page: ALL_SESSIONS_PER_PAGE,
+    });
+    items.push(...result.items);
+    if (page >= result.pagination.total_pages) return { items, capped: false };
+  }
+  return { items, capped: true };
 }
 
 export async function getSession(id: string): Promise<SessionDetail> {

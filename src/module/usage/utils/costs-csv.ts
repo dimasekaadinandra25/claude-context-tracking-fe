@@ -33,7 +33,7 @@ export function costsCsv(rows: CostUsage[], t: TFunction): string {
     toLine([
       neutralise(row.full_name),
       neutralise(row.claude_email ?? ''),
-      planLabel({ claude_plan: row.claude_tier, claude_tier: row.claude_tier }) ?? '',
+      planLabel({ claude_plan: null, claude_tier: row.claude_tier }) ?? '',
       neutralise(row.project || t('projects.private')),
       row.input_tokens,
       row.cache_write_tokens,

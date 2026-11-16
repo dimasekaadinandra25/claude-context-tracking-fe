@@ -136,7 +136,8 @@
       "found": "{{count}} sesi Opus kecil ({{share}}% dari sesi Opus) dengan paling banyak {{requests}} request dan {{output}} token output",
       "cheaper": "≈ {{percent}}% lebih murah dengan Sonnet (≈ {{saving}} dengan harga API)",
       "saving": "Perkiraan hemat",
-      "note": "Perkiraan dari harga daftar API per sejuta token (tulis cache 1,25× dan baca cache 0,1× dari input), dibandingkan dengan Sonnet 5.5, atas paling banyak 100 sesi terbaru dalam rentang ini. Ini bukan ukuran batas paket."
+      "note": "Perkiraan dari harga daftar API per sejuta token (tulis cache 1,25× dari input, baca cache dengan harga masing-masing model), dibandingkan dengan Sonnet 5.5, atas sesi dalam rentang ini. Ini bukan ukuran batas paket.",
+      "capped": "Hanya {{count}} sesi terbaru yang diperiksa."
     }
   },
   "adminPeople": {
@@ -263,6 +264,7 @@
   "report": {
     "export": "Ekspor gambar",
     "exporting": "Mengekspor…",
+    "failed": "Gagal mengekspor gambar: {{message}}",
     "title": "Claude Usage",
     "window": "Jendela batas 7 hari Claude · {{period}}",
     "period": "7 hari terakhir · {{period}}",

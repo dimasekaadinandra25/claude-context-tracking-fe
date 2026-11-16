@@ -1,12 +1,14 @@
-import type { DailyUsage } from '../types';
+import type { DailyUsage, OverviewPerson } from '../types';
 
 import { it, expect, describe } from 'vitest';
 
 import {
   costOf,
   budgetOf,
+  isShared,
   planLabel,
   planPrice,
+  rangeCost,
   isHeavyDay,
   memberCost,
   windowDays,
@@ -15,6 +17,20 @@ import {
   memberLimitUsed,
   weeklyAllowance,
 } from './plan';
+
+const baseDay: DailyUsage = {
+  user_id: 'u',
+  day: '2026-11-11',
+  input_tokens: 0,
+  cache_write_tokens: 0,
+  cache_read_tokens: 0,
+  output_tokens: 0,
+  requests: 1,
+  seven_day_used: null,
+  limit_used: null,
+  account_weight: 0,
+  account_members: 1,
+};
 
 describe('plan', () => {
   it('estimatesThePriceAndLabelFromTheTier', () => {
@@ -28,6 +44,7 @@ describe('plan', () => {
     );
     expect(planLabel({ claude_plan: 'Pro', claude_tier: 'default_claude_pro' })).toBe('Pro');
     expect(planLabel({ claude_plan: null, claude_tier: null })).toBeNull();
+    expect(planLabel({ claude_plan: null, claude_tier: 'default_claude_pro' })).toBe('Pro');
   });
 
   it('turnsLimitPointsIntoDollarsOfTheWeeklyAllowance', () => {
@@ -82,6 +99,25 @@ describe('plan', () => {
     ).toBeCloseTo((whole * 750) / 1000);
     expect(memberCost(day({ account_members: 2 }), tier)).toBeCloseTo(whole / 2);
     expect(memberCost(day({ limit_used: null, account_members: 2 }), tier)).toBeNull();
+  });
+
+  it('splitsTheDayWithADeactivatedMemberWhoStillUsedTheAccount', () => {
+    const tier = 'default_claude_max_20x';
+    const shared = { limit_used: 10, account_weight: 1000, account_members: 1 };
+    const daily: DailyUsage[] = [
+      { ...baseDay, ...shared, user_id: 'active', input_tokens: 600 },
+      { ...baseDay, ...shared, user_id: 'former', input_tokens: 400 },
+    ];
+    const people = [
+      { user_id: 'active', claude_tier: tier },
+      { user_id: 'former', claude_tier: tier },
+    ] as OverviewPerson[];
+
+    expect(isShared(daily[0])).toBe(true);
+    expect(isShared({ ...baseDay, input_tokens: 1000, account_weight: 1000 })).toBe(false);
+    expect(memberLimitUsed(daily[0])).toBeCloseTo(6);
+    expect(memberLimitUsed(daily[1])).toBeCloseTo(4);
+    expect(rangeCost(daily, people)).toBeCloseTo(costOf(10, tier) ?? 0);
   });
 
   it('roundsSharesSoTheyAddUpExactly', () => {

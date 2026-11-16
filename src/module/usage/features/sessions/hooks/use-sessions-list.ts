@@ -66,11 +66,17 @@ function useFilterDraft(
   setParams: (patch: Patch) => void
 ) {
   const [draft, setDraft] = useState<SessionFilters>(filters);
+  const [synced, setSynced] = useState(filters);
+  if (synced !== filters) {
+    setSynced(filters);
+    if (filterPatch(draft, searchParams)) setDraft(filters);
+  }
   const debounced = useDebounced(draft);
   useEffect(() => {
+    if (debounced !== draft) return;
     const patch = filterPatch(debounced, searchParams);
     if (patch) setParams(patch);
-  }, [debounced, searchParams, setParams]);
+  }, [debounced, draft, searchParams, setParams]);
   return [draft, setDraft] as const;
 }
 

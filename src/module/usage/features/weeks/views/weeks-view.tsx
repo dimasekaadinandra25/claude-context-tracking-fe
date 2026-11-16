@@ -136,7 +136,7 @@ export function WeeksView() {
   return (
     <PageShell title={t('weeks.title')} loading={loading} error={error}>
       <Card>
-        {weeks.length === 0 ? (
+        {weeks.length === 0 && !loading ? (
           <EmptyState message={t('weeks.empty')} />
         ) : (
           <TableContainer>

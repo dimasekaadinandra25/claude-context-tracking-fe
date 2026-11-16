@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { useMemo, useCallback } from 'react';
 import { varAlpha } from 'minimal-shared/utils';
 
+import Alert from '@mui/material/Alert';
 import Table from '@mui/material/Table';
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
@@ -13,6 +14,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import { useTranslate } from 'src/locales';
 import { getDaily } from 'src/module/usage/api/usage';
@@ -239,13 +241,23 @@ export function PlanUsageCard({
 }) {
   const { t } = useTranslate('usage');
   const { range } = useReportRange();
-  const week = useMemo(() => lastDays(WEEK_DAYS, new Date(), range.tz), [range.tz]);
+  const today = dayjs().format('YYYY-MM-DD');
+  const week = useMemo(
+    () => lastDays(WEEK_DAYS, dayjs(today).toDate(), range.tz),
+    [today, range.tz]
+  );
   const load = useCallback(() => getDaily(week), [week]);
-  const { data } = useFetch(load);
+  const { data, error, loading } = useFetch(load);
 
   return (
     <ChartCard title={t('planUsage.title')} action={action}>
-      <UsageGrid people={people} daily={data ?? []} days={rangeDates(week)} />
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+      {loading && <LinearProgress />}
+      {data && <UsageGrid people={people} daily={data} days={rangeDates(week)} />}
     </ChartCard>
   );
 }

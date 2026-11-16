@@ -136,7 +136,8 @@
       "found": "{{count}} small Opus sessions ({{share}}% of Opus sessions) with at most {{requests}} requests and {{output}} output tokens",
       "cheaper": "≈ {{percent}}% cheaper on Sonnet (≈ {{saving}} at API prices)",
       "saving": "Est. saving",
-      "note": "Estimate from API list prices per million tokens (cache write 1.25× and cache read 0.1× of input), compared with Sonnet 5.5, over up to 100 recent sessions in this range. It is not a measure of the plan's limits."
+      "note": "Estimate from API list prices per million tokens (cache write 1.25× of input, cache reads at each model's own price), compared with Sonnet 5.5, over the sessions in this range. It is not a measure of the plan's limits.",
+      "capped": "Only the {{count}} most recent sessions were checked."
     }
   },
   "adminPeople": {
@@ -263,6 +264,7 @@
   "report": {
     "export": "Export image",
     "exporting": "Exporting…",
+    "failed": "Could not export the image: {{message}}",
     "title": "Claude Usage",
     "window": "Claude 7-day limit window · {{period}}",
     "period": "Last 7 days · {{period}}",

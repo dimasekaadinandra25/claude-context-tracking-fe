@@ -1,5 +1,5 @@
-import { useLocation } from 'react-router';
 import { it, expect, describe } from 'vitest';
+import { useLocation, useNavigate } from 'react-router';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
 
 import { renderWithAppProviders } from 'src/test/render';
@@ -13,10 +13,17 @@ import { useReportRange, ReportRangeProvider } from '../../../hooks/use-report-r
 function Probes() {
   const { range } = useReportRange();
   const { search } = useLocation();
+  const navigate = useNavigate();
   return (
     <>
       <p>{`global ${range.from.toISOString()}`}</p>
       <p>{`search ${search}`}</p>
+      <button type="button" onClick={() => navigate('/')}>
+        sidebar sessions
+      </button>
+      <button type="button" onClick={() => navigate(-1)}>
+        back
+      </button>
     </>
   );
 }
@@ -190,5 +197,20 @@ describe('SessionsListView URL state', () => {
       GRID_READY
     );
     expect(backend.requests.some((r) => r.params?.q === 'inv')).toBe(false);
+  });
+
+  it('followsTheUrlWhenItChangesFromOutside', async () => {
+    renderSessions('/?project=billing');
+    const project = screen.getByRole('textbox', { name: 'Project' });
+    expect(project).toHaveValue('billing');
+
+    fireEvent.click(screen.getByRole('button', { name: 'sidebar sessions' }));
+    expect(project).toHaveValue('');
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    expect(screen.getByText('search')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'back' }));
+    await waitFor(() => expect(project).toHaveValue('billing'));
+    expect(screen.getByText('search ?project=billing')).toBeInTheDocument();
   });
 });

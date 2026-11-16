@@ -8,6 +8,18 @@
 
 ### Fixed
 
+- The plan usage grid moves to the new day after midnight in a tab left open.
+- The sessions filter follows the URL, so the sidebar link and back/forward no longer bring back an
+  old filter.
+- Model mix tip uses each model's own cache prices and checks every session in the range (up to
+  2,000, and says when it stopped there).
+- Pages no longer show the previous person or range while the next one loads, and stop polling in
+  hidden tabs, refreshing once when you come back.
+- No more "no data" flash during the first load; the plan card shows fetch errors.
+- Export image failures show an error and mark the button so the reporter can tell.
+- The CSV Plan column reads Pro / Max 5x / Max 20x instead of the raw tier.
+- Ids in API paths are encoded.
+- An account with a deactivated member who still used it is split by tokens instead of counted twice.
 - Monthly CSV: names, emails and projects starting with `=`, `+`, `-`, `@` are neutralised so Excel
   never runs them as formulas.
 - A failed token refresh only signs you out when the server rejects the token (400/401), not on a

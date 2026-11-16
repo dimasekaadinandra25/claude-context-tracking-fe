@@ -9,19 +9,35 @@ type FetchState<T> = {
   updatedAt?: number;
 };
 
-export function useFetch<T>(load: () => Promise<T>, refresh = true) {
-  const [state, setState] = useState<FetchState<T>>({ data: null, error: null, loading: true });
-  const [version, setVersion] = useState(0);
+const LOADING = { data: null, error: null, loading: true };
 
-  useEffect(() => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
-  }, [load]);
-
+function useAutoRefresh(refresh: boolean, reload: () => void) {
   useEffect(() => {
     if (!refresh) return undefined;
-    const timer = setInterval(() => setVersion((v) => v + 1), REFRESH_INTERVAL_MS);
-    return () => clearInterval(timer);
-  }, [load, refresh]);
+    const refetchIfVisible = () => {
+      if (!document.hidden) reload();
+    };
+    const timer = setInterval(refetchIfVisible, REFRESH_INTERVAL_MS);
+    document.addEventListener('visibilitychange', refetchIfVisible);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', refetchIfVisible);
+    };
+  }, [refresh, reload]);
+}
+
+export function useFetch<T>(load: () => Promise<T>, refresh = true) {
+  const [state, setState] = useState<FetchState<T>>(LOADING);
+  const [loaded, setLoaded] = useState(() => load);
+  const [version, setVersion] = useState(0);
+  const reload = useCallback(() => setVersion((v) => v + 1), []);
+
+  if (loaded !== load) {
+    setLoaded(() => load);
+    setState(LOADING);
+  }
+
+  useAutoRefresh(refresh, reload);
 
   useEffect(() => {
     let active = true;
@@ -31,14 +47,12 @@ export function useFetch<T>(load: () => Promise<T>, refresh = true) {
       )
       .catch(
         (err: Error) =>
-          active && setState((prev) => ({ data: prev.data, error: err.message, loading: false }))
+          active && setState((prev) => ({ ...prev, error: err.message, loading: false }))
       );
     return () => {
       active = false;
     };
   }, [load, version]);
-
-  const reload = useCallback(() => setVersion((v) => v + 1), []);
 
   return { ...state, reload };
 }

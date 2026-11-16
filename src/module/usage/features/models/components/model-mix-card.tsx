@@ -10,7 +10,7 @@ import { paths } from 'src/routes/paths';
 
 import { useTranslate } from 'src/locales';
 
-import { getSessions } from '../../../api/usage';
+import { getAllSessions } from '../../../api/usage';
 import { useFetch } from '../../../hooks/use-fetch';
 import { formatTokens } from '../../../utils/format';
 import { sessionTitle } from '../../../utils/session';
@@ -21,7 +21,6 @@ import { ChartCard } from '../../../components/chart-card';
 import { useReportRange } from '../../../hooks/use-report-range';
 import { modelMixTip, SMALL_OUTPUT, SMALL_REQUESTS } from '../../../utils/model-mix';
 
-const PER_PAGE = '100';
 const TOP = 5;
 
 const mixColumns = (t: TFunction): Column<SmallOpusSession>[] => [
@@ -52,8 +51,9 @@ const mixColumns = (t: TFunction): Column<SmallOpusSession>[] => [
 export function ModelMixCard() {
   const { t } = useTranslate('usage');
   const { range } = useReportRange();
-  const load = useCallback(() => getSessions(range, { per_page: PER_PAGE }), [range]);
-  const tip = modelMixTip(useFetch(load).data?.items ?? []);
+  const load = useCallback(() => getAllSessions(range), [range]);
+  const { data } = useFetch(load);
+  const tip = modelMixTip(data?.items ?? []);
 
   if (tip.sessions.length === 0) return null;
 
@@ -81,6 +81,7 @@ export function ModelMixCard() {
       />
       <Typography variant="caption" sx={{ display: 'block', mt: 2, color: 'text.disabled' }}>
         {t('models.mix.note')}
+        {data?.capped && ` ${t('models.mix.capped', { count: data.items.length })}`}
       </Typography>
     </ChartCard>
   );

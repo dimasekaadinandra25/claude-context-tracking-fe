@@ -1,13 +1,14 @@
 import type { OverviewPerson } from 'src/module/usage/types';
 
 import dayjs from 'dayjs';
-import { it, expect, describe } from 'vitest';
-import { screen } from '@testing-library/react';
+import { it, vi, expect, describe, afterEach } from 'vitest';
+import { act, screen, waitFor } from '@testing-library/react';
 
 import { renderWithAppProviders } from 'src/test/render';
 import { envelope, installFakeBackend } from 'src/test/fake-backend';
 
 import { PlanUsageCard } from './plan-usage-card';
+import { REFRESH_INTERVAL_MS } from '../hooks/use-fetch';
 import { ReportRangeProvider } from '../hooks/use-report-range';
 
 const person = (fields: Partial<OverviewPerson>) =>
@@ -94,5 +95,54 @@ describe('PlanUsageCard', () => {
     );
 
     expect(await screen.findByText('No usage in the last 7 days.')).toBeInTheDocument();
+  });
+
+  it('showsAFetchErrorInsteadOfAnEmptyWeek', async () => {
+    installFakeBackend({
+      'GET /usage/v1/daily': { status: 500, data: { message: 'daily is down' } },
+    });
+    renderWithAppProviders(
+      <ReportRangeProvider>
+        <PlanUsageCard people={[person({ user_id: 'a', full_name: 'Naufal' })]} />
+      </ReportRangeProvider>
+    );
+
+    expect(await screen.findByText('daily is down')).toBeInTheDocument();
+    expect(screen.queryByText('No usage in the last 7 days.')).not.toBeInTheDocument();
+  });
+
+  describe('at midnight', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('rollsTheWeekOverToTheNewDay', async () => {
+      vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
+      vi.setSystemTime(new Date(2026, 10, 16, 23, 59));
+      const backend = installFakeBackend({
+        'GET /usage/v1/daily': { status: 200, data: envelope([]) },
+      });
+      renderWithAppProviders(
+        <ReportRangeProvider>
+          <PlanUsageCard people={[person({ user_id: 'a', full_name: 'Naufal' })]} />
+        </ReportRangeProvider>
+      );
+      await waitFor(() =>
+        expect(backend.requests.map((r) => r.params?.from)).toContain(
+          new Date(2026, 10, 10).toISOString()
+        )
+      );
+
+      vi.setSystemTime(new Date(2026, 10, 17, 0, 1));
+      act(() => {
+        vi.advanceTimersByTime(REFRESH_INTERVAL_MS);
+      });
+
+      await waitFor(() =>
+        expect(backend.requests.map((r) => r.params?.from)).toContain(
+          new Date(2026, 10, 11).toISOString()
+        )
+      );
+    });
   });
 });

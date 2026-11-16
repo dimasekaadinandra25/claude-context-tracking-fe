@@ -4,12 +4,13 @@ import type { OverviewPerson } from 'src/module/usage/types';
 import dayjs from 'dayjs';
 import { toPng } from 'html-to-image';
 import { createPortal } from 'react-dom';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
 import { useTranslate } from 'src/locales';
+import { toast } from 'src/shared/ui/snackbar';
 import { getDaily, getModels } from 'src/module/usage/api/usage';
 import { WEEK_DAYS, daysRange, windowDays } from 'src/module/usage/utils/plan';
 import { lastDays, rangeDates, browserTimeZone } from 'src/module/usage/utils/range';
@@ -46,13 +47,28 @@ export async function loadReport(people: OverviewPerson[]): Promise<PlanReportDa
 function useImageExport(people: OverviewPerson[]) {
   const [report, setReport] = useState<PlanReportData | null>(null);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const node = useRef<HTMLDivElement>(null);
+  const { t } = useTranslate('usage');
+
+  const fail = useCallback(
+    (err: unknown) => {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
+      toast.error(t('report.failed', { message }));
+    },
+    [t]
+  );
 
   const start = () => {
     setBusy(true);
+    setError(null);
     loadReport(people)
       .then(setReport)
-      .catch(() => setBusy(false));
+      .catch((err: unknown) => {
+        fail(err);
+        setBusy(false);
+      });
   };
 
   useEffect(() => {
@@ -62,6 +78,7 @@ function useImageExport(people: OverviewPerson[]) {
       .then(
         (url) => active && download(url, `claude-usage-${dayjs().format('YYYY-MM-DD-HHmm')}.png`)
       )
+      .catch((err: unknown) => active && fail(err))
       .finally(() => {
         if (!active) return;
         setReport(null);
@@ -70,14 +87,14 @@ function useImageExport(people: OverviewPerson[]) {
     return () => {
       active = false;
     };
-  }, [report]);
+  }, [report, fail]);
 
-  return { report, busy, start, node };
+  return { report, busy, error, start, node };
 }
 
 export function ExportImageButton({ people }: { people: OverviewPerson[] }) {
   const { t } = useTranslate('usage');
-  const { report, busy, start, node } = useImageExport(people);
+  const { report, busy, error, start, node } = useImageExport(people);
 
   return (
     <>
@@ -87,6 +104,7 @@ export function ExportImageButton({ people }: { people: OverviewPerson[] }) {
         onClick={start}
         disabled={busy}
         data-testid="export-image"
+        data-export-error={error ?? undefined}
       >
         {busy ? t('report.exporting') : t('report.export')}
       </Button>

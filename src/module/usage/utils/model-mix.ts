@@ -1,32 +1,38 @@
 import type { UsageSession } from '../types';
 
-type Price = { input: number; output: number };
+type Price = { input: number; output: number; cacheWrite: number; cacheRead: number };
 
 const MILLION = 1_000_000;
-const CACHE_WRITE = 1.25;
-const CACHE_READ = 0.1;
 export const SMALL_REQUESTS = 15;
 export const SMALL_OUTPUT = 20_000;
 
-export const SONNET: Price = { input: 2, output: 10 };
+export const SONNET: Price = { input: 2, output: 10, cacheWrite: 2.5, cacheRead: 0.1 };
 
-const OPUS_PRICES: [RegExp, Price][] = [
-  [/opus-5-5/, { input: 4, output: 20 }],
-  [/opus/, { input: 5, output: 25 }],
+const PRICES: [RegExp, Price][] = [
+  [/opus-5-5/, { input: 4, output: 20, cacheWrite: 5, cacheRead: 0.2 }],
+  [/opus/, { input: 5, output: 25, cacheWrite: 6.25, cacheRead: 0.5 }],
+  [/sonnet-5-5/, SONNET],
+  [/sonnet/, { input: 2, output: 10, cacheWrite: 2.5, cacheRead: 0.2 }],
 ];
 
+export function modelPrice(model: string): Price | null {
+  return PRICES.find(([pattern]) => pattern.test(model))?.[1] ?? null;
+}
+
 export function opusPrice(model: string): Price | null {
-  return OPUS_PRICES.find(([pattern]) => pattern.test(model))?.[1] ?? null;
+  return model.includes('opus') ? modelPrice(model) : null;
 }
 
 const outputOf = (session: UsageSession) => session.output_tokens + session.subagent_output_tokens;
 
 export function sessionCost(session: UsageSession, price: Price): number {
-  const input =
-    session.input_tokens +
-    CACHE_WRITE * session.cache_write_tokens +
-    CACHE_READ * session.cache_read_tokens;
-  return (input * price.input + outputOf(session) * price.output) / MILLION;
+  return (
+    (session.input_tokens * price.input +
+      session.cache_write_tokens * price.cacheWrite +
+      session.cache_read_tokens * price.cacheRead +
+      outputOf(session) * price.output) /
+    MILLION
+  );
 }
 
 const opusOf = (session: UsageSession) =>

@@ -157,6 +157,20 @@ describe('SessionsListView URL state', () => {
     expect(screen.getByRole('textbox', { name: 'Project' })).toHaveValue('billing');
   });
 
+  it('seedsTheProjectFilterFromTheQueryString', async () => {
+    const backend = renderSessions('/?project=billing');
+
+    expect(screen.getByRole('textbox', { name: 'Project' })).toHaveValue('billing');
+    await waitFor(() =>
+      expect(backend.requests).toContainEqual(
+        expect.objectContaining({
+          url: '/usage/v1/sessions',
+          params: expect.objectContaining({ project: 'billing' }),
+        })
+      )
+    );
+  });
+
   it('writesDebouncedFiltersToTheUrlAndResetsThePage', async () => {
     const backend = renderSessions('/?page=3');
     const input = screen.getByRole('textbox', { name: 'Search title or project' });

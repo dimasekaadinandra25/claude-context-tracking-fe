@@ -88,7 +88,11 @@ function renderProjects(isAdmin = false) {
   );
   renderWithAppProviders(
     isAdmin ? (
-      <AuthContext value={authContextValue({ user: { ...testUser, is_super_admin: true } })}>
+      <AuthContext
+        value={authContextValue({
+          user: { ...testUser, is_super_admin: true, can_view_all: true },
+        })}
+      >
         {view}
       </AuthContext>
     ) : (

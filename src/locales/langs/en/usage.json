@@ -130,7 +130,14 @@
     "share": "Share of new context",
     "chart": "New context per day by model",
     "byMember": "Models by member",
-    "byMemberNote": "Each member's share of their own tokens per model (input including cache, output counts 5×) with requests."
+    "byMemberNote": "Each member's share of their own tokens per model (input including cache, output counts 5×) with requests.",
+    "mix": {
+      "title": "Model mix tip",
+      "found": "{{count}} small Opus sessions ({{share}}% of Opus sessions) with at most {{requests}} requests and {{output}} output tokens",
+      "cheaper": "≈ {{percent}}% cheaper on Sonnet (≈ {{saving}} at API prices)",
+      "saving": "Est. saving",
+      "note": "Estimate from API list prices per million tokens (cache write 1.25× and cache read 0.1× of input), compared with Sonnet 5.5, over up to 100 recent sessions in this range. It is not a measure of the plan's limits."
+    }
   },
   "adminPeople": {
     "title": "Members"

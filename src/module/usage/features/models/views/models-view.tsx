@@ -14,6 +14,7 @@ import { formatTokens } from '../../../utils/format';
 import { PageShell } from '../../../components/page-shell';
 import { DataTable } from '../../../components/data-table';
 import { ChartCard } from '../../../components/chart-card';
+import { ModelMixCard } from '../components/model-mix-card';
 import { EmptyState } from '../../../components/empty-state';
 import { RangePicker } from '../../../components/range-picker';
 import { MemberModelsCard } from '../components/member-models-card';
@@ -126,6 +127,7 @@ export function ModelsView() {
             </Grid>
           </Grid>
           <MemberModelsCard rows={members} />
+          <ModelMixCard />
           <ModelsTable models={models} />
         </>
       )}

@@ -7,7 +7,7 @@ import { PersonView } from '../views/person-view';
 export default function Page() {
   const { t } = useTranslate('usage');
   const { user } = useAuthContext();
-  const title = user?.is_super_admin ? t('person.title') : t('person.myTitle');
+  const title = user?.can_view_all ? t('person.title') : t('person.myTitle');
 
   return (
     <>

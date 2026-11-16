@@ -10,7 +10,12 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 import { LoadingScreen } from 'src/shared/ui/loading-screen';
 import { useAuthContext } from 'src/module/core/features/auth/hooks';
 import { ReportRangeProvider } from 'src/module/usage/hooks/use-report-range';
-import { AuthGuard, AdminGuard, PasswordChangeGuard } from 'src/module/core/features/auth/guard';
+import {
+  AuthGuard,
+  AdminGuard,
+  ViewAllGuard,
+  PasswordChangeGuard,
+} from 'src/module/core/features/auth/guard';
 
 import { usePathname } from '../hooks';
 
@@ -39,7 +44,7 @@ function HomeRedirect() {
   const { user } = useAuthContext();
   return (
     <Navigate
-      to={user?.is_super_admin ? paths.dashboard.overview : paths.dashboard.person()}
+      to={user?.can_view_all ? paths.dashboard.overview : paths.dashboard.person()}
       replace
     />
   );
@@ -57,6 +62,8 @@ const dashboardLayout = () => (
 
 const admin = (element: React.ReactElement) => <AdminGuard>{element}</AdminGuard>;
 
+const viewAll = (element: React.ReactElement) => <ViewAllGuard>{element}</ViewAllGuard>;
+
 export const dashboardRoutes: RouteObject[] = [
   { path: '/', element: <Navigate to={paths.dashboard.root} replace /> },
   {
@@ -64,7 +71,7 @@ export const dashboardRoutes: RouteObject[] = [
     element: CONFIG.auth.skip ? dashboardLayout() : <AuthGuard>{dashboardLayout()}</AuthGuard>,
     children: [
       { index: true, element: <HomeRedirect /> },
-      { path: 'overview', element: admin(<OverviewPage />) },
+      { path: 'overview', element: viewAll(<OverviewPage />) },
       { path: 'person', element: <PersonPage /> },
       { path: 'person/:id', element: <PersonPage /> },
       { path: 'sessions', element: <SessionsPage /> },

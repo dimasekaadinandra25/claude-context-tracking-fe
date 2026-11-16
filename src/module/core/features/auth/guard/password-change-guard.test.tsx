@@ -8,7 +8,12 @@ import { AuthContext } from '../context/auth-context';
 import { PasswordChangeGuard } from './password-change-guard';
 
 function renderGuarded(mustChange: boolean, path = '/dashboard/sessions') {
-  const user = { ...testUser, is_super_admin: false, must_change_password: mustChange };
+  const user = {
+    ...testUser,
+    is_super_admin: false,
+    can_view_all: false,
+    must_change_password: mustChange,
+  };
   render(
     <AuthContext value={authContextValue({ user })}>
       <MemoryRouter initialEntries={[path]}>

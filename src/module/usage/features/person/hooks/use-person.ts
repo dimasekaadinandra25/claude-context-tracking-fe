@@ -11,16 +11,16 @@ import { getOverview, getSessions, getTimeseries } from '../../../api/usage';
 
 const RECENT_SESSIONS = '10';
 
-function resolveUserId(isAdmin: boolean, routeId?: string, ownId?: string) {
-  return (isAdmin && routeId) || ownId || '';
+function resolveUserId(canViewAll: boolean, routeId?: string, ownId?: string) {
+  return (canViewAll && routeId) || ownId || '';
 }
 
 export function usePerson() {
   const { user } = useAuthContext();
   const { id } = useParams();
   const { range } = useReportRange();
-  const isAdmin = !!user?.is_super_admin;
-  const userId = resolveUserId(isAdmin, id, user?.id);
+  const canViewAll = !!user?.can_view_all;
+  const userId = resolveUserId(canViewAll, id, user?.id);
 
   const load = useCallback(
     () =>
@@ -37,7 +37,7 @@ export function usePerson() {
   const [overview, points, page, previous] = data ?? [null, [], null, null];
 
   return {
-    isAdmin,
+    canViewAll,
     userId,
     overview,
     previous,

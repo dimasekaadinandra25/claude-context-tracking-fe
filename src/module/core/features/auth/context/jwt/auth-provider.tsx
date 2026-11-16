@@ -1,4 +1,4 @@
-import type { AuthState, SignInParams, AuthContextValue } from '../../types';
+import type { AuthUser, AuthState, MeResponse, SignInParams, AuthContextValue } from '../../types';
 
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
@@ -19,6 +19,12 @@ type Props = {
 };
 
 const SIGNED_OUT: AuthState = { loading: false, user: null };
+
+const toAuthUser = (me: MeResponse): AuthUser => ({
+  ...me.user,
+  is_super_admin: me.is_super_admin,
+  can_view_all: me.can_view_all ?? me.is_super_admin,
+});
 
 function hasHttpStatus(error: unknown): boolean {
   return typeof (error as { status?: unknown } | null)?.status === 'number';
@@ -91,7 +97,7 @@ export function AuthProvider({ children }: Props) {
 
   const loadUser = useCallback(async () => {
     const me = await authApi.getMe();
-    setState({ loading: false, user: { ...me.user, is_super_admin: me.is_super_admin } });
+    setState({ loading: false, user: toAuthUser(me) });
   }, []);
 
   const checkUserSession = useSessionCheck(applySignOut, loadUser, setState);

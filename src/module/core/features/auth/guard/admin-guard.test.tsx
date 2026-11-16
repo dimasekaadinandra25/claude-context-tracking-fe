@@ -9,7 +9,11 @@ import { AuthContext } from '../context/auth-context';
 
 function renderAdminRoute(isSuperAdmin: boolean) {
   render(
-    <AuthContext value={authContextValue({ user: { ...testUser, is_super_admin: isSuperAdmin } })}>
+    <AuthContext
+      value={authContextValue({
+        user: { ...testUser, is_super_admin: isSuperAdmin, can_view_all: isSuperAdmin },
+      })}
+    >
       <MemoryRouter initialEntries={['/dashboard/admin/people']}>
         <Routes>
           <Route

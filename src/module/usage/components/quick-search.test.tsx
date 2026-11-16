@@ -37,7 +37,9 @@ function renderSearch() {
     'GET /usage/v1/sessions': { status: 200, data: envelope([session]) },
   });
   renderWithAppProviders(
-    <AuthContext value={authContextValue({ user: { ...testUser, is_super_admin: true } })}>
+    <AuthContext
+      value={authContextValue({ user: { ...testUser, is_super_admin: true, can_view_all: true } })}
+    >
       <ReportRangeProvider>
         <Harness />
       </ReportRangeProvider>

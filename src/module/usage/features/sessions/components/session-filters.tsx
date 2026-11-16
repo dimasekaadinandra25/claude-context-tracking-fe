@@ -14,7 +14,7 @@ import { useFetch } from '../../../hooks/use-fetch';
 type Props = {
   filters: Filters;
   models: string[];
-  isAdmin: boolean;
+  canViewAll: boolean;
   onChange: (patch: Filters) => void;
 };
 
@@ -51,12 +51,12 @@ export function PersonFilter({
   );
 }
 
-export function SessionFilters({ filters, models, isAdmin, onChange }: Props) {
+export function SessionFilters({ filters, models, canViewAll, onChange }: Props) {
   const { t } = useTranslate('usage');
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-      {isAdmin && (
+      {canViewAll && (
         <PersonFilter value={filters.userId ?? ''} onChange={(userId) => onChange({ userId })} />
       )}
       <TextField

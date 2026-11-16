@@ -72,7 +72,7 @@ const overheadColumn = (headerName: string): GridColDef<ProjectUsage> => ({
 
 export function projectColumns(
   t: TFunction,
-  isAdmin: boolean,
+  canViewAll: boolean,
   rows: ProjectUsage[] = [],
   spent: number | null = null
 ): GridColDef<ProjectUsage>[] {
@@ -100,7 +100,7 @@ export function projectColumns(
     costColumn(t('projects.cost'), share, spent),
     numberColumn('requests', t('col.requests')),
     numberColumn('sessions', t('col.sessions')),
-    ...(isAdmin ? [numberColumn('members', t('col.members'))] : []),
+    ...(canViewAll ? [numberColumn('members', t('col.members'))] : []),
     {
       field: 'models',
       headerName: t('col.models'),

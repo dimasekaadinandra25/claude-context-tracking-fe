@@ -22,7 +22,7 @@ export function meResponse(overrides: Partial<MeResponse> = {}): MeResponse {
 export function authContextValue(overrides: Partial<AuthContextValue> = {}): AuthContextValue {
   return {
     loading: false,
-    user: { ...testUser, is_super_admin: false },
+    user: { ...testUser, is_super_admin: false, can_view_all: false },
     authenticated: true,
     unauthenticated: false,
     signIn: vi.fn(),

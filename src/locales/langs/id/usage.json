@@ -130,7 +130,14 @@
     "share": "Porsi konteks baru",
     "chart": "Konteks baru per hari per model",
     "byMember": "Model per anggota",
-    "byMemberNote": "Porsi tiap anggota dari token miliknya sendiri per model (masuk termasuk cache, keluaran dihitung 5×) beserta permintaan."
+    "byMemberNote": "Porsi tiap anggota dari token miliknya sendiri per model (masuk termasuk cache, keluaran dihitung 5×) beserta permintaan.",
+    "mix": {
+      "title": "Tips campuran model",
+      "found": "{{count}} sesi Opus kecil ({{share}}% dari sesi Opus) dengan paling banyak {{requests}} request dan {{output}} token output",
+      "cheaper": "≈ {{percent}}% lebih murah dengan Sonnet (≈ {{saving}} dengan harga API)",
+      "saving": "Perkiraan hemat",
+      "note": "Perkiraan dari harga daftar API per sejuta token (tulis cache 1,25× dan baca cache 0,1× dari input), dibandingkan dengan Sonnet 5.5, atas paling banyak 100 sesi terbaru dalam rentang ini. Ini bukan ukuran batas paket."
+    }
   },
   "adminPeople": {
     "title": "Anggota"

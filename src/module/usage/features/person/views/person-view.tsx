@@ -23,12 +23,12 @@ import { PersonPressureCard } from '../../overview/components/context-pressure-c
 
 export function PersonView() {
   const { t } = useTranslate('usage');
-  const { isAdmin, userId, overview, previous, person, points, sessions, error, loading } =
+  const { canViewAll, userId, overview, previous, person, points, sessions, error, loading } =
     usePerson();
 
   const action = (
     <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-      {isAdmin && <PersonPicker userId={userId} />}
+      {canViewAll && <PersonPicker userId={userId} />}
       <RangePicker quick />
     </Box>
   );

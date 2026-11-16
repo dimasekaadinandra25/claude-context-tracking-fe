@@ -49,12 +49,12 @@ function useProjectsData(userId: string) {
 export function ProjectsView() {
   const { t } = useTranslate('usage');
   const { user } = useAuthContext();
-  const isAdmin = !!user?.is_super_admin;
+  const canViewAll = !!user?.can_view_all;
   const [userId, setUserId] = useState('');
   const { data, error, loading, spent } = useProjectsData(userId);
   const columns = useMemo(
-    () => projectColumns(t, isAdmin, data ?? [], spent),
-    [t, isAdmin, data, spent]
+    () => projectColumns(t, canViewAll, data ?? [], spent),
+    [t, canViewAll, data, spent]
   );
   const [visibility, setVisibility] = useColumnVisibility(
     VISIBILITY_KEY,
@@ -68,7 +68,7 @@ export function ProjectsView() {
       <Card>
         <Stack spacing={2} sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between' }}>
-            {isAdmin && <PersonFilter value={userId} onChange={setUserId} />}
+            {canViewAll && <PersonFilter value={userId} onChange={setUserId} />}
             <ExportMonth userId={userId} />
           </Box>
           <DataGrid

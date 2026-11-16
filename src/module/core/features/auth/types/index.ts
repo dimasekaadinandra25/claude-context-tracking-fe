@@ -8,6 +8,7 @@ export type User = {
 
 export type AuthUser = User & {
   is_super_admin: boolean;
+  can_view_all: boolean;
 };
 
 export type TokenPair = {
@@ -28,6 +29,7 @@ export type MeResponse = {
   roles: string[];
   permissions: string[] | null;
   is_super_admin: boolean;
+  can_view_all?: boolean;
 };
 
 export type AuthState = {

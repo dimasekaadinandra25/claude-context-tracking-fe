@@ -40,7 +40,7 @@ export function SessionsListView() {
           <SessionFilters
             filters={list.filters}
             models={list.models}
-            isAdmin={!!user?.is_super_admin}
+            canViewAll={!!user?.can_view_all}
             onChange={list.setFilter}
           />
           <SessionsGrid {...list} />

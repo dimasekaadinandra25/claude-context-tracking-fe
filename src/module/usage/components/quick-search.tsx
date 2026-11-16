@@ -37,12 +37,12 @@ type Result = {
 function useResults(open: boolean, query: string): Result[] {
   const { t } = useTranslate('usage');
   const { user } = useAuthContext();
-  const isAdmin = !!user?.is_super_admin;
+  const canViewAll = !!user?.can_view_all;
   const q = useDebounced(query.trim());
 
   const loadPeople = useCallback(
-    () => (open && isAdmin ? getPeople() : Promise.resolve([])),
-    [open, isAdmin]
+    () => (open && canViewAll ? getPeople() : Promise.resolve([])),
+    [open, canViewAll]
   );
   const loadSessions = useCallback(
     () =>

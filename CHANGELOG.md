@@ -4,6 +4,10 @@
 
 ### Added
 
+- Read-only accounts: users with `can_view_all` (the `usage_viewer` role) see the team overview,
+  every member's usage and the member filters, but not the admin pages.
+- Models page: a model mix tip lists small sessions (up to 15 requests and 20K output) that used
+  Opus and estimates how much cheaper they would have been on Sonnet at API list prices.
 - Overview people table: a green dot marks members active in the last 10 minutes and a 5h share
   column shows how many points of the account's current 5-hour window each member used.
 - Projects page: export a month as CSV with each member and project's tokens and estimated cost

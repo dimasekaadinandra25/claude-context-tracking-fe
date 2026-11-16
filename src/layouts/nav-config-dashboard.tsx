@@ -27,11 +27,12 @@ export function useNavData(): NavSectionProps['data'] {
   const { t } = useTranslate('navigation');
   const { user } = useAuthContext();
   const isAdmin = !!user?.is_super_admin;
+  const canViewAll = !!user?.can_view_all;
 
   return useMemo(() => {
     const usage = [
       {
-        title: t(isAdmin ? 'person' : 'myUsage'),
+        title: t(canViewAll ? 'person' : 'myUsage'),
         path: paths.dashboard.person(),
         icon: ICONS.person,
         deepMatch: true,
@@ -47,23 +48,19 @@ export function useNavData(): NavSectionProps['data'] {
       { title: t('weeks'), path: paths.dashboard.weeks, icon: ICONS.weeks },
     ];
 
-    if (!isAdmin) {
-      return [{ items: usage }];
-    }
+    if (!canViewAll) return [{ items: usage }];
 
-    return [
-      {
-        items: [
-          { title: t('overview'), path: paths.dashboard.overview, icon: ICONS.overview },
-          ...usage,
-        ],
-      },
-      {
-        subheader: t('admin.root'),
-        items: [
-          { title: t('admin.people'), path: paths.dashboard.adminPeople, icon: ICONS.people },
-        ],
-      },
-    ];
-  }, [t, isAdmin]);
+    const team = {
+      items: [
+        { title: t('overview'), path: paths.dashboard.overview, icon: ICONS.overview },
+        ...usage,
+      ],
+    };
+    const admin = {
+      subheader: t('admin.root'),
+      items: [{ title: t('admin.people'), path: paths.dashboard.adminPeople, icon: ICONS.people }],
+    };
+
+    return isAdmin ? [team, admin] : [team];
+  }, [t, isAdmin, canViewAll]);
 }
